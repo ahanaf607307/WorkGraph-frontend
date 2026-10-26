@@ -9,8 +9,8 @@ export const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   return (
     <div
       className={cn(
-        "rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-all",
-        props.onClick && "cursor-pointer",
+        "rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-2xs transition-all",
+        props.onClick && "cursor-pointer hover:border-amber-400/50 dark:hover:border-amber-400/50",
         className
       )}
       {...props}
@@ -40,7 +40,7 @@ export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
   return (
     <h3
       className={cn(
-        "text-lg font-semibold leading-none tracking-tight text-slate-900 dark:text-slate-100",
+        "text-base font-bold leading-none tracking-tight text-zinc-950 dark:text-white",
         className
       )}
       {...props}
@@ -57,7 +57,7 @@ export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement
 }) => {
   return (
     <p
-      className={cn("text-sm text-slate-500 dark:text-slate-400 leading-relaxed", className)}
+      className={cn("text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed", className)}
       {...props}
     >
       {children}
@@ -80,7 +80,7 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   return (
     <div
-      className={cn("p-6 pt-0 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 mt-4", className)}
+      className={cn("p-6 pt-0 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 mt-4", className)}
       {...props}
     >
       {children}

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WorkGraph — Intelligent Project & Workload Manager",
-  description: "Modern, professional project management SaaS with deterministic workload governance and deadline risk engine.",
+  title: "Work Graph — Intelligent Project & Workload Manager",
+  description: "Modern, professional project management SaaS with deterministic workload governance, real-time messaging, and deadline risk engine.",
 };
 
 export default function RootLayout({
@@ -26,10 +26,32 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased light`}
-      style={{ colorScheme: "light" }}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white dark:bg-black text-zinc-950 dark:text-zinc-100 transition-colors">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const saved = localStorage.getItem('workgraph_theme');
+                  if (saved === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                    document.documentElement.style.colorScheme = 'dark';
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                    document.documentElement.style.colorScheme = 'light';
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-black text-zinc-950 dark:text-zinc-100 transition-colors">
         <Providers>{children}</Providers>
       </body>
     </html>

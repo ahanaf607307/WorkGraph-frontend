@@ -51,29 +51,29 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
       <div
         className={cn(
-          "relative w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl z-10 animate-in zoom-in-95 duration-200",
+          "relative w-full rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 shadow-2xl z-10 animate-in zoom-in-95 duration-200",
           maxWidths[maxWidth],
           className
         )}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {title && (
           <div className="mb-4 pr-6">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
-            {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
+            <h2 className="text-lg font-bold text-zinc-950 dark:text-white">{title}</h2>
+            {description && <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">{description}</p>}
           </div>
         )}
 

@@ -8,7 +8,7 @@ export const Skeleton: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-slate-200/80 dark:bg-slate-800",
+        "animate-pulse rounded-md bg-zinc-200/80 dark:bg-zinc-800",
         className
       )}
       {...props}
@@ -23,7 +23,7 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Progress: React.FC<ProgressProps> = ({
   value,
-  indicatorColor = "bg-indigo-600",
+  indicatorColor = "bg-amber-400",
   className,
   ...props
 }) => {
@@ -32,7 +32,7 @@ export const Progress: React.FC<ProgressProps> = ({
   return (
     <div
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800",
+        "relative h-2 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800",
         className
       )}
       {...props}

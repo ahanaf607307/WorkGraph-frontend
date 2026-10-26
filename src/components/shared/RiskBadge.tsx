@@ -10,7 +10,7 @@ export const RiskBadge: React.FC<{
 }> = ({ riskLevel = "LOW", className, showIcon = true }) => {
   const match = RISK_LEVELS.find((r) => r.value === riskLevel) || {
     label: riskLevel,
-    color: "bg-slate-100 text-slate-700 border-slate-200",
+    color: "bg-zinc-100 text-zinc-700 border-zinc-200",
   };
 
   const getIcon = () => {

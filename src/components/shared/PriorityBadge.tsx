@@ -8,7 +8,7 @@ export const PriorityBadge: React.FC<{ priority: string; className?: string }> =
 }) => {
   const match = TASK_PRIORITIES.find((p) => p.value === priority) || {
     label: priority,
-    color: "bg-slate-100 text-slate-700 border-slate-200",
+    color: "bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700",
   };
 
   return (
