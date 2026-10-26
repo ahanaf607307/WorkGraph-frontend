@@ -11,6 +11,10 @@ export const userActions = {
     return apiClient<OrganizationMember[]>(`/organizations/${organizationId}/members`);
   },
 
+  getMembers: async (organizationId: string): Promise<OrganizationMember[]> => {
+    return apiClient<OrganizationMember[]>(`/organizations/${organizationId}/members`);
+  },
+
   inviteMember: async (
     organizationId: string,
     data: { email: string; role?: string; weeklyCapacityHours?: number }
@@ -24,7 +28,13 @@ export const userActions = {
   updateMember: async (
     organizationId: string,
     userId: string,
-    data: { role?: string; weeklyCapacityHours?: number }
+    data: {
+      role?: string;
+      weeklyCapacityHours?: number;
+      designationId?: string | null;
+      departmentId?: string | null;
+      teamId?: string | null;
+    }
   ): Promise<OrganizationMember> => {
     return apiClient<OrganizationMember>(
       `/organizations/${organizationId}/members/${userId}`,

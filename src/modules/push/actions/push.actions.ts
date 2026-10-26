@@ -82,6 +82,21 @@ export const pushActions = {
     }
   },
 
+  isSubscribed: async (): Promise<boolean> => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) return false;
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.getSubscription();
+      return !!sub;
+    } catch {
+      return false;
+    }
+  },
+
+  subscribeToPush: async (): Promise<boolean> => {
+    return pushActions.registerAndSubscribe();
+  },
+
   sendTestPush: async (title: string = "Work Graph Push Test", message: string = "Push notifications are working smoothly!"): Promise<any> => {
     return apiClient("/push/test", {
       method: "POST",
