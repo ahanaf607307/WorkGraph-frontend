@@ -37,10 +37,10 @@ export const ProjectListView: React.FC = () => {
       {/* Page Title & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
             Projects & Workflows
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-zinc-500 mt-1">
             Manage your organization&apos;s development initiatives, deliverables, and team roadmaps.
           </p>
         </div>
@@ -50,22 +50,22 @@ export const ProjectListView: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-zinc-950 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search projects by name or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-transparent focus:border-slate-300 dark:focus:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-transparent focus:border-zinc-300 dark:focus:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none"
           />
         </div>
         <div className="w-full sm:w-48">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
           >
             <option value="" className="cursor-pointer">All Statuses</option>
             <option value="ACTIVE" className="cursor-pointer">Active</option>
@@ -105,26 +105,26 @@ export const ProjectListView: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <StatusBadge status={project.status} />
-                  <span className="text-2xs text-slate-400 font-mono flex items-center">
+                  <span className="text-2xs text-zinc-400 font-mono flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
                     {formatDate(project.dueDate)}
                   </span>
                 </div>
 
                 <Link href={`/projects/${project.id}`}>
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+                  <h3 className="text-base font-semibold text-zinc-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
                     {project.name}
                   </h3>
                 </Link>
 
-                <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-zinc-500 mt-1.5 line-clamp-2 leading-relaxed">
                   {project.description || "No project description provided."}
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 space-y-3">
-                <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">
+              <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+                <div className="flex items-center justify-between text-xs text-zinc-500">
+                  <span className="font-medium text-zinc-700 dark:text-zinc-300">
                     {project.metrics.progress}% Complete
                   </span>
                   <span>{project.metrics.completedTasks}/{project.metrics.totalTasks} Tasks</span>
@@ -138,7 +138,7 @@ export const ProjectListView: React.FC = () => {
                       <Avatar key={m.id} name={m.name} size="sm" />
                     ))}
                     {(project.members || []).length > 4 && (
-                      <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200 text-2xs flex items-center justify-center font-bold ring-2 ring-white dark:ring-slate-900">
+                      <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-200 text-2xs flex items-center justify-center font-bold ring-2 ring-white dark:ring-zinc-950">
                         +{project.members.length - 4}
                       </div>
                     )}

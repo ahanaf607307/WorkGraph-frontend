@@ -112,10 +112,10 @@ export const TeamWorkloadView: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
             Team Workload & Capacity Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-zinc-500 mt-1">
             Deterministic workload governance calculated from weekly capacities and assigned task estimates.
           </p>
         </div>
@@ -127,45 +127,45 @@ export const TeamWorkloadView: React.FC = () => {
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card className="p-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Total Team Members
           </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <div className="text-2xl font-bold text-zinc-950 dark:text-white">
             {workload?.summary.totalMembers ?? 0}
           </div>
-          <span className="text-2xs text-slate-400 font-mono">
+          <span className="text-2xs text-zinc-400 font-mono">
             {workload?.summary.totalWeeklyCapacity ?? 0}h total weekly capacity
           </span>
         </Card>
 
         <Card className="p-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Assigned Open Workload
           </div>
           <div className="text-2xl font-bold text-amber-500">
             {workload?.summary.totalOpenHours ?? 0}h
           </div>
-          <span className="text-2xs text-slate-400 font-mono">Estimated active task effort</span>
+          <span className="text-2xs text-zinc-400 font-mono">Estimated active task effort</span>
         </Card>
 
         <Card className="p-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Average Utilization
           </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <div className="text-2xl font-bold text-zinc-950 dark:text-white">
             {workload?.summary.averageUtilization ?? 0}%
           </div>
-          <span className="text-2xs text-slate-400 font-mono">Team-wide capacity balance</span>
+          <span className="text-2xs text-zinc-400 font-mono">Team-wide capacity balance</span>
         </Card>
 
         <Card className="p-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Overloaded Members
           </div>
           <div className="text-2xl font-bold text-rose-600">
             {workload?.summary.overloadedCount ?? 0}
           </div>
-          <span className="text-2xs text-slate-400 font-mono">Require workload rebalancing</span>
+          <span className="text-2xs text-zinc-400 font-mono">Require workload rebalancing</span>
         </Card>
       </div>
 
@@ -189,22 +189,22 @@ export const TeamWorkloadView: React.FC = () => {
                   <Avatar name={m.user.name} size="lg" />
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-base font-bold text-slate-900 dark:text-slate-100">
+                      <span className="text-base font-bold text-zinc-950 dark:text-white">
                         {m.user.name}
                       </span>
-                      <span className="text-2xs font-mono uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">
+                      <span className="text-2xs font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
                         {m.role}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-400 mt-0.5">{m.user.email}</div>
+                    <div className="text-xs text-zinc-400 mt-0.5">{m.user.email}</div>
                   </div>
                 </div>
 
                 {/* Metrics Breakdown */}
                 <div className="flex items-center space-x-6 text-xs">
                   <div>
-                    <div className="text-slate-400">Capacity</div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    <div className="text-zinc-400">Capacity</div>
+                    <div className="font-semibold text-zinc-800 dark:text-zinc-200">
                       {m.weeklyCapacityHours} hrs/wk
                     </div>
                   </div>
@@ -215,8 +215,8 @@ export const TeamWorkloadView: React.FC = () => {
                   </div>
 
                   <div>
-                    <div className="text-slate-400">Active Tasks</div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    <div className="text-zinc-400">Active Tasks</div>
+                    <div className="font-semibold text-zinc-800 dark:text-zinc-200">
                       {m.activeTasksCount} tasks
                     </div>
                   </div>
@@ -237,8 +237,8 @@ export const TeamWorkloadView: React.FC = () => {
                 <div className="flex items-center space-x-4 min-w-[220px]">
                   <div className="flex-1 space-y-1">
                     <div className="flex justify-between text-2xs font-semibold">
-                      <span className="text-slate-500">Utilization</span>
-                      <span className="font-bold text-slate-900 dark:text-slate-100">
+                      <span className="text-zinc-500">Utilization</span>
+                      <span className="font-bold text-zinc-950 dark:text-white">
                         {m.utilizationPercentage}%
                       </span>
                     </div>
@@ -274,31 +274,31 @@ export const TeamWorkloadView: React.FC = () => {
           maxWidth="2xl"
         >
           <div className="space-y-4 mt-2">
-            <div className="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between text-xs text-zinc-500 pb-2 border-b border-zinc-100 dark:border-zinc-800">
               <span>Task Deliverable</span>
               <span className="mr-2">Redistribute / Reassign</span>
             </div>
 
             <div className="max-h-96 overflow-y-auto space-y-2.5">
               {(selectedMember.tasks || []).length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">
+                <div className="text-center py-6 text-xs text-zinc-400">
                   No tasks currently assigned to this member.
                 </div>
               ) : (
                 selectedMember.tasks?.map((t: any) => (
                   <div
                     key={t.id}
-                    className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between text-xs gap-3"
+                    className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-between text-xs gap-3"
                   >
                     <div className="space-y-1 flex-1 truncate">
                       <div className="flex items-center space-x-2">
                         <StatusBadge status={t.status} />
                         <PriorityBadge priority={t.priority} />
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        <span className="font-semibold text-zinc-950 dark:text-white truncate">
                           {t.title}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-2 text-2xs text-slate-400">
+                      <div className="flex items-center space-x-2 text-2xs text-zinc-400">
                         <span className="font-mono text-amber-500 font-semibold">{t.project.name}</span>
                         <span>•</span>
                         <span>{t.estimatedHours}h effort</span>
@@ -320,7 +320,7 @@ export const TeamWorkloadView: React.FC = () => {
               )}
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex justify-end pt-3 border-t border-zinc-100 dark:border-zinc-800">
               <Button variant="outline" size="sm" onClick={() => setSelectedMember(null)}>
                 Close
               </Button>
@@ -355,7 +355,7 @@ export const TeamWorkloadView: React.FC = () => {
                 ))}
             </Select>
 
-            <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex justify-end space-x-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
               <Button variant="outline" size="sm" onClick={() => setReassignTask(null)}>
                 Cancel
               </Button>
@@ -415,7 +415,7 @@ export const TeamWorkloadView: React.FC = () => {
             </Select>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex justify-end space-x-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <Button variant="outline" size="sm" onClick={() => setInviteModalOpen(false)}>
               Cancel
             </Button>

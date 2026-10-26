@@ -112,7 +112,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
           />
         </div>
 
-        <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-end space-x-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
           <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>

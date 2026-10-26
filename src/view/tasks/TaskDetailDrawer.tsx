@@ -128,24 +128,24 @@ export const TaskDetailDrawer: React.FC<{
     <div className="fixed inset-0 z-50 flex justify-end">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-zinc-950/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-xl h-full bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
+      <div className="relative w-full max-w-xl h-full bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
         {/* Header */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-mono uppercase text-slate-400">
+            <span className="text-xs font-mono uppercase text-zinc-400">
               {task?.project?.name || "TASK"}
             </span>
             <span>•</span>
-            <span className="text-xs font-mono text-slate-500">ID: {taskId.slice(0, 8)}</span>
+            <span className="text-xs font-mono text-zinc-500">ID: {taskId.slice(0, 8)}</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -153,7 +153,7 @@ export const TaskDetailDrawer: React.FC<{
 
         {/* Content Body */}
         {isLoading || !task ? (
-          <div className="p-8 text-center text-sm text-slate-400">Loading task details...</div>
+          <div className="p-8 text-center text-sm text-zinc-400">Loading task details...</div>
         ) : (
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Title & Status Bar */}
@@ -163,7 +163,7 @@ export const TaskDetailDrawer: React.FC<{
                   <select
                     value={task.status}
                     onChange={(e) => updateStatusMutation.mutate(e.target.value as TaskStatus)}
-                    className="px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-semibold rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none cursor-pointer"
                   >
                     <option value="TODO" className="cursor-pointer">To Do</option>
                     <option value="IN_PROGRESS" className="cursor-pointer">In Progress</option>
@@ -177,11 +177,11 @@ export const TaskDetailDrawer: React.FC<{
                 <RiskBadge riskLevel={task.riskLevel} />
               </div>
 
-              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+              <h2 className="text-xl font-bold text-zinc-950 dark:text-white">
                 {task.title}
               </h2>
 
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap">
                 {task.description || "No description provided."}
               </p>
             </div>
@@ -202,13 +202,13 @@ export const TaskDetailDrawer: React.FC<{
             )}
 
             {/* Task Metadata Fields */}
-            <div className="grid grid-cols-2 gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 text-xs">
+            <div className="grid grid-cols-2 gap-4 p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 text-xs">
               <div>
-                <span className="text-slate-400 block mb-1">Assignee</span>
+                <span className="text-zinc-400 block mb-1">Assignee</span>
                 <select
                   value={task.assigneeId || ""}
                   onChange={(e) => updateAssigneeMutation.mutate(e.target.value || null)}
-                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
+                  className="w-full px-2 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 outline-none cursor-pointer"
                 >
                   <option value="" className="cursor-pointer">Unassigned</option>
                   {members?.map((m) => (
@@ -220,23 +220,23 @@ export const TaskDetailDrawer: React.FC<{
               </div>
 
               <div>
-                <span className="text-slate-400 block mb-1">Estimated Effort</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                <span className="text-zinc-400 block mb-1">Estimated Effort</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                   {task.estimatedHours} hours
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400 block mb-1">Due Date</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center">
-                  <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                <span className="text-zinc-400 block mb-1">Due Date</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200 flex items-center">
+                  <Clock className="w-3.5 h-3.5 mr-1 text-zinc-400" />
                   {formatDate(task.dueDate)}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400 block mb-1">Created By</span>
-                <span className="text-slate-700 dark:text-slate-300">
+                <span className="text-zinc-400 block mb-1">Created By</span>
+                <span className="text-zinc-700 dark:text-zinc-300">
                   {task.createdBy?.name || "System"}
                 </span>
               </div>
@@ -245,33 +245,33 @@ export const TaskDetailDrawer: React.FC<{
             {/* Task Dependencies Section */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                   Task Dependencies
                 </h3>
               </div>
 
               {/* Prerequisites list */}
               <div className="space-y-2">
-                <span className="text-2xs font-semibold text-slate-500 uppercase">
+                <span className="text-2xs font-semibold text-zinc-500 uppercase">
                   Prerequisites (Must finish before this task)
                 </span>
                 {(dependencies?.prerequisites || []).length === 0 ? (
-                  <div className="text-xs text-slate-400 italic">No prerequisites required.</div>
+                  <div className="text-xs text-zinc-400 italic">No prerequisites required.</div>
                 ) : (
                   dependencies?.prerequisites.map((p) => (
                     <div
                       key={p.dependencyId}
-                      className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs"
+                      className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs"
                     >
                       <div className="flex items-center space-x-2">
                         <StatusBadge status={p.task.status} />
-                        <span className="font-medium text-slate-800 dark:text-slate-200">
+                        <span className="font-medium text-zinc-800 dark:text-zinc-200">
                           {p.task.title}
                         </span>
                       </div>
                       <button
                         onClick={() => removeDepMutation.mutate(p.dependencyId)}
-                        className="text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                        className="text-zinc-400 hover:text-rose-600 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -285,7 +285,7 @@ export const TaskDetailDrawer: React.FC<{
                 <select
                   value={newPredecessorId}
                   onChange={(e) => setNewPredecessorId(e.target.value)}
-                  className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+                  className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
                 >
                   <option value="" className="cursor-pointer">Select prerequisite task to link...</option>
                   {(projectTasks || [])
@@ -310,27 +310,27 @@ export const TaskDetailDrawer: React.FC<{
             </div>
 
             {/* Comments Thread */}
-            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            <div className="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                 Discussion & Activity
               </h3>
 
               <div className="space-y-3">
                 {(task.comments || []).length === 0 ? (
-                  <div className="text-xs text-slate-400 italic">No comments yet.</div>
+                  <div className="text-xs text-zinc-400 italic">No comments yet.</div>
                 ) : (
                   task.comments?.map((c) => (
                     <div
                       key={c.id}
-                      className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs space-y-1"
+                      className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 text-xs space-y-1"
                     >
-                      <div className="flex items-center justify-between text-2xs text-slate-400">
-                        <span className="font-semibold text-slate-700 dark:text-slate-200">
+                      <div className="flex items-center justify-between text-2xs text-zinc-400">
+                        <span className="font-semibold text-zinc-700 dark:text-zinc-200">
                           {c.author.name}
                         </span>
                         <span>{formatRelativeDate(c.createdAt)}</span>
                       </div>
-                      <p className="text-slate-800 dark:text-slate-200">{c.content}</p>
+                      <p className="text-zinc-800 dark:text-zinc-200">{c.content}</p>
                     </div>
                   ))
                 )}
@@ -348,7 +348,7 @@ export const TaskDetailDrawer: React.FC<{
                       addCommentMutation.mutate(commentText.trim());
                     }
                   }}
-                  className="flex-1 px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none"
+                  className="flex-1 px-3 py-2 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none"
                 />
                 <Button
                   size="sm"

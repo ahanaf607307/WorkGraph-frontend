@@ -277,7 +277,7 @@ export const ChatView: React.FC = () => {
 
   const handleSendTestPush = async () => {
     try {
-      await pushActions.sendTestPush("WorkGraph Live Alert", "Real-time enterprise notification delivered successfully!");
+      await pushActions.sendTestPush("Work Graph Live Alert", "Real-time enterprise notification delivered successfully!");
       toast.success("Push notification dispatched!");
     } catch (err: any) {
       toast.error("Failed to send test push: " + (err.message || "Error"));

@@ -76,10 +76,10 @@ export const WorkspaceSettingsView: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
             Workspace Settings
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-zinc-500 mt-1">
             Manage organization members, role permissions, and individual weekly working capacities.
           </p>
         </div>
@@ -99,21 +99,21 @@ export const WorkspaceSettingsView: React.FC = () => {
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div>
-            <span className="text-slate-400 block mb-1">Organization Name</span>
-            <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
+            <span className="text-zinc-400 block mb-1">Organization Name</span>
+            <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
               {currentOrg?.name}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block mb-1">Workspace Slug</span>
-            <span className="font-mono text-slate-700 dark:text-slate-300">
+            <span className="text-zinc-400 block mb-1">Workspace Slug</span>
+            <span className="font-mono text-zinc-700 dark:text-zinc-300">
               {currentOrg?.slug}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block mb-1">Your Access Level</span>
+            <span className="text-zinc-400 block mb-1">Your Access Level</span>
             <Badge variant="default">{currentOrg?.myRole || "MEMBER"}</Badge>
           </div>
         </CardContent>
@@ -136,7 +136,7 @@ export const WorkspaceSettingsView: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-semibold">
+                <thead className="bg-zinc-50 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 uppercase font-semibold">
                   <tr>
                     <th className="py-3 px-4">Member</th>
                     <th className="py-3 px-4">Role</th>
@@ -144,17 +144,17 @@ export const WorkspaceSettingsView: React.FC = () => {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                   {members?.map((m) => (
-                    <tr key={m.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                    <tr key={m.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-3">
                           <Avatar name={m.user.name} size="sm" />
                           <div>
-                            <div className="font-semibold text-slate-900 dark:text-slate-100">
+                            <div className="font-semibold text-zinc-950 dark:text-white">
                               {m.user.name}
                             </div>
-                            <div className="text-slate-400">{m.user.email}</div>
+                            <div className="text-zinc-400">{m.user.email}</div>
                           </div>
                         </div>
                       </td>
@@ -168,7 +168,7 @@ export const WorkspaceSettingsView: React.FC = () => {
                                 data: { role: e.target.value },
                               })
                             }
-                            className="px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 outline-none cursor-pointer"
+                            className="px-2 py-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none cursor-pointer"
                           >
                             <option value="MEMBER" className="cursor-pointer">MEMBER</option>
                             <option value="ADMIN" className="cursor-pointer">ADMIN</option>
@@ -193,9 +193,9 @@ export const WorkspaceSettingsView: React.FC = () => {
                                   });
                                 }
                               }}
-                              className="w-16 px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono outline-none"
+                              className="w-16 px-2 py-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 font-mono outline-none"
                             />
-                            <span className="text-slate-400">hours/week</span>
+                            <span className="text-zinc-400">hours/week</span>
                           </div>
                         ) : (
                           <span className="font-mono">{m.weeklyCapacityHours} hours/week</span>
@@ -209,7 +209,7 @@ export const WorkspaceSettingsView: React.FC = () => {
                                 removeMemberMutation.mutate(m.userId);
                               }
                             }}
-                            className="p-1 text-slate-400 hover:text-rose-600 transition-colors"
+                            className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
                             title="Remove Member"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -264,7 +264,7 @@ export const WorkspaceSettingsView: React.FC = () => {
             </Select>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex justify-end space-x-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <Button variant="outline" size="sm" onClick={() => setInviteModalOpen(false)}>
               Cancel
             </Button>

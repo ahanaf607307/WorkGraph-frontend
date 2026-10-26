@@ -47,7 +47,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
   if (isLoading || !project) {
     return (
-      <div className="p-8 text-center text-sm text-slate-500">
+      <div className="p-8 text-center text-sm text-zinc-500">
         Loading project details...
       </div>
     );
@@ -56,19 +56,19 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
   return (
     <div className="space-y-6">
       {/* Project Banner Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-zinc-950 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center space-x-3">
               <StatusBadge status={project.status} />
-              <span className="text-2xs text-slate-400 font-mono">
+              <span className="text-2xs text-zinc-400 font-mono">
                 Initiated by {project.createdBy?.name}
               </span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
               {project.name}
             </h1>
-            <p className="text-sm text-slate-500 max-w-2xl leading-relaxed">
+            <p className="text-sm text-zinc-500 max-w-2xl leading-relaxed">
               {project.description || "No project description provided."}
             </p>
           </div>
@@ -85,11 +85,11 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
         </div>
 
         {/* Project Metrics Summary Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
           <div>
-            <span className="text-slate-400 block mb-0.5">Progress</span>
+            <span className="text-zinc-400 block mb-0.5">Progress</span>
             <div className="flex items-center space-x-2">
-              <span className="text-base font-bold text-slate-900 dark:text-slate-100">
+              <span className="text-base font-bold text-zinc-950 dark:text-white">
                 {project.metrics.progress}%
               </span>
               <Progress value={project.metrics.progress} className="w-20 h-2" />
@@ -97,16 +97,16 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
           </div>
 
           <div>
-            <span className="text-slate-400 block mb-0.5">Target Deadline</span>
-            <div className="flex items-center space-x-1.5 font-semibold text-slate-800 dark:text-slate-200">
+            <span className="text-zinc-400 block mb-0.5">Target Deadline</span>
+            <div className="flex items-center space-x-1.5 font-semibold text-zinc-800 dark:text-zinc-200">
               <Calendar className="w-4 h-4 text-indigo-500" />
               <span>{formatDate(project.dueDate)}</span>
             </div>
           </div>
 
           <div>
-            <span className="text-slate-400 block mb-0.5">Completed Tasks</span>
-            <div className="flex items-center space-x-1.5 font-semibold text-slate-800 dark:text-slate-200">
+            <span className="text-zinc-400 block mb-0.5">Completed Tasks</span>
+            <div className="flex items-center space-x-1.5 font-semibold text-zinc-800 dark:text-zinc-200">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>
                 {project.metrics.completedTasks} / {project.metrics.totalTasks}
@@ -115,7 +115,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
           </div>
 
           <div>
-            <span className="text-slate-400 block mb-0.5">Assigned Members</span>
+            <span className="text-zinc-400 block mb-0.5">Assigned Members</span>
             <div className="flex -space-x-1.5 overflow-hidden mt-0.5">
               {(project.members || []).slice(0, 5).map((m) => (
                 <Avatar key={m.id} name={m.name} size="sm" />
@@ -126,7 +126,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center space-x-2 border-b border-zinc-200 dark:border-zinc-800">
         <button
           onClick={() => setActiveTab("board")}
           className={`flex items-center space-x-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
@@ -175,17 +175,17 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
       {activeTab === "risks" && (
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">
+            <h3 className="text-base font-bold text-zinc-950 dark:text-white mb-1">
               Deterministic Deadline Risk Analysis
             </h3>
-            <p className="text-xs text-slate-500 mb-4">
+            <p className="text-xs text-zinc-500 mb-4">
               All evaluations are calculated using deterministic rules based on task due date, remaining estimated effort, calendar buffer, and prerequisite task completion.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 text-center">
-                <div className="text-2xs text-slate-400 font-semibold uppercase">Total Evaluated</div>
-                <div className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+              <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700/60 text-center">
+                <div className="text-2xs text-zinc-400 font-semibold uppercase">Total Evaluated</div>
+                <div className="text-xl font-bold text-zinc-950 dark:text-white mt-1">
                   {riskReport?.summary.totalTasks || 0}
                 </div>
               </div>
@@ -216,16 +216,16 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
               {(riskReport?.risks || []).map((item) => (
                 <div
                   key={item.taskId}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-3"
+                  className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col md:flex-row md:items-center justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                      <span className="font-semibold text-sm text-zinc-950 dark:text-white">
                         {item.title}
                       </span>
                       <StatusBadge status={item.status} />
                     </div>
-                    <ul className="text-xs text-slate-500 space-y-0.5 list-disc pl-5">
+                    <ul className="text-xs text-zinc-500 space-y-0.5 list-disc pl-5">
                       {item.riskReasons.map((r, i) => (
                         <li key={i}>{r}</li>
                       ))}
@@ -234,8 +234,8 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
                   <div className="flex items-center space-x-3 shrink-0">
                     <div className="text-right text-xs">
-                      <div className="text-slate-400">Assigned to: {item.assignee?.name || "Unassigned"}</div>
-                      <div className="font-mono text-slate-600 dark:text-slate-300">
+                      <div className="text-zinc-400">Assigned to: {item.assignee?.name || "Unassigned"}</div>
+                      <div className="font-mono text-zinc-600 dark:text-zinc-300">
                         {formatDate(item.dueDate)}
                       </div>
                     </div>

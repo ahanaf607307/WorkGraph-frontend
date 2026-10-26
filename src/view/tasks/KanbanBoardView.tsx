@@ -27,7 +27,7 @@ import { Plus, Clock, AlertCircle, GripVertical, Filter } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 
 const COLUMNS: Array<{ id: TaskStatus; title: string; color: string; border: string }> = [
-  { id: "TODO", title: "To Do", color: "bg-slate-50 dark:bg-slate-900/50", border: "border-slate-200 dark:border-slate-800" },
+  { id: "TODO", title: "To Do", color: "bg-zinc-50 dark:bg-zinc-950/50", border: "border-zinc-200 dark:border-zinc-800" },
   { id: "IN_PROGRESS", title: "In Progress", color: "bg-blue-50/40 dark:bg-blue-950/20", border: "border-blue-200/60 dark:border-blue-900/40" },
   { id: "IN_REVIEW", title: "In Review", color: "bg-purple-50/40 dark:bg-purple-950/20", border: "border-purple-200/60 dark:border-purple-900/40" },
   { id: "DONE", title: "Done", color: "bg-emerald-50/40 dark:bg-emerald-950/20", border: "border-emerald-200/60 dark:border-emerald-900/40" },
@@ -158,20 +158,20 @@ export const KanbanBoardView: React.FC<{ projectId: string }> = ({ projectId }) 
   return (
     <div className="space-y-4">
       {/* Board Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-zinc-950 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
         <div className="flex items-center space-x-3 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search board tasks..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none w-full sm:w-56"
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none w-full sm:w-56"
           />
 
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
           >
             <option value="" className="cursor-pointer">All Priorities</option>
             <option value="LOW" className="cursor-pointer">Low</option>
@@ -276,14 +276,14 @@ const DroppableColumn: React.FC<{
     >
       <div className="flex items-center justify-between pb-3 px-1">
         <div className="flex items-center space-x-2">
-          <span className="font-bold text-xs text-slate-800 dark:text-slate-200">{title}</span>
-          <span className="px-1.5 py-0.2 rounded-full text-2xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500">
+          <span className="font-bold text-xs text-zinc-800 dark:text-zinc-200">{title}</span>
+          <span className="px-1.5 py-0.2 rounded-full text-2xs font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-500">
             {count}
           </span>
         </div>
         <button
           onClick={onAddTask}
-          className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-md hover:bg-white/60 dark:hover:bg-slate-800 transition-colors"
+          className="p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 rounded-md hover:bg-white/60 dark:hover:bg-zinc-800 transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
         </button>
@@ -333,7 +333,7 @@ const TaskCardContent: React.FC<{
           {dragHandleProps && (
             <button
               {...dragHandleProps}
-              className="p-1 text-slate-300 hover:text-slate-600 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing"
+              className="p-1 text-zinc-300 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-grab active:cursor-grabbing"
             >
               <GripVertical className="w-3.5 h-3.5" />
             </button>
@@ -341,18 +341,18 @@ const TaskCardContent: React.FC<{
         </div>
       </div>
 
-      <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug">
+      <h4 className="text-xs font-semibold text-zinc-950 dark:text-white line-clamp-2 leading-snug">
         {task.title}
       </h4>
 
       {task.description && (
-        <p className="text-2xs text-slate-500 line-clamp-2 leading-relaxed">
+        <p className="text-2xs text-zinc-500 line-clamp-2 leading-relaxed">
           {task.description}
         </p>
       )}
 
       {/* Task Bottom Details */}
-      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-2xs text-slate-400">
+      <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-2xs text-zinc-400">
         <div className="flex items-center space-x-1.5">
           <Avatar name={task.assignee?.name} size="sm" />
           <span className="truncate max-w-[90px]">{task.assignee?.name || "Unassigned"}</span>
@@ -361,7 +361,7 @@ const TaskCardContent: React.FC<{
         <div className="flex items-center space-x-2 font-mono">
           {task.estimatedHours > 0 && <span>{task.estimatedHours}h</span>}
           {task.dueDate && (
-            <span className="flex items-center text-slate-500">
+            <span className="flex items-center text-zinc-500">
               <Clock className="w-3 h-3 mr-0.5" />
               {formatDate(task.dueDate, "MMM d")}
             </span>

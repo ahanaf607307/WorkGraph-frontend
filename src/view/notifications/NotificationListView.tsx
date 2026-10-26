@@ -40,10 +40,10 @@ export const NotificationListView: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
             Notification History
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-zinc-500 mt-1">
             Real-time alerts, task assignments, deadline warnings, and workspace activities.
           </p>
         </div>
