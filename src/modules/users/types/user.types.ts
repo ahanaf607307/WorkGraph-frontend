@@ -5,8 +5,16 @@ export interface OrganizationMember {
   organizationId: string;
   userId: string;
   role: "OWNER" | "ADMIN" | "MEMBER";
+  designation?: string;
+  customDesignation?: string | null;
+  designationId?: string | null;
+  departmentId?: string | null;
+  teamId?: string | null;
   weeklyCapacityHours: number;
   user: User;
+  department?: { id: string; name: string; code?: string | null } | null;
+  team?: { id: string; name: string } | null;
+  designationRel?: { id: string; name: string; code?: string | null; hierarchyLevel?: number } | null;
   createdAt: string;
 }
 
