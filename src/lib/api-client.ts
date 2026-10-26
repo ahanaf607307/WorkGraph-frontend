@@ -37,6 +37,10 @@ export async function apiClient<T = any>(
     if (token && !headers["Authorization"]) {
       headers["Authorization"] = `Bearer ${token}`;
     }
+    const currentOrgId = localStorage.getItem(APP_CONFIG.currentOrgKey);
+    if (currentOrgId && !headers["x-organization-id"]) {
+      headers["x-organization-id"] = currentOrgId;
+    }
   }
 
   const response = await fetch(url, {
