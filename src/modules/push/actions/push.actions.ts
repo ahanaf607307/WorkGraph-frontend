@@ -82,7 +82,7 @@ export const pushActions = {
     }
   },
 
-  sendTestPush: async (title: string = "WorkGraph Push Test", message: string = "Push notifications are working smoothly!"): Promise<any> => {
+  sendTestPush: async (title: string = "Work Graph Push Test", message: string = "Push notifications are working smoothly!"): Promise<any> => {
     return apiClient("/push/test", {
       method: "POST",
       body: JSON.stringify({ title, message }),

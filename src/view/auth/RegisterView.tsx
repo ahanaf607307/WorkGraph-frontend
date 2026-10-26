@@ -35,7 +35,7 @@ export const RegisterView: React.FC = () => {
       }
       await refreshOrganizations();
       toast.success("Workspace created!", {
-        description: "Welcome to WorkGraph SaaS.",
+        description: "Welcome to Work Graph SaaS.",
       });
       router.push("/dashboard");
     } catch (error: any) {
@@ -48,16 +48,16 @@ export const RegisterView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 font-sans">
-      <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-zinc-50 dark:bg-black font-sans">
+      <div className="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-none">
         <div className="text-center">
           <div className="w-10 h-10 rounded-xl bg-amber-400 text-black font-black flex items-center justify-center text-xl mx-auto shadow-md shadow-amber-400/20 mb-3">
             W
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Create your WorkGraph Account
+          <h2 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+            Create your Work Graph Account
           </h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-zinc-500">
             Get started with real-time project governance and team workload tracking.
           </p>
         </div>

@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
     if (pathname.startsWith("/analytics")) return "Productivity & Risk Analytics";
     if (pathname.startsWith("/notifications")) return "Notifications";
     if (pathname.startsWith("/settings")) return "Settings";
-    return "WorkGraph";
+    return "Work Graph";
   };
 
   const { theme, toggleTheme } = useTheme();

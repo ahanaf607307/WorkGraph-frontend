@@ -1,4 +1,4 @@
-// WorkGraph Service Worker for Web Push Notifications
+// Work Graph Service Worker for Web Push Notifications
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -13,7 +13,7 @@ self.addEventListener("push", (event) => {
 
   try {
     const data = event.data.json();
-    const title = data.title || "WorkGraph Notification";
+    const title = data.title || "Work Graph Notification";
     const options = {
       body: data.body || "",
       icon: data.icon || "/favicon.ico",
@@ -21,7 +21,7 @@ self.addEventListener("push", (event) => {
       data: data.data || { url: "/chat" },
       vibrate: [100, 50, 100],
       actions: [
-        { action: "open", title: "Open WorkGraph" },
+        { action: "open", title: "Open Work Graph" },
       ],
     };
 
@@ -29,7 +29,7 @@ self.addEventListener("push", (event) => {
   } catch (err) {
     const text = event.data.text();
     event.waitUntil(
-      self.registration.showNotification("WorkGraph Notification", {
+      self.registration.showNotification("Work Graph Notification", {
         body: text,
         icon: "/favicon.ico",
       })

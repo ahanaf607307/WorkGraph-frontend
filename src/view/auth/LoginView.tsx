@@ -56,7 +56,7 @@ export const LoginView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-slate-50 dark:bg-slate-950 font-sans">
+    <div className="min-h-screen flex flex-col md:flex-row bg-zinc-50 dark:bg-black font-sans">
       {/* Left Marketing / Hero Panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-black text-white p-12 flex-col justify-between relative overflow-hidden border-r border-zinc-800">
         <div className="absolute inset-0 bg-radial from-amber-500/20 via-transparent to-transparent opacity-60" />
@@ -66,7 +66,7 @@ export const LoginView: React.FC = () => {
             <div className="w-10 h-10 rounded-xl bg-amber-400 text-black font-black flex items-center justify-center text-xl shadow-lg shadow-amber-400/20">
               W
             </div>
-            <span className="text-xl font-black tracking-tight text-white">WorkGraph</span>
+            <span className="text-xl font-black tracking-tight text-white">Work Graph</span>
           </div>
           <div className="mt-20 max-w-md">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-300 border border-amber-400/30 mb-4">
@@ -75,26 +75,26 @@ export const LoginView: React.FC = () => {
             <h1 className="text-4xl font-extrabold tracking-tight leading-tight">
               Intelligent Project & Team Workload Governance.
             </h1>
-            <p className="mt-4 text-slate-400 text-base leading-relaxed">
+            <p className="mt-4 text-zinc-400 text-base leading-relaxed">
               Real-time Kanban boards, deterministic deadline risk algorithms, and capacity management designed for modern engineering teams.
             </p>
           </div>
         </div>
 
         <div className="relative z-10 space-y-4">
-          <div className="flex items-center space-x-3 text-sm text-slate-300">
+          <div className="flex items-center space-x-3 text-sm text-zinc-300">
             <CheckCircle2 className="w-5 h-5 text-amber-400" />
             <span>Real-time Socket.IO 1-to-1 & Group Squad Messaging</span>
           </div>
-          <div className="flex items-center space-x-3 text-sm text-slate-300">
+          <div className="flex items-center space-x-3 text-sm text-zinc-300">
             <CheckCircle2 className="w-5 h-5 text-amber-400" />
             <span>Browser Web Push notifications for live message & task alerts</span>
           </div>
-          <div className="flex items-center space-x-3 text-sm text-slate-300">
+          <div className="flex items-center space-x-3 text-sm text-zinc-300">
             <CheckCircle2 className="w-5 h-5 text-amber-400" />
             <span>Dynamic Departments, Squads & Multi-Team Operation Managers</span>
           </div>
-          <div className="flex items-center space-x-3 text-sm text-slate-300">
+          <div className="flex items-center space-x-3 text-sm text-zinc-300">
             <CheckCircle2 className="w-5 h-5 text-amber-400" />
             <span>Admin-configurable Dynamic Designations (GM, AGM, HTO, PM, OM, TL, CL)</span>
           </div>
@@ -103,12 +103,12 @@ export const LoginView: React.FC = () => {
 
       {/* Right Login Form Panel */}
       <div className="flex-1 flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+        <div className="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-none">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              Sign in to WorkGraph
+            <h2 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              Sign in to Work Graph
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-zinc-500">
               Enter your credentials to access your enterprise workspace.
             </p>
           </div>
@@ -138,8 +138,8 @@ export const LoginView: React.FC = () => {
           </form>
 
           {/* Quick Demo Credentials */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
               Quick Test Accounts (Password: 123456)
             </div>
             <div className="grid grid-cols-2 gap-2">

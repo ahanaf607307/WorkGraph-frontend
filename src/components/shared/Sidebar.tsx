@@ -43,7 +43,7 @@ export const Sidebar: React.FC = () => {
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-300 z-20 shrink-0 select-none",
+        "relative flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all duration-300 z-20 shrink-0 select-none",
         isCollapsed ? "w-20" : "w-64"
       )}
     >
@@ -61,7 +61,7 @@ export const Sidebar: React.FC = () => {
                 </div>
                 <div className="truncate">
                   <div className="text-sm font-bold text-zinc-950 dark:text-white truncate">
-                    {currentOrg?.name || "WorkGraph"}
+                    {currentOrg?.name || "Work Graph"}
                   </div>
                   <div className="text-xs text-zinc-500 font-mono truncate">
                     {currentOrg?.myRole || "WORKSPACE"}
@@ -139,27 +139,27 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Footer Profile & Collapse Toggle */}
-      <div className="p-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
         <div
           className={cn(
-            "flex items-center space-x-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50",
+            "flex items-center space-x-3 p-2 rounded-xl bg-zinc-100/80 dark:bg-zinc-900",
             isCollapsed && "justify-center p-1"
           )}
         >
           <Avatar name={user?.name} size="sm" />
           {!isCollapsed && (
             <div className="truncate flex-1">
-              <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+              <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">
                 {user?.name || "User"}
               </div>
-              <div className="text-2xs text-slate-500 truncate">{user?.email}</div>
+              <div className="text-2xs text-zinc-500 truncate">{user?.email}</div>
             </div>
           )}
           {!isCollapsed && (
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors"
+              className="p-1.5 text-zinc-400 hover:text-rose-600 rounded-lg hover:bg-white dark:hover:bg-zinc-800 transition-colors cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -169,7 +169,7 @@ export const Sidebar: React.FC = () => {
         {/* Toggle Collapse Button */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="w-full flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-xs"
+          className="w-full flex items-center justify-center p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-xs cursor-pointer"
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
