@@ -83,16 +83,20 @@ export const LoginView: React.FC = () => {
 
         <div className="relative z-10 space-y-4">
           <div className="flex items-center space-x-3 text-sm text-slate-300">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-            <span>Zero AI Hallucinations — 100% deterministic rules & metrics</span>
+            <CheckCircle2 className="w-5 h-5 text-amber-400" />
+            <span>Real-time Socket.IO 1-to-1 & Group Squad Messaging</span>
           </div>
           <div className="flex items-center space-x-3 text-sm text-slate-300">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-            <span>Real-time Socket.IO collaboration & live workload tracking</span>
+            <CheckCircle2 className="w-5 h-5 text-amber-400" />
+            <span>Browser Web Push notifications for live message & task alerts</span>
           </div>
           <div className="flex items-center space-x-3 text-sm text-slate-300">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-            <span>Circular task dependency detection & blocked completion guards</span>
+            <CheckCircle2 className="w-5 h-5 text-amber-400" />
+            <span>Dynamic Departments, Squads & Multi-Team Operation Managers</span>
+          </div>
+          <div className="flex items-center space-x-3 text-sm text-slate-300">
+            <CheckCircle2 className="w-5 h-5 text-amber-400" />
+            <span>Admin-configurable Dynamic Designations (GM, AGM, HTO, PM, OM, TL, CL)</span>
           </div>
         </div>
       </div>
@@ -105,7 +109,7 @@ export const LoginView: React.FC = () => {
               Sign in to WorkGraph
             </h2>
             <p className="mt-2 text-sm text-slate-500">
-              Enter your credentials to access your workspaces.
+              Enter your credentials to access your enterprise workspace.
             </p>
           </div>
 
@@ -144,7 +148,7 @@ export const LoginView: React.FC = () => {
                 onClick={() => setDemoAccount("admin@test.com")}
                 className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Admin User</div>
+                <div className="font-bold text-amber-600 dark:text-amber-400">Owner / GM</div>
                 <div className="text-zinc-400 truncate">admin@test.com</div>
               </button>
               <button
@@ -152,8 +156,24 @@ export const LoginView: React.FC = () => {
                 onClick={() => setDemoAccount("user1@test.com")}
                 className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Tech Lead</div>
+                <div className="font-bold text-amber-600 dark:text-amber-400">Operation Mgr (Multi-Squad)</div>
                 <div className="text-zinc-400 truncate">user1@test.com</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDemoAccount("user2@test.com")}
+                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                <div className="font-bold text-amber-600 dark:text-amber-400">Team Leader</div>
+                <div className="text-zinc-400 truncate">user2@test.com</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDemoAccount("user3@test.com")}
+                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                <div className="font-bold text-amber-600 dark:text-amber-400">Squad Engineer</div>
+                <div className="text-zinc-400 truncate">user3@test.com</div>
               </button>
             </div>
           </div>

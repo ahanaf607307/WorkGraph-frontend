@@ -81,6 +81,14 @@ export const RegisterView: React.FC = () => {
           />
 
           <Input
+            id="department"
+            label="Department / Squad (Optional)"
+            placeholder="e.g. Engineering, Operations, Product"
+            error={errors.department?.message}
+            {...register("department")}
+          />
+
+          <Input
             id="password"
             type="password"
             label="Password"

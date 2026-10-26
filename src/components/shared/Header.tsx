@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Search, Check, Sparkles, Sun, Moon } from "lucide-react";
+import { Bell, Search, Check, Sparkles, Sun, Moon, MessageSquare } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import { userActions } from "../../modules/users/actions/user.actions";
@@ -57,6 +57,8 @@ export const Header: React.FC = () => {
   };
 
   const getBreadcrumbTitle = () => {
+    if (pathname.startsWith("/chat")) return "Direct & Team Messages";
+    if (pathname.startsWith("/departments")) return "Departments, Teams & Hierarchy";
     if (pathname.startsWith("/dashboard")) return "Dashboard Overview";
     if (pathname.startsWith("/projects/new")) return "Create New Project";
     if (pathname.includes("/board")) return "Kanban Board";
@@ -86,6 +88,15 @@ export const Header: React.FC = () => {
       </div>
 
       <div className="flex items-center space-x-3">
+        {/* Quick Link to Messages */}
+        <Link
+          href="/chat"
+          title="Direct & Group Messages"
+          className="p-2 text-zinc-600 hover:text-black dark:text-zinc-300 dark:hover:text-amber-400 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors cursor-pointer shadow-2xs"
+        >
+          <MessageSquare className="w-4.5 h-4.5" />
+        </Link>
+
         {/* Dark / Light Mode Toggle Button */}
         <button
           type="button"

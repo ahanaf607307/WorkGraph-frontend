@@ -16,6 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
   PlusCircle,
+  MessageSquare,
+  Network,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { cn } from "../../lib/utils";
@@ -30,6 +32,8 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Projects", href: "/projects", icon: FolderKanban },
+    { label: "Messages & Chat", href: "/chat", icon: MessageSquare },
+    { label: "Departments & Hierarchy", href: "/departments", icon: Network },
     { label: "Team & Workload", href: "/team", icon: Users },
     { label: "Analytics", href: "/analytics", icon: BarChart3 },
     { label: "Notifications", href: "/notifications", icon: Bell },
