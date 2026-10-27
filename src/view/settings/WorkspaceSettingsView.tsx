@@ -159,21 +159,24 @@ export const WorkspaceSettingsView: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        {isOwnerOrAdmin && m.userId !== user?.id ? (
+                        {currentOrg?.myRole === "OWNER" && m.userId !== user?.id && m.role !== "OWNER" ? (
                           <select
                             value={m.role}
                             onChange={(e) =>
                               updateMemberMutation.mutate({
-                                userId: m.userId,
-                                data: { role: e.target.value },
+                                 userId: m.userId,
+                                 data: { role: e.target.value },
                               })
                             }
                             className="px-2 py-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none cursor-pointer"
                           >
                             <option value="MEMBER" className="cursor-pointer">MEMBER</option>
                             <option value="ADMIN" className="cursor-pointer">ADMIN</option>
-                            <option value="OWNER" className="cursor-pointer">OWNER</option>
                           </select>
+                        ) : m.role === "OWNER" ? (
+                          <Badge variant="warning" className="border-amber-400/80 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-bold">
+                            🏢 System Admin
+                          </Badge>
                         ) : (
                           <Badge variant="default">{m.role}</Badge>
                         )}
@@ -202,14 +205,14 @@ export const WorkspaceSettingsView: React.FC = () => {
                         )}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {isOwnerOrAdmin && m.userId !== user?.id && (
+                        {isOwnerOrAdmin && m.userId !== user?.id && m.role !== "OWNER" && (
                           <button
                             onClick={() => {
                               if (confirm(`Remove ${m.user.name} from organization?`)) {
                                 removeMemberMutation.mutate(m.userId);
                               }
                             }}
-                            className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
+                            className="p-1 text-zinc-400 hover:text-rose-600 transition-colors cursor-pointer"
                             title="Remove Member"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -260,7 +263,6 @@ export const WorkspaceSettingsView: React.FC = () => {
             >
               <option value="MEMBER">Member</option>
               <option value="ADMIN">Admin</option>
-              <option value="OWNER">Owner</option>
             </Select>
           </div>
 
