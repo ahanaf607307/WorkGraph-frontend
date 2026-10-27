@@ -3,7 +3,8 @@ import { apiClient } from "../../../lib/api-client";
 export interface ChatParticipant {
   id: string;
   userId: string;
-  role: "OWNER" | "ADMIN" | "MEMBER";
+  role?: "OWNER" | "ADMIN" | "MEMBER";
+  isAdmin?: boolean;
   lastReadAt?: string | null;
   user: {
     id: string;
@@ -36,6 +37,8 @@ export interface ConversationItem {
   name?: string | null;
   description?: string | null;
   avatarUrl?: string | null;
+  isBlocked?: boolean;
+  blockedById?: string | null;
   lastMessageAt?: string | null;
   lastMessage?: ChatMessageItem | null;
   participants: ChatParticipant[];
@@ -63,6 +66,32 @@ export const chatActions = {
       method: "POST",
       body: JSON.stringify(data),
     });
+  },
+
+  updateConversation: async (
+    conversationId: string,
+    data: { name?: string; description?: string; avatarUrl?: string }
+  ): Promise<ConversationItem> => {
+    return apiClient<ConversationItem>(`/chat/conversations/${conversationId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
+  blockConversation: async (conversationId: string): Promise<any> => {
+    return apiClient<any>(`/chat/conversations/${conversationId}/block`, {
+      method: "POST",
+    });
+  },
+
+  unblockConversation: async (conversationId: string): Promise<any> => {
+    return apiClient<any>(`/chat/conversations/${conversationId}/unblock`, {
+      method: "POST",
+    });
+  },
+
+  getConversationMedia: async (conversationId: string): Promise<any[]> => {
+    return apiClient<any[]>(`/chat/conversations/${conversationId}/media`);
   },
 
   addParticipants: async (conversationId: string, userIds: string[]): Promise<any> => {
@@ -98,4 +127,19 @@ export const chatActions = {
       method: "POST",
     });
   },
+
+  deleteMessage: async (messageId: string, conversationId?: string): Promise<void> => {
+    const url = conversationId
+      ? `/chat/conversations/${conversationId}/messages/${messageId}`
+      : `/chat/messages/${messageId}`;
+    return apiClient<void>(url, {
+      method: "DELETE",
+    });
+  },
+
+  searchUsers: async (query?: string): Promise<any[]> => {
+    const q = query ? `?query=${encodeURIComponent(query)}` : "";
+    return apiClient<any[]>(`/chat/users${q}`);
+  },
 };
+

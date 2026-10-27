@@ -18,6 +18,7 @@ export interface TeamItem {
   departmentId: string;
   name: string;
   description?: string | null;
+  serviceType?: string | null;
   leaderId?: string | null;
   coLeaderId?: string | null;
   leader?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
@@ -127,5 +128,18 @@ export const departmentActions = {
   getHierarchy: async (organizationId?: string): Promise<HierarchyData> => {
     const query = organizationId ? `?organizationId=${organizationId}` : "";
     return apiClient<HierarchyData>(`/departments/hierarchy${query}`);
+  },
+
+  addMemberToTeam: async (teamId: string, userId: string): Promise<any> => {
+    return apiClient<any>(`/departments/teams/${teamId}/members`, {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    });
+  },
+
+  removeMemberFromTeam: async (teamId: string, userId: string): Promise<void> => {
+    return apiClient<void>(`/departments/teams/${teamId}/members/${userId}`, {
+      method: "DELETE",
+    });
   },
 };

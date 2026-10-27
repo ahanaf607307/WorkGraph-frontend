@@ -2,8 +2,9 @@
 
 import React from "react";
 import { ConversationItem } from "../../../modules/chat/actions/chat.actions";
+import { uploadActions } from "../../../modules/upload/actions/upload.actions";
 import { Avatar } from "../../../components/ui/avatar";
-import { Users } from "lucide-react";
+import { Users, Lock } from "lucide-react";
 import { cn } from "../../../lib/utils";
 
 export const getConversationTitle = (c: ConversationItem, currentUserId?: string): string => {
@@ -38,6 +39,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   const title = getConversationTitle(c, currentUserId);
   const subtitle = getConversationSubtitle(c, currentUserId);
   const isGroup = c.type === "GROUP" || (c as any).isGroup;
+  const isBlocked = c.isBlocked || false;
+  const avatarUrl = c.avatarUrl ? uploadActions.getFileUrl(c.avatarUrl) : null;
 
   return (
     <button
@@ -46,20 +49,43 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
       className={cn(
         "w-full p-3.5 flex items-center space-x-3 text-left transition-colors cursor-pointer",
         isActive
-          ? "bg-amber-400/10 dark:bg-amber-400/15 border-r-4 border-amber-400"
-          : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+          ? "bg-orange-50 dark:bg-orange-950/20 border-r-4 border-orange-500"
+          : "hover:bg-zinc-50 dark:hover:bg-zinc-900/60"
       )}
     >
       <div className="relative shrink-0">
         {isGroup ? (
-          <div className="w-10 h-10 rounded-xl bg-zinc-950 dark:bg-zinc-800 text-amber-400 flex items-center justify-center font-bold text-sm shadow-2xs">
-            <Users className="w-5 h-5" />
-          </div>
+          avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={title}
+              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow-2xs">
+              <Users className="w-5 h-5" />
+            </div>
+          )
         ) : (
-          <Avatar name={title} size="md" />
+          avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={title}
+              className="w-10 h-10 rounded-full object-cover shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+            />
+          ) : (
+            <Avatar name={title} size="md" />
+          )
         )}
-        {!isGroup && (
+
+        {!isGroup && !isBlocked && (
           <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-zinc-900" />
+        )}
+
+        {isBlocked && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-3xs ring-2 ring-white dark:ring-zinc-900">
+            <Lock className="w-2.5 h-2.5" />
+          </span>
         )}
       </div>
 
@@ -80,12 +106,14 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
 
         <div className="flex items-center justify-between">
           <p className="text-2xs text-zinc-500 dark:text-zinc-400 truncate">
-            {c.lastMessage ? (
+            {isBlocked ? (
+              <span className="text-rose-600 dark:text-rose-400 font-semibold">Conversation Blocked</span>
+            ) : c.lastMessage ? (
               <>
                 <span className="font-semibold text-zinc-700 dark:text-zinc-300">
                   {c.lastMessage.sender?.name ? c.lastMessage.sender.name.split(" ")[0] : "Member"}:
                 </span>{" "}
-                {c.lastMessage.content}
+                {c.lastMessage.content || "Sent an attachment"}
               </>
             ) : (
               subtitle
@@ -93,7 +121,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
           </p>
 
           {(c.unreadCount || 0) > 0 && (
-            <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-amber-400 text-black font-extrabold text-3xs shrink-0 shadow-2xs">
+            <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-orange-500 text-white font-extrabold text-3xs shrink-0 shadow-2xs">
               {c.unreadCount}
             </span>
           )}

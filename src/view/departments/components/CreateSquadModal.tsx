@@ -9,7 +9,7 @@ interface CreateSquadModalProps {
   onClose: () => void;
   departmentName?: string;
   members: any[];
-  onSubmit: (data: { name: string; description?: string; leaderId?: string; coLeaderId?: string }) => void;
+  onSubmit: (data: { name: string; description?: string; leaderId?: string; coLeaderId?: string; serviceType?: string }) => void;
 }
 
 export const CreateSquadModal: React.FC<CreateSquadModalProps> = ({
@@ -19,7 +19,7 @@ export const CreateSquadModal: React.FC<CreateSquadModalProps> = ({
   members,
   onSubmit,
 }) => {
-  const [form, setForm] = useState({ name: "", description: "", leaderId: "", coLeaderId: "" });
+  const [form, setForm] = useState({ name: "", description: "", leaderId: "", coLeaderId: "", serviceType: "Full Stack Web Development" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +29,9 @@ export const CreateSquadModal: React.FC<CreateSquadModalProps> = ({
       description: form.description.trim() || undefined,
       leaderId: form.leaderId || undefined,
       coLeaderId: form.coLeaderId || undefined,
+      serviceType: form.serviceType || undefined,
     });
-    setForm({ name: "", description: "", leaderId: "", coLeaderId: "" });
+    setForm({ name: "", description: "", leaderId: "", coLeaderId: "", serviceType: "Full Stack Web Development" });
     onClose();
   };
 
@@ -95,6 +96,26 @@ export const CreateSquadModal: React.FC<CreateSquadModalProps> = ({
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+              Service Delivery Focus *
+            </label>
+            <select
+              value={form.serviceType}
+              onChange={(e) => setForm({ ...form, serviceType: e.target.value })}
+              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none cursor-pointer mb-3"
+            >
+              <option value="Full Stack Web Development">Full Stack Web Development</option>
+              <option value="Mobile App (iOS & Android)">Mobile App (iOS & Android)</option>
+              <option value="UI/UX & Product Design">UI/UX & Product Design</option>
+              <option value="DevOps & Cloud Engineering">DevOps & Cloud Engineering</option>
+              <option value="AI / Machine Learning & Data">AI / Machine Learning & Data</option>
+              <option value="Quality Assurance & Testing">Quality Assurance & Testing</option>
+              <option value="Digital Marketing & SEO">Digital Marketing & SEO</option>
+              <option value="Enterprise Architecture">Enterprise Architecture</option>
+            </select>
           </div>
 
           <div>

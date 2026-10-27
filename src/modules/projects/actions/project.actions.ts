@@ -43,4 +43,37 @@ export const projectActions = {
   fetchProjectRisks: async (projectId: string): Promise<ProjectRiskSummary> => {
     return apiClient<ProjectRiskSummary>(`/projects/${projectId}/risks`);
   },
+
+  addPhase: async (projectId: string, data: any): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/phases`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  updatePhase: async (projectId: string, phaseId: string, data: any): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/phases/${phaseId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
+  deletePhase: async (projectId: string, phaseId: string): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/phases/${phaseId}`, {
+      method: "DELETE",
+    });
+  },
+
+  addDocument: async (projectId: string, data: any): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/documents`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  deleteDocument: async (projectId: string, documentId: string): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/documents/${documentId}`, {
+      method: "DELETE",
+    });
+  },
 };

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { workloadActions } from "../../modules/workload/actions/workload.actions";
 import { userActions } from "../../modules/users/actions/user.actions";
 import { taskActions } from "../../modules/tasks/actions/task.actions";
+import { departmentActions } from "../../modules/departments/actions/department.actions";
 import { useAuth } from "../../hooks/useAuth";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../../components/ui/card";
 import { Avatar } from "../../components/ui/avatar";
@@ -27,6 +28,7 @@ import {
   UserPlus,
   ArrowRightLeft,
   Calendar,
+  Filter,
 } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 
@@ -35,8 +37,24 @@ export const TeamWorkloadView: React.FC = () => {
   const { currentOrg, user } = useAuth();
   const orgId = currentOrg?.id;
 
+  const isSystemAdminOrAdmin =
+    currentOrg?.myRole === "OWNER" ||
+    currentOrg?.myRole === "ADMIN" ||
+    user?.role === "SYSTEM_OWNER";
+
+  const isPrivilegedLeader =
+    isSystemAdminOrAdmin ||
+    currentOrg?.designation === "TEAM_LEADER" ||
+    currentOrg?.designation === "CO_LEADER" ||
+    currentOrg?.designation === "OPERATION_MANAGER" ||
+    currentOrg?.designation === "GENERAL_MANAGER" ||
+    currentOrg?.designation === "PROJECT_MANAGER";
+
+  const [selectedDeptFilter, setSelectedDeptFilter] = useState<string>("");
+
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [inviteName, setInviteName] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteCapacity, setInviteCapacity] = useState(40);
   const [inviteRole, setInviteRole] = useState("MEMBER");
@@ -50,6 +68,29 @@ export const TeamWorkloadView: React.FC = () => {
     queryFn: () => workloadActions.fetchOrganizationWorkload(orgId!),
     enabled: !!orgId,
   });
+
+  const { data: departments = [] } = useQuery({
+    queryKey: ["departments", orgId],
+    queryFn: () => departmentActions.getDepartments(orgId!),
+    enabled: !!orgId && isSystemAdminOrAdmin,
+  });
+
+  // Filter members: regular members only see their squad team members; admins see all with department filter
+  const displayedMembers = useMemo(() => {
+    if (!workload?.members) return [];
+    if (!isSystemAdminOrAdmin) {
+      return workload.members.filter(
+        (m: any) =>
+          m.user.id === user?.id ||
+          (currentOrg?.teamId && m.teamId === currentOrg?.teamId) ||
+          (currentOrg?.departmentId && m.departmentId === currentOrg?.departmentId)
+      );
+    }
+    if (selectedDeptFilter) {
+      return workload.members.filter((m: any) => m.departmentId === selectedDeptFilter);
+    }
+    return workload.members;
+  }, [workload?.members, isSystemAdminOrAdmin, selectedDeptFilter, currentOrg, user?.id]);
 
   const inviteMemberMutation = useMutation({
     mutationFn: (data: { email: string; role?: string; weeklyCapacityHours?: number }) =>
@@ -113,15 +154,44 @@ export const TeamWorkloadView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            Team Workload & Capacity Management
+            {isSystemAdminOrAdmin
+              ? "Organization Members & Capacity Management"
+              : "My Squad Team Members"}
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
-            Deterministic workload governance calculated from weekly capacities and assigned task estimates.
+            {isSystemAdminOrAdmin
+              ? "Deterministic workload governance calculated from weekly capacities and department-wise members."
+              : "View your team members, active workload, and sprint capacities."}
           </p>
         </div>
-        <Button variant="primary" size="md" onClick={() => setInviteModalOpen(true)}>
-          <UserPlus className="w-4 h-4 mr-1.5" /> Add Member
-        </Button>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {isSystemAdminOrAdmin && departments && departments.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-zinc-500 flex items-center gap-1">
+                <Filter className="w-3.5 h-3.5" /> Dept:
+              </span>
+              <select
+                value={selectedDeptFilter}
+                onChange={(e) => setSelectedDeptFilter(e.target.value)}
+                className="text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                <option value="">All Departments</option>
+                {departments.map((d: any) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {isSystemAdminOrAdmin && (
+            <Button variant="primary" size="md" onClick={() => setInviteModalOpen(true)}>
+              <UserPlus className="w-4 h-4 mr-1.5" /> Add Member
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Summary KPI Cards */}
@@ -178,27 +248,44 @@ export const TeamWorkloadView: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {(workload?.members || []).map((m) => (
-            <Card
-              key={m.memberId}
-              className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all shadow-2xs"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                {/* Member Info */}
-                <div className="flex items-center space-x-3.5">
-                  <Avatar name={m.user.name} size="lg" />
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-base font-bold text-zinc-950 dark:text-white">
-                        {m.user.name}
-                      </span>
-                      <span className="text-2xs font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
-                        {m.role}
-                      </span>
+          {displayedMembers.length === 0 ? (
+            <Card className="p-8 text-center border-dashed">
+              <div className="text-zinc-400 text-sm">
+                No members found for this view.
+              </div>
+            </Card>
+          ) : (
+            displayedMembers.map((m) => (
+              <Card
+                key={m.memberId}
+                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all shadow-2xs"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  {/* Member Info */}
+                  <div className="flex items-center space-x-3.5">
+                    <Avatar name={m.user.name} size="lg" />
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-base font-bold text-zinc-950 dark:text-white">
+                          {m.user.name}
+                        </span>
+                        <span className="text-2xs font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                          {m.role}
+                        </span>
+                        {m.department?.name && (
+                          <span className="text-2xs font-medium px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                            {m.department.name}
+                          </span>
+                        )}
+                        {m.team?.name && (
+                          <span className="text-2xs font-medium px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
+                            {m.team.name}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-zinc-400 mt-0.5">{m.user.email}</div>
                     </div>
-                    <div className="text-xs text-zinc-400 mt-0.5">{m.user.email}</div>
                   </div>
-                </div>
 
                 {/* Metrics Breakdown */}
                 <div className="flex items-center space-x-6 text-xs">
@@ -260,9 +347,10 @@ export const TeamWorkloadView: React.FC = () => {
                 </div>
               </div>
             </Card>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
+    )}
 
       {/* Inspect Member Assigned Tasks & Rebalance Modal */}
       {selectedMember && (
@@ -307,14 +395,18 @@ export const TeamWorkloadView: React.FC = () => {
                       </div>
                     </div>
 
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setReassignTask(t)}
-                      className="shrink-0 text-xs"
-                    >
-                      <ArrowRightLeft className="w-3.5 h-3.5 mr-1" /> Reassign
-                    </Button>
+                    {isPrivilegedLeader ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setReassignTask(t)}
+                        className="shrink-0 text-xs"
+                      >
+                        <ArrowRightLeft className="w-3.5 h-3.5 mr-1" /> Reassign
+                      </Button>
+                    ) : (
+                      <span className="text-2xs text-zinc-400 italic font-mono">Assigned</span>
+                    )}
                   </div>
                 ))
               )}
@@ -387,9 +479,18 @@ export const TeamWorkloadView: React.FC = () => {
       >
         <div className="space-y-4 mt-2">
           <Input
+            id="inviteName"
+            type="text"
+            label="Full Name (Optional)"
+            placeholder="e.g. John Doe"
+            value={inviteName}
+            onChange={(e) => setInviteName(e.target.value)}
+          />
+
+          <Input
             id="inviteEmail"
             type="email"
-            label="User Email Address"
+            label="User Email Address *"
             placeholder="e.g. user2@test.com"
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
@@ -415,6 +516,10 @@ export const TeamWorkloadView: React.FC = () => {
             </Select>
           </div>
 
+          <p className="text-3xs text-zinc-400">
+            If this user does not have an account yet, one will automatically be created with default password <span className="font-mono text-orange-600 dark:text-orange-400">123456</span>.
+          </p>
+
           <div className="flex justify-end space-x-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <Button variant="outline" size="sm" onClick={() => setInviteModalOpen(false)}>
               Cancel
@@ -426,9 +531,10 @@ export const TeamWorkloadView: React.FC = () => {
               onClick={() =>
                 inviteMemberMutation.mutate({
                   email: inviteEmail,
+                  name: inviteName,
                   role: inviteRole,
                   weeklyCapacityHours: inviteCapacity,
-                })
+                } as any)
               }
             >
               Add Member

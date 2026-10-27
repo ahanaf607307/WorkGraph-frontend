@@ -8,21 +8,27 @@ import { Building2, Plus, Crown, Star } from "lucide-react";
 interface DepartmentSquadTabProps {
   departments: DepartmentItem[];
   isAdminOrOwner: boolean;
+  isSystemAdmin: boolean;
   loading: boolean;
   onOpenCreateDept: () => void;
   onOpenCreateSquad: (deptId: string) => void;
   onOpenAssignOm: (team: TeamItem) => void;
   onRemoveOm: (teamId: string, omUserId: string) => void;
+  onOpenAddMember?: (team: TeamItem) => void;
+  onRemoveMember?: (teamId: string, userId: string) => void;
 }
 
 export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
   departments,
   isAdminOrOwner,
+  isSystemAdmin,
   loading,
   onOpenCreateDept,
   onOpenCreateSquad,
   onOpenAssignOm,
   onRemoveOm,
+  onOpenAddMember,
+  onRemoveMember,
 }) => {
   if (loading) {
     return <div className="p-12 text-center text-xs text-zinc-400">Loading departments...</div>;
@@ -38,7 +44,7 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
         <p className="text-xs text-zinc-500 max-w-md mx-auto">
           Create your first department (e.g. Engineering, Product, Operations) and configure squads with leaders and co-leaders.
         </p>
-        {isAdminOrOwner && (
+        {isSystemAdmin ? (
           <button
             type="button"
             onClick={onOpenCreateDept}
@@ -46,6 +52,8 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
           >
             Create Department
           </button>
+        ) : (
+          <p className="text-2xs text-zinc-400">Department structure is managed by the System Admin (Company Head).</p>
         )}
       </div>
     );
@@ -130,13 +138,19 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
                     className="p-4 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 space-y-3"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate">
+                      <h4 className="text-sm font-bold text-zinc-950 dark:text-white truncate">
                         {team.name}
                       </h4>
                       <span className="text-3xs font-mono font-bold text-zinc-500 px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 shadow-2xs">
                         {team._count?.members || 0} members
                       </span>
                     </div>
+
+                    {(team as any).serviceType && (
+                      <div className="inline-flex items-center px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+                        ⚡ {(team as any).serviceType}
+                      </div>
+                    )}
 
                     {team.description && (
                       <p className="text-2xs text-zinc-500 line-clamp-2">
@@ -204,6 +218,57 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
                         ) : (
                           <span className="text-3xs text-zinc-400 italic">
                             No Operation Manager linked
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Squad Members Section with Add Member Option */}
+                    <div className="pt-2 border-t border-zinc-200/60 dark:border-zinc-700/60 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-3xs font-mono font-bold uppercase text-zinc-400">
+                          Squad Members ({team.members?.length || 0}):
+                        </span>
+                        {isAdminOrOwner && onOpenAddMember && (
+                          <button
+                            type="button"
+                            onClick={() => onOpenAddMember(team)}
+                            className="text-3xs font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer flex items-center gap-0.5"
+                          >
+                            <Plus className="w-2.5 h-2.5" /> Add Member
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5">
+                        {team.members && team.members.length > 0 ? (
+                          team.members.map((m: any) => (
+                            <span
+                              key={m.id || m.userId}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-3xs border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+                            >
+                              <Avatar name={m.user?.name || "Member"} size="sm" className="w-3.5 h-3.5 text-4xs" />
+                              <span className="font-semibold truncate max-w-[110px]">{m.user?.name || "Member"}</span>
+                              {m.designationRel?.name && (
+                                <span className="text-4xs text-amber-600 dark:text-amber-400 font-mono">
+                                  ({m.designationRel.name})
+                                </span>
+                              )}
+                              {isAdminOrOwner && onRemoveMember && (
+                                <button
+                                  type="button"
+                                  onClick={() => onRemoveMember(team.id, m.userId)}
+                                  title="Remove member from squad"
+                                  className="text-zinc-400 hover:text-rose-500 cursor-pointer ml-0.5 text-xs font-bold leading-none"
+                                >
+                                  &times;
+                                </button>
+                              )}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-3xs text-zinc-400 italic">
+                            No team members assigned yet
                           </span>
                         )}
                       </div>

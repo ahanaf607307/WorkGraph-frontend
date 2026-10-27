@@ -4,6 +4,11 @@ export interface MemberWorkload {
   memberId: string;
   user: User;
   role: string;
+  designation?: string | null;
+  departmentId?: string | null;
+  department?: { id: string; name: string } | null;
+  teamId?: string | null;
+  team?: { id: string; name: string } | null;
   weeklyCapacityHours: number;
   assignedOpenHours: number;
   activeTasksCount: number;

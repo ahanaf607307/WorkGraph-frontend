@@ -11,11 +11,63 @@ export interface ProjectMetrics {
   progress: number;
 }
 
+export interface ProjectPhase {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string | null;
+  orderIndex: number;
+  startDate?: string | null;
+  deadline?: string | null;
+  budget?: number | null;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectDocument {
+  id: string;
+  projectId: string;
+  name: string;
+  fileUrl: string;
+  fileType?: string | null;
+  fileSize?: number | null;
+  category?: string | null;
+  uploadedById?: string | null;
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   organizationId: string;
   name: string;
   description?: string | null;
+  orderId?: string | null;
+  clientName?: string | null;
+  clientEmail?: string | null;
+  clientPhone?: string | null;
+  salesPersonName?: string | null;
+  profileName?: string | null;
+  platformName?: string | null;
+  budget?: number | null;
+  currency?: string | null;
+  serviceType?: string | null;
+  departmentId?: string | null;
+  department?: { id: string; name: string; code?: string | null } | null;
+  teamId?: string | null;
+  team?: {
+    id: string;
+    name: string;
+    serviceType?: string | null;
+    leader?: User | null;
+    coLeader?: User | null;
+    members?: any[];
+  } | null;
+  clientHealth?: "GOOD" | "ATTENTION" | "AT_RISK" | "CRITICAL" | string | null;
+  meetingRecordingUrl?: string | null;
+  conversationDocUrl?: string | null;
+  phases?: ProjectPhase[];
+  documents?: ProjectDocument[];
   status: "PLANNING" | "ACTIVE" | "ON_HOLD" | "COMPLETED" | "CANCELLED";
   startDate?: string | null;
   dueDate?: string | null;

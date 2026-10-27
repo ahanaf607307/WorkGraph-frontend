@@ -13,6 +13,10 @@ import {
 } from "../../modules/designations/actions/designation.actions";
 import { userActions } from "../../modules/users/actions/user.actions";
 import { OrganizationMember } from "../../modules/users/types/user.types";
+import {
+  serviceActions,
+  ServiceItem,
+} from "../../modules/services/actions/service.actions";
 import { toast } from "sonner";
 import { Building2, Plus, Award, Layers, Users, FolderTree } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/tabs";
@@ -25,18 +29,24 @@ import { CreateDepartmentModal } from "./components/CreateDepartmentModal";
 import { CreateSquadModal } from "./components/CreateSquadModal";
 import { AssignOperationManagerModal } from "./components/AssignOperationManagerModal";
 import { CreateDesignationModal } from "./components/CreateDesignationModal";
+import { EditDesignationModal } from "./components/EditDesignationModal";
 import { EditMemberPlacementModal } from "./components/EditMemberPlacementModal";
+import { AddSquadMemberModal } from "./components/AddSquadMemberModal";
 
 export const DepartmentManagementView: React.FC = () => {
-  const { currentOrg } = useAuth();
-  const orgRole = currentOrg?.myRole;
-  const isAdminOrOwner = orgRole === "OWNER" || orgRole === "ADMIN";
+  const { currentOrg, user } = useAuth();
+  const isSystemOwner = user?.role === "SYSTEM_OWNER";
+  const isCompanyHead = currentOrg?.myRole === "OWNER";
+  const isSystemAdmin = isCompanyHead || isSystemOwner;
+  const isAdmin = currentOrg?.myRole === "ADMIN";
+  const isAdminOrOwner = isSystemAdmin || isAdmin;
 
   const [activeTab, setActiveTab] = useState<string>("departments");
   const [departments, setDepartments] = useState<DepartmentItem[]>([]);
   const [designations, setDesignations] = useState<DesignationItem[]>([]);
   const [hierarchyData, setHierarchyData] = useState<any>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
+  const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modals state
@@ -44,35 +54,41 @@ export const DepartmentManagementView: React.FC = () => {
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [targetDeptId, setTargetDeptId] = useState("");
   const [showDesignationModal, setShowDesignationModal] = useState(false);
+  const [showEditDesignationModal, setShowEditDesignationModal] = useState(false);
+  const [editingDesignation, setEditingDesignation] = useState<DesignationItem | null>(null);
   const [showAssignOmModal, setShowAssignOmModal] = useState(false);
   const [targetTeam, setTargetTeam] = useState<TeamItem | null>(null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [targetTeamForMember, setTargetTeamForMember] = useState<TeamItem | null>(null);
   const [showEditMemberModal, setShowEditMemberModal] = useState(false);
   const [editingMember, setEditingMember] = useState<OrganizationMember | null>(null);
 
-  // Load all initial data
-  const loadAllData = async () => {
+  // Load all data with smooth background auto-fetch (No screen black/white flicker)
+  const loadAllData = async (isInitial = false) => {
     if (!currentOrg?.id) return;
     try {
-      setLoading(true);
-      const [deptList, desigList, hier, memberList] = await Promise.all([
+      if (isInitial) setLoading(true);
+      const [deptList, desigList, hier, memberList, servList] = await Promise.all([
         departmentActions.getDepartments(currentOrg.id),
         designationActions.getDesignations(currentOrg.id),
         departmentActions.getHierarchy(currentOrg.id),
         userActions.getOrganizationMembers(currentOrg.id),
+        serviceActions.getServices().catch(() => []),
       ]);
       setDepartments(deptList);
       setDesignations(desigList);
       setHierarchyData(hier);
       setMembers(memberList);
+      setServices(servList);
     } catch (err: any) {
       toast.error("Failed to load department data: " + (err.message || "Error"));
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadAllData();
+    loadAllData(true);
   }, [currentOrg?.id]);
 
   // Create Department
@@ -120,8 +136,38 @@ export const DepartmentManagementView: React.FC = () => {
     }
   };
 
+  // Add Member to Squad
+  const handleAddMemberToSquad = async (teamId: string, userId: string) => {
+    try {
+      await departmentActions.addMemberToTeam(teamId, userId);
+      toast.success("Member assigned to squad successfully!");
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to add member to squad");
+    }
+  };
+
+  // Remove Member from Squad
+  const handleRemoveMemberFromSquad = async (teamId: string, userId: string) => {
+    if (!confirm("Are you sure you want to remove this member from the squad?")) return;
+    try {
+      await departmentActions.removeMemberFromTeam(teamId, userId);
+      toast.success("Member removed from squad");
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove member from squad");
+    }
+  };
+
   // Create Dynamic Designation
-  const handleCreateDesignation = async (data: { name: string; code?: string; description?: string; hierarchyLevel: number }) => {
+  const handleCreateDesignation = async (data: {
+    name: string;
+    code?: string;
+    title?: string;
+    departmentId?: string | null;
+    description?: string;
+    hierarchyLevel: number;
+  }) => {
     if (!currentOrg?.id) return;
     try {
       await designationActions.createDesignation(data);
@@ -129,6 +175,29 @@ export const DepartmentManagementView: React.FC = () => {
       await loadAllData();
     } catch (err: any) {
       toast.error(err.message || "Failed to create designation");
+    }
+  };
+
+  // Update Dynamic Designation
+  const handleUpdateDesignation = async (
+    id: string,
+    data: {
+      name: string;
+      code?: string;
+      title?: string;
+      departmentId?: string | null;
+      description?: string;
+      hierarchyLevel: number;
+    }
+  ) => {
+    try {
+      await designationActions.updateDesignation(id, data);
+      toast.success(`Designation "${data.name}" updated!`);
+      setShowEditDesignationModal(false);
+      setEditingDesignation(null);
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update designation");
     }
   };
 
@@ -150,6 +219,8 @@ export const DepartmentManagementView: React.FC = () => {
     designationId: string;
     departmentId: string;
     teamId: string;
+    serviceId?: string;
+    isApproved?: boolean;
     weeklyCapacityHours: number;
   }) => {
     if (!editingMember || !currentOrg?.id) return;
@@ -159,10 +230,12 @@ export const DepartmentManagementView: React.FC = () => {
         designationId: form.designationId || null,
         departmentId: form.departmentId || null,
         teamId: form.teamId || null,
+        serviceId: form.serviceId || null,
+        isApproved: form.isApproved,
         weeklyCapacityHours: form.weeklyCapacityHours,
       });
 
-      toast.success(`Updated hierarchy & designation for ${editingMember.user.name}`);
+      toast.success(`Updated hierarchy & service for ${editingMember.user.name}`);
       await loadAllData();
     } catch (err: any) {
       toast.error(err.message || "Failed to update member hierarchy");
@@ -172,30 +245,30 @@ export const DepartmentManagementView: React.FC = () => {
   const targetDept = departments.find((d) => d.id === targetDeptId);
 
   return (
-    <div className="w-full space-y-6 select-none">
+    <div className="w-full space-y-6 select-text">
       {/* Top Header & Context */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
             <h1 className="text-2xl font-black tracking-tight text-zinc-950 dark:text-white flex items-center gap-2.5">
               <Building2 className="w-7 h-7 text-amber-500" />
-              Departments & Enterprise Hierarchy
+              Department & Team
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-400 text-black shadow-2xs">
               Enterprise
             </span>
           </div>
           <p className="text-xs text-zinc-500 mt-1">
-            Dynamic departments, squad units, cross-team operational leadership & admin-defined designations.
+            Manage departments, squads, team members, operational leadership & role hierarchy.
           </p>
         </div>
 
-        {isAdminOrOwner && (
+        {isSystemAdmin ? (
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setShowDeptModal(true)}
-              className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+              className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>Add Department</span>
@@ -203,13 +276,18 @@ export const DepartmentManagementView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowDesignationModal(true)}
-              className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+              className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
             >
               <Award className="w-4 h-4 text-amber-400" />
               <span>New Designation</span>
             </button>
           </div>
-        )}
+        ) : isAdmin ? (
+          <div className="px-3.5 py-2 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-3xs font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
+            <span>🛡️</span>
+            <span>Admin Workspace (Departments & Designations managed by System Admin)</span>
+          </div>
+        ) : null}
       </div>
 
       {/* Enterprise Stats Cards */}
@@ -227,10 +305,12 @@ export const DepartmentManagementView: React.FC = () => {
             <Layers className="w-4 h-4" />
             <span>Departments & Squads</span>
           </TabsTrigger>
-          <TabsTrigger value="designations">
-            <Award className="w-4 h-4" />
-            <span>Dynamic Designations</span>
-          </TabsTrigger>
+          {isAdminOrOwner && (
+            <TabsTrigger value="designations">
+              <Award className="w-4 h-4" />
+              <span>Dynamic Designations</span>
+            </TabsTrigger>
+          )}
           <TabsTrigger value="hierarchy">
             <FolderTree className="w-4 h-4" />
             <span>Company Hierarchy Chart</span>
@@ -245,6 +325,7 @@ export const DepartmentManagementView: React.FC = () => {
           <DepartmentSquadTab
             departments={departments}
             isAdminOrOwner={isAdminOrOwner}
+            isSystemAdmin={isSystemAdmin}
             loading={loading}
             onOpenCreateDept={() => setShowDeptModal(true)}
             onOpenCreateSquad={(deptId) => {
@@ -256,14 +337,23 @@ export const DepartmentManagementView: React.FC = () => {
               setShowAssignOmModal(true);
             }}
             onRemoveOm={handleRemoveOm}
+            onOpenAddMember={(team) => {
+              setTargetTeamForMember(team);
+              setShowAddMemberModal(true);
+            }}
+            onRemoveMember={handleRemoveMemberFromSquad}
           />
         </TabsContent>
 
         <TabsContent value="designations">
           <DesignationManagerTab
             designations={designations}
-            isAdminOrOwner={isAdminOrOwner}
+            isSystemAdmin={isSystemAdmin}
             onOpenCreateDesignation={() => setShowDesignationModal(true)}
+            onEditDesignation={(desig) => {
+              setEditingDesignation(desig);
+              setShowEditDesignationModal(true);
+            }}
             onDeleteDesignation={handleDeleteDesignation}
           />
         </TabsContent>
@@ -292,6 +382,17 @@ export const DepartmentManagementView: React.FC = () => {
         onSubmit={handleCreateDepartment}
       />
 
+      <EditDesignationModal
+        isOpen={showEditDesignationModal}
+        onClose={() => {
+          setShowEditDesignationModal(false);
+          setEditingDesignation(null);
+        }}
+        departments={departments}
+        designation={editingDesignation}
+        onSubmit={handleUpdateDesignation}
+      />
+
       <CreateSquadModal
         isOpen={showTeamModal}
         onClose={() => setShowTeamModal(false)}
@@ -308,9 +409,18 @@ export const DepartmentManagementView: React.FC = () => {
         onSubmit={handleAssignOm}
       />
 
+      <AddSquadMemberModal
+        isOpen={showAddMemberModal}
+        onClose={() => setShowAddMemberModal(false)}
+        team={targetTeamForMember}
+        members={members}
+        onSubmit={handleAddMemberToSquad}
+      />
+
       <CreateDesignationModal
         isOpen={showDesignationModal}
         onClose={() => setShowDesignationModal(false)}
+        departments={departments}
         onSubmit={handleCreateDesignation}
       />
 
@@ -320,6 +430,8 @@ export const DepartmentManagementView: React.FC = () => {
         member={editingMember}
         departments={departments}
         designations={designations}
+        services={services}
+        isSystemAdmin={isSystemAdmin}
         onSubmit={handleSaveMemberPlacement}
       />
     </div>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../hooks/useAuth";
 import { projectActions } from "../../modules/projects/actions/project.actions";
@@ -19,6 +20,7 @@ import { Plus, Search, FolderKanban, Calendar, CheckCircle2 } from "lucide-react
 import { formatDate } from "../../lib/utils";
 
 export const ProjectListView: React.FC = () => {
+  const router = useRouter();
   const { currentOrg } = useAuth();
   const orgId = currentOrg?.id;
 
@@ -100,15 +102,36 @@ export const ProjectListView: React.FC = () => {
           {projects?.map((project) => (
             <Card
               key={project.id}
+              onClick={() => router.push(`/projects/${project.id}`)}
               className="flex flex-col justify-between hover:shadow-md hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all p-5 rounded-2xl group cursor-pointer"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <StatusBadge status={project.status} />
-                  <span className="text-2xs text-zinc-400 font-mono flex items-center">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {formatDate(project.dueDate)}
-                  </span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-1.5">
+                    <StatusBadge status={project.status} />
+                    {project.orderId && (
+                      <span className="font-mono text-3xs font-bold bg-amber-400 text-black px-1.5 py-0.2 rounded">
+                        #{project.orderId}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-1.5 text-2xs text-zinc-400 font-mono">
+                    <Calendar className="w-3 h-3 text-indigo-400" />
+                    <span>{formatDate(project.dueDate)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2 mb-1 text-3xs">
+                  {project.platformName && (
+                    <span className="font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.2 rounded">
+                      {project.platformName}
+                    </span>
+                  )}
+                  {project.clientName && (
+                    <span className="text-zinc-500 font-medium truncate">
+                      Client: <strong className="text-zinc-800 dark:text-zinc-200">{project.clientName}</strong>
+                    </span>
+                  )}
                 </div>
 
                 <Link href={`/projects/${project.id}`}>
@@ -117,20 +140,27 @@ export const ProjectListView: React.FC = () => {
                   </h3>
                 </Link>
 
-                <p className="text-xs text-zinc-500 mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
                   {project.description || "No project description provided."}
                 </p>
+
+                {(project.team?.name || project.department?.name) && (
+                  <div className="mt-2 text-3xs font-medium text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                    <span>Squad:</span>
+                    <span className="font-bold underline">{project.team?.name || project.department?.name}</span>
+                  </div>
+                )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-                <div className="flex items-center justify-between text-xs text-zinc-500">
+              <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/80 space-y-2.5">
+                <div className="flex items-center justify-between text-2xs text-zinc-500">
                   <span className="font-medium text-zinc-700 dark:text-zinc-300">
                     {project.metrics.progress}% Complete
                   </span>
                   <span>{project.metrics.completedTasks}/{project.metrics.totalTasks} Tasks</span>
                 </div>
 
-                <Progress value={project.metrics.progress} className="h-2" />
+                <Progress value={project.metrics.progress} className="h-1.5" />
 
                 <div className="flex items-center justify-between pt-1">
                   <div className="flex -space-x-1.5 overflow-hidden">
@@ -145,8 +175,15 @@ export const ProjectListView: React.FC = () => {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Link href={`/projects/${project.id}/board`}>
-                      <Button variant="ghost" size="sm" className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40">
+                    <Link
+                      href={`/projects/${project.id}/board`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                      >
                         Kanban Board
                       </Button>
                     </Link>

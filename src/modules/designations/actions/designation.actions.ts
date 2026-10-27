@@ -3,8 +3,11 @@ import { apiClient } from "../../../lib/api-client";
 export interface DesignationItem {
   id: string;
   organizationId: string;
+  departmentId?: string | null;
+  department?: { id: string; name: string; code?: string } | null;
   name: string;
   code?: string | null;
+  title?: string | null;
   description?: string | null;
   hierarchyLevel: number;
   isSystem: boolean;
@@ -22,6 +25,8 @@ export const designationActions = {
   createDesignation: async (data: {
     name: string;
     code?: string;
+    title?: string;
+    departmentId?: string | null;
     description?: string;
     hierarchyLevel?: number;
   }): Promise<DesignationItem> => {
@@ -36,6 +41,8 @@ export const designationActions = {
     data: Partial<{
       name: string;
       code: string;
+      title: string;
+      departmentId: string | null;
       description: string;
       hierarchyLevel: number;
     }>

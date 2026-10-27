@@ -17,27 +17,27 @@ export const DashboardHeroBanner: React.FC<DashboardHeroBannerProps> = ({
   myRole,
 }) => {
   return (
-    <div className="w-full p-6 md:p-8 rounded-3xl bg-zinc-950 text-white shadow-xl relative overflow-hidden border border-zinc-800/80">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+    <div className="w-full p-6 md:p-8 rounded-3xl bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white shadow-sm relative overflow-hidden border border-zinc-200 dark:border-zinc-800">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-3xl">
+        <div className="space-y-2.5 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-400 text-black shadow-2xs">
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs">
               Work Graph Enterprise
             </span>
-            <span className="px-3 py-1 rounded-full text-xs font-mono bg-zinc-800/80 text-zinc-300 border border-zinc-700/60">
+            <span className="px-3 py-1 rounded-full text-xs font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
               {workspaceName || "Workspace"}
             </span>
-            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-zinc-900 text-amber-400 border border-amber-400/30">
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
               Role: {myRole || "MEMBER"}
             </span>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-zinc-950 dark:text-white">
             Welcome back, {userName || "Colleague"}!
           </h1>
-          <p className="text-xs md:text-sm text-zinc-400 leading-relaxed">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
             Real-time enterprise project governance, cross-team workload capacity, deterministic risk engine, and live squad channels.
           </p>
         </div>
@@ -53,18 +53,16 @@ export const DashboardHeroBanner: React.FC<DashboardHeroBannerProps> = ({
             <Button
               variant="outline"
               size="md"
-              className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white hover:border-amber-400"
             >
-              <MessageSquare className="w-4 h-4 mr-1.5 text-amber-400" /> Messages
+              <MessageSquare className="w-4 h-4 mr-1.5 text-orange-500" /> Messages
             </Button>
           </Link>
           <Link href="/departments">
             <Button
               variant="outline"
               size="md"
-              className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white hover:border-amber-400"
             >
-              <Building2 className="w-4 h-4 mr-1.5 text-amber-400" /> Squads & Hierarchy
+              <Building2 className="w-4 h-4 mr-1.5 text-orange-500" /> Squads & Hierarchy
             </Button>
           </Link>
         </div>
