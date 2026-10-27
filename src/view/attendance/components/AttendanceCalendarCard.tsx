@@ -37,11 +37,11 @@ export const AttendanceCalendarCard: React.FC<AttendanceCalendarCardProps> = ({
   });
 
   return (
-    <div className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 gap-3">
+    <div className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs space-y-3.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-white/[0.04] gap-3">
         <div className="flex items-center space-x-2">
-          <CalendarIcon className="w-5 h-5 text-orange-500" />
-          <h2 className="text-base font-bold text-zinc-950 dark:text-white">
+          <CalendarIcon className="w-4 h-4 text-violet-500" />
+          <h2 className="text-sm font-bold text-zinc-950 dark:text-white">
             {currentDate.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
           </h2>
         </div>

@@ -38,10 +38,10 @@ export const AttendanceShiftDetailsCard: React.FC<AttendanceShiftDetailsCardProp
   const isSelectedDateToday = selectedDateStr === todayStr;
 
   return (
-    <div className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+    <div className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs space-y-4">
+      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-white/[0.04]">
         <div>
-          <div className="text-3xs font-mono uppercase text-zinc-400 font-bold">
+          <div className="text-3xs font-mono uppercase text-zinc-400 font-medium">
             {isSelectedDateToday
               ? "Today's Live Shift"
               : isSelectedDatePast

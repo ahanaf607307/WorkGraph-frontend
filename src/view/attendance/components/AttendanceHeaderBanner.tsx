@@ -19,32 +19,27 @@ export const AttendanceHeaderBanner: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-zinc-900 via-black to-zinc-950 border border-zinc-800 text-white shadow-xl">
-      <div className="space-y-1">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">
-          <Clock className="w-3.5 h-3.5" />
-          Live Enterprise Timesheet
-        </div>
-        <h1 className="text-2xl font-black tracking-tight text-white">
-          Daily Attendance & Work Log Tracker
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+      <div>
+        <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+          <span>Daily Attendance & Work Log Tracker</span>
         </h1>
-        <p className="text-xs text-zinc-400">
-          Log daily check-in/checkout, review date-wise presence, and record project execution tasks.
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+          Daily check-in/checkout, calendar attendance presence, and task logs
         </p>
       </div>
 
-      <div className="flex items-center gap-4 bg-zinc-800/80 px-5 py-3 rounded-2xl border border-zinc-700/80 shrink-0">
+      <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] shrink-0">
         <div className="text-right">
-          <div className="text-2xs font-mono uppercase text-orange-400 font-bold">Current Local Time</div>
-          <div className="text-xl font-black font-mono tracking-tight text-white">
+          <div className="text-sm font-bold font-mono text-zinc-900 dark:text-white">
             {currentTimeStr || "--:--:--"}
           </div>
           <div className="text-3xs text-zinc-400 font-mono">
             {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
           </div>
         </div>
-        <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold">
-          <Timer className="w-5 h-5" />
+        <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+          <Timer className="w-3.5 h-3.5" />
         </div>
       </div>
     </div>

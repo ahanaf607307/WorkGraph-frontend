@@ -207,31 +207,33 @@ export const AttendanceView: React.FC = () => {
       <AttendanceHeaderBanner />
 
       {/* Tabs: Personal vs Admin Oversight */}
-      <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+      <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-white/[0.06] pb-2">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setActiveTab("my")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2",
+              "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
               activeTab === "my"
-                ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
-                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                ? "bg-violet-600 text-white font-semibold"
+                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
             )}
           >
-            <CalendarIcon className="w-4 h-4" /> My Attendance & Task Log
+            <CalendarIcon className="w-3.5 h-3.5" />
+            <span>My Attendance & Tasks</span>
           </button>
 
           {isSystemAdminOrAdmin && (
             <button
               onClick={() => setActiveTab("overview")}
               className={cn(
-                "px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2",
+                "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
                 activeTab === "overview"
-                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
-                  : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  ? "bg-violet-600 text-white font-semibold"
+                  : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
               )}
             >
-              <Users className="w-4 h-4" /> Company Attendance & Timesheet Hub
+              <Users className="w-3.5 h-3.5" />
+              <span>Company Timesheet Hub</span>
             </button>
           )}
         </div>

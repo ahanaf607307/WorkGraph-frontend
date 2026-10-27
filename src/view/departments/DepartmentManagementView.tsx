@@ -250,11 +250,11 @@ export const DepartmentManagementView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-black tracking-tight text-zinc-950 dark:text-white flex items-center gap-2.5">
-              <Building2 className="w-7 h-7 text-amber-500" />
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2.5">
+              <Building2 className="w-6 h-6 text-violet-600" />
               Department & Team
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-400 text-black shadow-2xs">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
               Enterprise
             </span>
           </div>
@@ -268,7 +268,7 @@ export const DepartmentManagementView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowDeptModal(true)}
-              className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>Add Department</span>
@@ -276,9 +276,9 @@ export const DepartmentManagementView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowDesignationModal(true)}
-              className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white border border-zinc-200/70 dark:border-zinc-700 font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
             >
-              <Award className="w-4 h-4 text-amber-400" />
+              <Award className="w-4 h-4 text-violet-500" />
               <span>New Designation</span>
             </button>
           </div>

@@ -51,9 +51,9 @@ export const AttendanceDailyTasksCard: React.FC<AttendanceDailyTasksCardProps> =
   };
 
   return (
-    <div className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-        <span className="text-xs font-bold text-zinc-900 dark:text-white">
+    <div className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs space-y-4">
+      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-white/[0.04]">
+        <span className="text-xs font-bold text-zinc-950 dark:text-white">
           Daily Tasks & Work Logs ({selectedRecord?.dailyTasks?.length || 0})
         </span>
 
@@ -61,31 +61,31 @@ export const AttendanceDailyTasksCard: React.FC<AttendanceDailyTasksCardProps> =
           <Button
             size="sm"
             onClick={onOpenTaskModal}
-            className="text-2xs bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1.5 rounded-xl cursor-pointer"
+            className="text-2xs bg-violet-600 hover:bg-violet-700 text-white font-medium px-3 py-1.5 rounded-xl cursor-pointer"
           >
             <PlusCircle className="w-3.5 h-3.5 mr-1" /> Log Task
           </Button>
         )}
       </div>
 
-      <div className="space-y-3 max-h-96 overflow-y-auto">
+      <div className="space-y-2.5 max-h-96 overflow-y-auto">
         {!selectedRecord?.dailyTasks || selectedRecord.dailyTasks.length === 0 ? (
-          <div className="text-center py-8 text-xs text-zinc-400 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <div className="text-center py-8 text-xs text-zinc-400 border border-dashed border-zinc-200/80 dark:border-white/[0.06] rounded-xl">
             No tasks logged for this date.
           </div>
         ) : (
           selectedRecord.dailyTasks.map((t) => (
             <div
               key={t.id}
-              className="p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 space-y-2.5 hover:border-orange-200 dark:hover:border-zinc-700 transition-colors"
+              className="p-3 rounded-xl bg-zinc-50/70 dark:bg-white/[0.02] border border-zinc-200/60 dark:border-white/[0.04] space-y-2 hover:border-violet-500/30 transition-colors"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white leading-tight">
+                  <h4 className="text-xs font-semibold text-zinc-900 dark:text-white leading-tight">
                     {t.title}
                   </h4>
                   {t.project && (
-                    <span className="inline-block mt-1 text-3xs font-mono font-semibold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 px-1.5 py-0.2 rounded-md">
+                    <span className="inline-block mt-1 text-3xs font-mono font-medium text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 px-1.5 py-0.2 rounded-md">
                       📁 {t.project.name}
                     </span>
                   )}

@@ -136,7 +136,7 @@ export const WorkspaceSettingsView: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-zinc-50 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 uppercase font-semibold">
+                <thead className="bg-zinc-50/70 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-white/[0.04] text-zinc-500 uppercase font-semibold">
                   <tr>
                     <th className="py-3 px-4">Member</th>
                     <th className="py-3 px-4">Role</th>
@@ -144,7 +144,7 @@ export const WorkspaceSettingsView: React.FC = () => {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                <tbody className="divide-y divide-zinc-100 dark:divide-white/[0.04]">
                   {members?.map((m) => (
                     <tr key={m.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
                       <td className="py-3 px-4">
@@ -168,13 +168,13 @@ export const WorkspaceSettingsView: React.FC = () => {
                                  data: { role: e.target.value },
                               })
                             }
-                            className="px-2 py-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none cursor-pointer"
+                            className="px-2 py-1 text-xs rounded border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 outline-none cursor-pointer focus:border-violet-500/40"
                           >
                             <option value="MEMBER" className="cursor-pointer">MEMBER</option>
                             <option value="ADMIN" className="cursor-pointer">ADMIN</option>
                           </select>
                         ) : m.role === "OWNER" ? (
-                          <Badge variant="warning" className="border-amber-400/80 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-bold">
+                          <Badge variant="default" className="border-violet-200/60 dark:border-violet-800/60 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 font-semibold">
                             🏢 System Admin
                           </Badge>
                         ) : (

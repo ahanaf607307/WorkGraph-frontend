@@ -190,37 +190,33 @@ export const TargetsView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-zinc-900 via-black to-zinc-950 border border-zinc-800 text-white shadow-xl">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-            <Target className="w-3.5 h-3.5" />
-            Strategic Delivery Goals
-          </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">
-            Monthly Targets & Operational Deliverables
+    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
+      {/* Sleek Open Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+        <div>
+          <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+            <span>Monthly Targets & Objectives</span>
           </h1>
-          <p className="text-xs text-zinc-400">
-            Configure department deliverables and allow Team Leaders (TL / CL) to report real-time monthly achievement.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Configure department deliverables and monitor Team Leader monthly achievements
           </p>
         </div>
 
         {/* Month Selector & Create Target Button */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center space-x-2 bg-zinc-800/90 border border-zinc-700/80 px-3 py-1.5 rounded-2xl">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center space-x-1.5 bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] px-2 py-1 rounded-xl">
             <button
               onClick={prevMonth}
-              className="p-1 rounded-lg hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
+              className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs font-bold font-mono px-2 text-white">{monthName}</span>
+            <span className="text-xs font-semibold px-2 text-zinc-800 dark:text-zinc-200">{monthName}</span>
             <button
               onClick={nextMonth}
-              className="p-1 rounded-lg hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
+              className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -236,55 +232,58 @@ export const TargetsView: React.FC = () => {
                 }));
                 setIsCreateModalOpen(true);
               }}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md shadow-violet-600/20 cursor-pointer"
+              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs shadow-sm shadow-violet-600/20 cursor-pointer"
             >
-              <PlusCircle className="w-4 h-4 mr-1.5" /> Set Monthly Target
+              <PlusCircle className="w-3.5 h-3.5 mr-1" />
+              <span>Set Target</span>
             </Button>
           )}
         </div>
       </div>
 
       {/* Tabs: Department Targets vs Team Targets */}
-      <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+      <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-white/[0.06] pb-2">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setActiveTab("DEPARTMENT")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2",
+              "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
               activeTab === "DEPARTMENT"
-                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
-                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                ? "bg-violet-600 text-white font-semibold"
+                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
             )}
           >
-            <Network className="w-4 h-4" /> Department Targets ({targets.filter((t) => t.targetType === "DEPARTMENT").length})
+            <Network className="w-3.5 h-3.5" />
+            <span>Department Targets ({targets.filter((t) => t.targetType === "DEPARTMENT").length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab("TEAM")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2",
+              "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
               activeTab === "TEAM"
-                ? "bg-violet-600 text-white shadow-md shadow-violet-600/20"
-                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                ? "bg-violet-600 text-white font-semibold"
+                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
             )}
           >
-            <Users className="w-4 h-4" /> Team Squad Targets ({targets.filter((t) => t.targetType === "TEAM").length})
+            <Users className="w-3.5 h-3.5" />
+            <span>Squad Targets ({targets.filter((t) => t.targetType === "TEAM").length})</span>
           </button>
         </div>
       </div>
 
       {/* Target Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredTargets.length === 0 ? (
-          <div className="col-span-full py-16 text-center rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/40 p-8 space-y-3">
-            <Target className="w-10 h-10 text-zinc-300 dark:text-zinc-700 mx-auto" />
-            <div className="text-sm font-bold text-zinc-900 dark:text-white">
+          <div className="col-span-full py-12 text-center rounded-2xl border border-dashed border-zinc-200/80 dark:border-white/[0.08] bg-white/40 dark:bg-white/[0.02] p-6 space-y-2">
+            <Target className="w-8 h-8 text-zinc-300 dark:text-zinc-700 mx-auto" />
+            <div className="text-sm font-semibold text-zinc-900 dark:text-white">
               No {activeTab.toLowerCase()} targets configured for {monthName}
             </div>
-            <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+            <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
               {isSystemAdminOrAdmin
-                ? "Click 'Set Monthly Target' above to establish deliverables and milestone goals."
-                : "Targets will be displayed here once configured by the System Admin or department management."}
+                ? "Click 'Set Target' above to establish deliverables and milestone goals."
+                : "Targets will be displayed here once configured by the System Admin or management."}
             </p>
           </div>
         ) : (
@@ -302,7 +301,7 @@ export const TargetsView: React.FC = () => {
             return (
               <div
                 key={target.id}
-                className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all space-y-4 flex flex-col justify-between"
+                className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-all space-y-3.5 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   {/* Badge Row */}
