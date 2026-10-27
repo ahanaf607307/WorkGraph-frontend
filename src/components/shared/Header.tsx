@@ -3,21 +3,22 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Search, Check, Sparkles, Sun, Moon, MessageSquare } from "lucide-react";
+import { Bell, Search, Check, Sparkles, Sun, Moon, MessageSquare, Building2, ChevronDown, Shield } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import { userActions } from "../../modules/users/actions/user.actions";
 import { NotificationItem } from "../../modules/users/types/user.types";
 import { getSocket } from "../../lib/socket";
 import { toast } from "sonner";
-import { formatRelativeDate } from "../../lib/utils";
+import { formatRelativeDate, cn } from "../../lib/utils";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
-  const { user, currentOrg } = useAuth();
+  const { user, currentOrg, organizations, setCurrentOrg } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
+  const [showOrgDropdown, setShowOrgDropdown] = useState(false);
 
   const loadNotifications = async () => {
     try {
@@ -57,8 +58,13 @@ export const Header: React.FC = () => {
   };
 
   const getBreadcrumbTitle = () => {
+    if (pathname.startsWith("/workspaces")) return "Company Workspace Registry & Approval Queue";
     if (pathname.startsWith("/chat")) return "Direct & Team Messages";
-    if (pathname.startsWith("/departments")) return "Departments, Teams & Hierarchy";
+    if (pathname.startsWith("/attendance")) return "Daily Attendance & Work Log Tracker";
+    if (pathname.startsWith("/targets")) return "Monthly Targets & Objectives Hub";
+    if (pathname.startsWith("/notices")) return "Workspace Notice Board";
+    if (pathname.startsWith("/announcements")) return "System Updates & Announcements";
+    if (pathname.startsWith("/departments")) return "Department & Team";
     if (pathname.startsWith("/dashboard")) return "Dashboard Overview";
     if (pathname.startsWith("/projects/new")) return "Create New Project";
     if (pathname.includes("/board")) return "Kanban Board";
@@ -75,19 +81,78 @@ export const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-black/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-10 select-none transition-colors">
+    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-black/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50 select-none transition-colors">
       <div className="flex items-center space-x-3">
         <h1 className="text-base font-bold text-zinc-950 dark:text-white">
           {getBreadcrumbTitle()}
         </h1>
-        {currentOrg && (
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700">
-            {currentOrg.name}
-          </span>
-        )}
       </div>
 
       <div className="flex items-center space-x-3">
+        {/* Company Registration Badge / Workspace Switcher (Right Side) */}
+        {user?.role === "SYSTEM_OWNER" ? (
+          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 text-amber-700 dark:text-amber-400 font-bold text-xs shadow-2xs">
+            <Shield className="w-4 h-4 text-amber-500" />
+            <span>Platform Super-Admin</span>
+          </div>
+        ) : currentOrg ? (
+          <div className="relative">
+            <button
+              onClick={() => setShowOrgDropdown(!showOrgDropdown)}
+              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-orange-50/80 dark:bg-zinc-900 hover:bg-orange-100/70 dark:hover:bg-zinc-800 border border-orange-200/80 dark:border-zinc-700 transition-all cursor-pointer shadow-2xs"
+            >
+              <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-orange-500 to-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0">
+                {currentOrg.name?.[0]?.toUpperCase() || "C"}
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <span className="text-xs font-extrabold text-zinc-950 dark:text-white max-w-[170px] truncate">
+                  {currentOrg.name}
+                </span>
+                <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-zinc-700 px-1.5 py-0.2 rounded uppercase">
+                  {currentOrg.myRole === "OWNER" ? "System Admin" : currentOrg.myRole}
+                </span>
+              </div>
+              {organizations.length > 1 && (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              )}
+            </button>
+
+            {showOrgDropdown && organizations.length > 1 && (
+              <>
+                <div
+                  className="fixed inset-0 z-[9998]"
+                  onClick={() => setShowOrgDropdown(false)}
+                />
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150">
+                  <div className="text-2xs font-bold uppercase text-zinc-400 px-3 py-1.5">
+                    Switch Workspace
+                  </div>
+                  {organizations.map((org) => (
+                    <button
+                      key={org.id}
+                      onClick={() => {
+                        setCurrentOrg(org);
+                        setShowOrgDropdown(false);
+                      }}
+                      className={cn(
+                        "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-semibold transition-colors text-left cursor-pointer",
+                        currentOrg.id === org.id
+                          ? "bg-orange-500 text-white font-bold"
+                          : "hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                      )}
+                    >
+                      <span className="truncate">{org.name}</span>
+                      <span className="text-3xs uppercase font-mono opacity-80">
+                        {org.myRole === "OWNER" ? "SYS ADMIN" : org.myRole}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        ) : null}
+
         {/* Quick Link to Messages */}
         <Link
           href="/chat"
@@ -126,19 +191,24 @@ export const Header: React.FC = () => {
           >
             <Bell className="w-4.5 h-4.5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white dark:ring-black animate-pulse" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-orange-500 ring-2 ring-white dark:ring-black animate-pulse" />
             )}
           </button>
 
           {showNotifMenu && (
-            <div className="absolute right-0 mt-2 w-80 md:w-96 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <>
+              <div
+                className="fixed inset-0 z-[9998]"
+                onClick={() => setShowNotifMenu(false)}
+              />
+              <div className="absolute right-0 mt-2 w-80 md:w-96 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-4 z-[9999] animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-sm font-bold text-zinc-950 dark:text-white">
                     Notifications
                   </span>
                   {unreadCount > 0 && (
-                    <span className="px-2 py-0.2 rounded-full text-2xs bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-bold border border-amber-300 dark:border-amber-700">
+                    <span className="px-2 py-0.2 rounded-full text-2xs bg-orange-100 dark:bg-orange-950 text-orange-900 dark:text-orange-300 font-bold border border-orange-300 dark:border-orange-700">
                       {unreadCount} new
                     </span>
                   )}
@@ -146,7 +216,7 @@ export const Header: React.FC = () => {
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 font-semibold flex items-center cursor-pointer"
+                    className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 font-semibold flex items-center cursor-pointer"
                   >
                     <Check className="w-3.5 h-3.5 mr-1" /> Mark all read
                   </button>
@@ -190,6 +260,7 @@ export const Header: React.FC = () => {
                 </Link>
               </div>
             </div>
+          </>
           )}
         </div>
       </div>

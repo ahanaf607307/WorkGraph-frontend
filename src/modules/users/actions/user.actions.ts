@@ -34,6 +34,9 @@ export const userActions = {
       designationId?: string | null;
       departmentId?: string | null;
       teamId?: string | null;
+      serviceId?: string | null;
+      isApproved?: boolean;
+      status?: string;
     }
   ): Promise<OrganizationMember> => {
     return apiClient<OrganizationMember>(

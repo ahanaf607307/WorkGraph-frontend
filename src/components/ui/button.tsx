@@ -10,12 +10,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const variants = {
-      primary: "bg-amber-400 hover:bg-amber-300 text-black font-bold shadow-xs focus-visible:ring-amber-400 border border-amber-400/50",
-      secondary: "bg-black hover:bg-zinc-900 text-white dark:bg-white dark:text-black dark:hover:bg-zinc-200 shadow-xs focus-visible:ring-zinc-500",
-      outline: "border border-zinc-300 dark:border-zinc-700 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:border-amber-400 dark:hover:border-amber-400",
-      ghost: "bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white",
+      primary: "bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-md shadow-orange-500/20 focus-visible:ring-orange-500 border border-orange-500",
+      secondary: "bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 shadow-xs focus-visible:ring-zinc-400 border border-zinc-200 dark:border-zinc-700",
+      outline: "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300 dark:hover:border-orange-800 shadow-xs",
+      ghost: "bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-white",
       danger: "bg-rose-600 hover:bg-rose-700 text-white shadow-sm focus-visible:ring-rose-500",
-      subtle: "bg-amber-50 hover:bg-amber-100 text-amber-950 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40",
+      subtle: "bg-orange-50 hover:bg-orange-100 text-orange-900 dark:bg-orange-950/40 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40",
     };
 
     const sizes = {

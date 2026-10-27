@@ -32,6 +32,10 @@ export async function apiClient<T = any>(
     ...(options.headers as Record<string, string>),
   };
 
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   if (typeof window !== "undefined") {
     const token = localStorage.getItem(APP_CONFIG.tokenKey);
     if (token && !headers["Authorization"]) {
