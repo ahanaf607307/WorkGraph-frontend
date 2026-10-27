@@ -78,16 +78,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   return (
     <form
       onSubmit={handleFormSubmit}
-      className="p-3 md:p-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col space-y-2 shrink-0"
+      className="p-3 md:p-4 border-t border-zinc-200/70 dark:border-white/[0.04] bg-white dark:bg-[#0f1118] flex flex-col space-y-2 shrink-0"
     >
       {/* Attachment Preview Chip */}
       {attachment && (
-        <div className="flex items-center justify-between p-2 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 text-xs w-fit max-w-full">
+        <div className="flex items-center justify-between p-2 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200/60 dark:border-violet-800/60 text-xs w-fit max-w-full">
           <div className="flex items-center space-x-2 truncate pr-2">
             {attachment.mimeType.startsWith("image/") ? (
-              <ImageIcon className="w-4 h-4 text-orange-500 shrink-0" />
+              <ImageIcon className="w-4 h-4 text-violet-500 shrink-0" />
             ) : (
-              <FileText className="w-4 h-4 text-orange-500 shrink-0" />
+              <FileText className="w-4 h-4 text-violet-500 shrink-0" />
             )}
             <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
               {attachment.originalName}
@@ -100,7 +100,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           <button
             type="button"
             onClick={() => setAttachment(null)}
-            className="p-1 rounded-md hover:bg-orange-200/50 dark:hover:bg-orange-900/50 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+            className="p-1 rounded-md hover:bg-violet-200/50 dark:hover:bg-violet-900/50 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -123,10 +123,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || isUploading}
           title="Upload image or document"
-          className="p-2.5 rounded-xl bg-zinc-100 hover:bg-orange-50 hover:text-orange-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 transition-colors cursor-pointer shrink-0 disabled:opacity-40"
+          className="p-2.5 rounded-xl bg-zinc-100 hover:bg-violet-50 hover:text-violet-600 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-zinc-600 dark:text-zinc-300 transition-colors cursor-pointer shrink-0 disabled:opacity-40"
         >
           {isUploading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+            <Loader2 className="w-4 h-4 animate-spin text-violet-500" />
           ) : (
             <Paperclip className="w-4 h-4" />
           )}
@@ -138,13 +138,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           value={messageText}
           onChange={(e) => onTextChange(e.target.value)}
           disabled={disabled}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-transparent focus:border-orange-500 dark:focus:border-orange-500 text-xs text-zinc-900 dark:text-white focus:outline-none transition-all placeholder:text-zinc-400"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-850/70 border border-transparent focus:border-violet-500/40 text-xs text-zinc-900 dark:text-white focus:outline-none transition-all placeholder:text-zinc-400"
         />
 
         <button
           type="submit"
           disabled={disabled || (!messageText.trim() && !attachment)}
-          className="px-4 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-bold rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 shadow-xs shrink-0"
+          className="px-4 py-2.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white font-medium rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm shadow-violet-600/20 shrink-0"
         >
           <span className="hidden sm:inline">Send</span>
           <Send className="w-3.5 h-3.5" />

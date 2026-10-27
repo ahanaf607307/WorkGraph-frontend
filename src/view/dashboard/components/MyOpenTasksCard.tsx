@@ -14,7 +14,7 @@ interface MyOpenTasksCardProps {
 
 export const MyOpenTasksCard: React.FC<MyOpenTasksCardProps> = ({ myTasks = [], isLoading }) => {
   return (
-    <Card className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+    <Card className="w-full bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
           <CardTitle>My Open Assignments</CardTitle>

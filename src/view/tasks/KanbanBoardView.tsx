@@ -27,10 +27,10 @@ import { Plus, Clock, AlertCircle, GripVertical, Filter } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 
 const COLUMNS: Array<{ id: TaskStatus; title: string; color: string; border: string }> = [
-  { id: "TODO", title: "To Do", color: "bg-zinc-50 dark:bg-zinc-950/50", border: "border-zinc-200 dark:border-zinc-800" },
-  { id: "IN_PROGRESS", title: "In Progress", color: "bg-blue-50/40 dark:bg-blue-950/20", border: "border-blue-200/60 dark:border-blue-900/40" },
-  { id: "IN_REVIEW", title: "In Review", color: "bg-purple-50/40 dark:bg-purple-950/20", border: "border-purple-200/60 dark:border-purple-900/40" },
-  { id: "DONE", title: "Done", color: "bg-emerald-50/40 dark:bg-emerald-950/20", border: "border-emerald-200/60 dark:border-emerald-900/40" },
+  { id: "TODO", title: "To Do", color: "bg-zinc-50/60 dark:bg-[#0f1118]/60", border: "border-zinc-200/70 dark:border-white/[0.06]" },
+  { id: "IN_PROGRESS", title: "In Progress", color: "bg-blue-50/30 dark:bg-blue-950/10", border: "border-blue-200/50 dark:border-blue-900/30" },
+  { id: "IN_REVIEW", title: "In Review", color: "bg-violet-50/30 dark:bg-violet-950/10", border: "border-violet-200/50 dark:border-violet-900/30" },
+  { id: "DONE", title: "Done", color: "bg-emerald-50/30 dark:bg-emerald-950/10", border: "border-emerald-200/50 dark:border-emerald-900/30" },
 ];
 
 export const KanbanBoardView: React.FC<{ projectId: string }> = ({ projectId }) => {
@@ -158,20 +158,20 @@ export const KanbanBoardView: React.FC<{ projectId: string }> = ({ projectId }) 
   return (
     <div className="space-y-4">
       {/* Board Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-zinc-950 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0f1118] p-2.5 rounded-xl border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center space-x-3 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search board tasks..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none w-full sm:w-56"
+            className="px-3 py-1.5 text-xs rounded-lg border border-transparent focus:border-violet-500/30 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-950 dark:text-white outline-none w-full sm:w-56 transition-all"
           />
 
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer focus:border-violet-500/40"
           >
             <option value="" className="cursor-pointer">All Priorities</option>
             <option value="LOW" className="cursor-pointer">Low</option>
@@ -310,7 +310,7 @@ const DraggableTaskCard: React.FC<{
     >
       <div
         onClick={onClick}
-        className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3.5 shadow-2xs hover:shadow-md hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all select-none cursor-pointer"
+        className="rounded-xl border border-zinc-200/70 dark:border-white/[0.06] bg-white dark:bg-[#0f1118] p-3.5 shadow-xs hover:shadow-md hover:border-violet-500/40 dark:hover:border-violet-500/30 transition-all select-none cursor-pointer"
       >
         <TaskCardContent task={task} dragHandleProps={{ ...attributes, ...listeners }} />
       </div>

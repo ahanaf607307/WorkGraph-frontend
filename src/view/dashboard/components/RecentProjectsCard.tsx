@@ -15,13 +15,13 @@ interface RecentProjectsCardProps {
 
 export const RecentProjectsCard: React.FC<RecentProjectsCardProps> = ({ projects = [], isLoading }) => {
   return (
-    <Card className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+    <Card className="bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
           <CardTitle>Recent Projects & Roadmaps</CardTitle>
           <CardDescription>Active initiatives and target delivery milestones</CardDescription>
         </div>
-        <Link href="/projects" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">
+        <Link href="/projects" className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:underline">
           View all ({projects.length}) →
         </Link>
       </CardHeader>

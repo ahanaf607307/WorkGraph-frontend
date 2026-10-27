@@ -133,9 +133,9 @@ export const TaskDetailDrawer: React.FC<{
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-xl h-full bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
+      <div className="relative w-full max-w-xl h-full bg-white dark:bg-[#0f1118] border-l border-zinc-200/70 dark:border-white/[0.06] shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
         {/* Header */}
-        <div className="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+        <div className="p-5 border-b border-zinc-100 dark:border-white/[0.04] flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-xs font-mono uppercase text-zinc-400">
               {task?.project?.name || "TASK"}

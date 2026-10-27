@@ -34,7 +34,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
       {/* 1. Active Projects */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Active Projects</span>
           <FolderKanban className="w-4.5 h-4.5 text-amber-500" />
@@ -52,7 +52,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
       </Card>
 
       {/* 2. Total Tasks */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Total Tasks</span>
           <TrendingUp className="w-4.5 h-4.5 text-blue-500" />
@@ -70,7 +70,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
       </Card>
 
       {/* 3. Completion Rate */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Completion Rate</span>
           <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
@@ -88,7 +88,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
       </Card>
 
       {/* 4. Risk Bottlenecks */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Risk Bottlenecks</span>
           <Flame className="w-4.5 h-4.5 text-rose-500" />
@@ -106,7 +106,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
       </Card>
 
       {/* 5. Team Capacity */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Team Capacity</span>
           <Users className="w-4.5 h-4.5 text-amber-500" />
@@ -124,7 +124,7 @@ export const DashboardMetricCards: React.FC<DashboardMetricCardsProps> = ({
       </Card>
 
       {/* 6. Squads & Units */}
-      <Card className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+      <Card className="p-4.5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center justify-between text-zinc-500 mb-2">
           <span className="text-xs font-bold uppercase font-mono">Squads & Units</span>
           <Layers className="w-4.5 h-4.5 text-indigo-500" />

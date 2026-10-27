@@ -46,8 +46,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message: m, isMine
           className={cn(
             "p-3 rounded-2xl text-xs leading-relaxed shadow-xs break-words space-y-2",
             isMine
-              ? "bg-orange-500 text-white font-medium rounded-br-xs"
-              : "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 rounded-bl-xs"
+              ? "bg-violet-600 text-white font-medium rounded-br-xs shadow-xs"
+              : "bg-white dark:bg-[#0f1118] text-zinc-900 dark:text-white border border-zinc-200/70 dark:border-white/[0.06] rounded-bl-xs shadow-xs"
           )}
         >
           {/* Attachments rendering */}

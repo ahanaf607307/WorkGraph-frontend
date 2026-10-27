@@ -22,7 +22,7 @@ export const TaskStatusPieChart: React.FC<TaskStatusPieChartProps> = ({
   isLoading,
 }) => {
   return (
-    <Card className="xl:col-span-5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+    <Card className="xl:col-span-5 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle>Tasks by Workflow Stage</CardTitle>
         <CardDescription>Live distribution across Kanban statuses</CardDescription>

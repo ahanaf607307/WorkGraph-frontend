@@ -317,7 +317,7 @@ export const ChatView: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col bg-zinc-50 dark:bg-zinc-950 overflow-hidden select-none">
+    <div className="h-[calc(100vh-5.5rem)] flex flex-col bg-white dark:bg-[#0f1118] rounded-2xl border border-zinc-200/70 dark:border-white/[0.06] overflow-hidden select-none shadow-xs">
       {/* Web Push Banner */}
       {!pushSubscribed && !pushPromptDismissed && (
         <PushNotificationBanner
@@ -346,7 +346,7 @@ export const ChatView: React.FC = () => {
 
         {/* Right: Active Conversation or Placeholder */}
         {activeConversation ? (
-          <div className="flex-1 flex flex-col bg-white dark:bg-zinc-950 overflow-hidden">
+          <div className="flex-1 flex flex-col bg-white dark:bg-[#0f1118] overflow-hidden">
             <ChatHeader
               conversation={activeConversation}
               currentUserId={user?.id}
@@ -379,17 +379,17 @@ export const ChatView: React.FC = () => {
             )}
 
             {/* Message Thread */}
-            <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-zinc-50/60 dark:bg-zinc-950/60">
+            <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-zinc-50/40 dark:bg-[#090a0f]/50">
               {loadingMessages ? (
                 <div className="flex items-center justify-center h-full text-xs text-zinc-400">
                   Loading message history...
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-violet-500/10 text-violet-500 flex items-center justify-center">
                     <Sparkles className="w-6 h-6" />
                   </div>
-                  <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                  <h4 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
                     No messages in this channel yet
                   </h4>
                   <p className="text-xs text-zinc-400 max-w-sm">
@@ -411,9 +411,9 @@ export const ChatView: React.FC = () => {
               {Object.keys(typingUsers).length > 0 && (
                 <div className="flex items-center space-x-2 text-2xs text-zinc-500 italic pl-2 animate-pulse">
                   <div className="flex space-x-1">
-                    <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" />
-                    <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-                    <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+                    <span className="w-1.5 h-1.5 bg-violet-600 rounded-full animate-bounce" />
+                    <span className="w-1.5 h-1.5 bg-violet-600 rounded-full animate-bounce [animation-delay:0.2s]" />
+                    <span className="w-1.5 h-1.5 bg-violet-600 rounded-full animate-bounce [animation-delay:0.4s]" />
                   </div>
                   <span>
                     {Object.values(typingUsers).join(", ")} {Object.keys(typingUsers).length > 1 ? "are" : "is"} typing...
@@ -434,11 +434,11 @@ export const ChatView: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center bg-white dark:bg-zinc-950 text-center p-8 space-y-3">
-            <div className="w-16 h-16 rounded-3xl bg-orange-500/10 text-orange-500 flex items-center justify-center shadow-xs">
+          <div className="flex-1 flex flex-col items-center justify-center bg-white dark:bg-[#0f1118] text-center p-8 space-y-3">
+            <div className="w-16 h-16 rounded-3xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center shadow-xs">
               <MessageSquare className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-zinc-950 dark:text-white">
+            <h3 className="text-base font-semibold text-zinc-950 dark:text-white">
               No Conversation Selected
             </h3>
             <p className="text-xs text-zinc-400 max-w-md">

@@ -15,7 +15,7 @@ interface RiskBottlenecksCardProps {
 
 export const RiskBottlenecksCard: React.FC<RiskBottlenecksCardProps> = ({ highRiskTasks = [], isLoading }) => {
   return (
-    <Card className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+    <Card className="bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center space-x-2">
           <Flame className="w-5 h-5 text-rose-500" />
@@ -24,7 +24,7 @@ export const RiskBottlenecksCard: React.FC<RiskBottlenecksCardProps> = ({ highRi
             <CardDescription>Deterministic bottleneck & overdue task detection</CardDescription>
           </div>
         </div>
-        <Link href="/analytics" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">
+        <Link href="/analytics" className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:underline">
           Risk report →
         </Link>
       </CardHeader>

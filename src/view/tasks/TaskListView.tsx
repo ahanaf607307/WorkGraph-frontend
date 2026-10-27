@@ -54,7 +54,7 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
   return (
     <div className="space-y-4">
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-zinc-950 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0f1118] p-2.5 rounded-xl border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="flex items-center space-x-3 w-full sm:w-auto flex-1">
           <div className="relative flex-1 max-w-sm">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -63,14 +63,14 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
               placeholder="Search tasks..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none"
+              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-transparent focus:border-violet-500/30 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-950 dark:text-white outline-none transition-all"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer focus:border-violet-500/40"
           >
             <option value="" className="cursor-pointer">All Statuses</option>
             <option value="TODO" className="cursor-pointer">To Do</option>
@@ -82,7 +82,7 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer focus:border-violet-500/40"
           >
             <option value="" className="cursor-pointer">All Priorities</option>
             <option value="LOW" className="cursor-pointer">Low</option>
@@ -115,10 +115,10 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
           onAction={projectId ? () => setCreateModalOpen(true) : undefined}
         />
       ) : (
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden shadow-2xs">
+        <div className="rounded-2xl border border-zinc-200/70 dark:border-white/[0.06] bg-white dark:bg-[#0f1118] overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-zinc-50 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-zinc-50/70 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-white/[0.04] text-zinc-500 uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-3 px-4">Task</th>
                   <th className="py-3 px-4">Status</th>
@@ -130,7 +130,7 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <tbody className="divide-y divide-zinc-100 dark:divide-white/[0.04]">
                 {tasks?.map((task) => (
                   <tr
                     key={task.id}
@@ -138,7 +138,7 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
                     onClick={() => setSelectedTaskId(task.id)}
                   >
                     <td className="py-3 px-4 font-semibold text-zinc-950 dark:text-white max-w-xs">
-                      <div className="truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                      <div className="truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                         {task.title}
                       </div>
                       {task.project && !projectId && (

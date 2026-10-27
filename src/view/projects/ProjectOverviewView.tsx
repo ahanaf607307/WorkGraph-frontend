@@ -139,12 +139,12 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
   return (
     <div className="space-y-6">
       {/* Enterprise Project Banner Header */}
-      <div className="bg-white dark:bg-zinc-950 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#0f1118] rounded-2xl p-6 border border-zinc-200/70 dark:border-white/[0.06] shadow-xs space-y-4">
         {/* Top meta tags: Order ID, Platform, Profile, Health */}
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-zinc-100 dark:border-zinc-850 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-zinc-100 dark:border-white/[0.04] pb-3">
           <div className="flex flex-wrap items-center gap-2">
             {project.orderId && (
-              <span className="font-mono font-bold bg-amber-400 text-black px-2.5 py-0.5 rounded-full text-2xs shadow-xs">
+              <span className="font-mono font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 px-2.5 py-0.5 rounded-full text-2xs shadow-xs">
                 #{project.orderId}
               </span>
             )}
@@ -284,13 +284,13 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center space-x-2 border-b border-zinc-200 dark:border-zinc-800 overflow-x-auto text-sm">
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] w-fit shadow-xs overflow-x-auto text-xs">
         <button
           onClick={() => setActiveTab("board")}
-          className={`flex items-center space-x-2 px-4 py-3 font-semibold border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap ${
             activeTab === "board"
-              ? "border-amber-400 text-amber-600 dark:text-amber-400 font-bold"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
           <Layers className="w-4 h-4" />
@@ -299,10 +299,10 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
         <button
           onClick={() => setActiveTab("list")}
-          className={`flex items-center space-x-2 px-4 py-3 font-semibold border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap ${
             activeTab === "list"
-              ? "border-amber-400 text-amber-600 dark:text-amber-400 font-bold"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
           <ListTodo className="w-4 h-4" />
@@ -311,10 +311,10 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
         <button
           onClick={() => setActiveTab("phases")}
-          className={`flex items-center space-x-2 px-4 py-3 font-semibold border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap ${
             activeTab === "phases"
-              ? "border-amber-400 text-amber-600 dark:text-amber-400 font-bold"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
           <Milestone className="w-4 h-4" />
@@ -323,10 +323,10 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
         <button
           onClick={() => setActiveTab("client")}
-          className={`flex items-center space-x-2 px-4 py-3 font-semibold border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap ${
             activeTab === "client"
-              ? "border-amber-400 text-amber-600 dark:text-amber-400 font-bold"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
           <UserCheck className="w-4 h-4" />
@@ -335,16 +335,22 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 
         <button
           onClick={() => setActiveTab("risks")}
-          className={`flex items-center space-x-2 px-4 py-3 font-semibold border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap ${
             activeTab === "risks"
-              ? "border-amber-400 text-amber-600 dark:text-amber-400 font-bold"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
           <Flame className="w-4 h-4 text-rose-500" />
           <span>Deadline Risk Engine</span>
           {riskReport && riskReport.summary.highRiskCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full text-2xs bg-rose-100 text-rose-700 font-bold">
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-3xs font-mono font-semibold ${
+                activeTab === "risks"
+                  ? "bg-white/20 text-white"
+                  : "bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300"
+              }`}
+            >
               {riskReport.summary.highRiskCount}
             </span>
           )}

@@ -13,12 +13,12 @@ export const SquadsOverviewStrip: React.FC<SquadsOverviewStripProps> = ({ allTea
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
-          <Building2 className="w-4 h-4 text-amber-500" />
-          <h2 className="text-sm font-bold text-zinc-950 dark:text-white uppercase font-mono tracking-wider">
+          <Building2 className="w-4 h-4 text-violet-500" />
+          <h2 className="text-sm font-semibold text-zinc-950 dark:text-white uppercase font-mono tracking-wider">
             Departments & Operational Squads ({allTeams.length} units)
           </h2>
         </div>
-        <Link href="/departments" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">
+        <Link href="/departments" className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:underline">
           Manage squads & hierarchy →
         </Link>
       </div>
@@ -27,13 +27,13 @@ export const SquadsOverviewStrip: React.FC<SquadsOverviewStripProps> = ({ allTea
         {allTeams.slice(0, 3).map((team) => (
           <div
             key={team.id}
-            className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-2.5"
+            className="p-4 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs space-y-2.5"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">
+              <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
                 {team.name}
               </span>
-              <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-800 dark:text-amber-300">
+              <span className="text-3xs font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
                 {team._count?.members || 0} members
               </span>
             </div>

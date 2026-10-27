@@ -52,7 +52,7 @@ export const ProjectListView: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-zinc-950 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-[#0f1118] p-2.5 rounded-xl border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -60,14 +60,14 @@ export const ProjectListView: React.FC = () => {
             placeholder="Search projects by name or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-transparent focus:border-zinc-300 dark:focus:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-transparent focus:border-violet-500/30 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-950 dark:text-white outline-none transition-all"
           />
         </div>
         <div className="w-full sm:w-48">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-200 outline-none cursor-pointer focus:border-violet-500/40"
           >
             <option value="" className="cursor-pointer">All Statuses</option>
             <option value="ACTIVE" className="cursor-pointer">Active</option>
@@ -103,27 +103,27 @@ export const ProjectListView: React.FC = () => {
             <Card
               key={project.id}
               onClick={() => router.push(`/projects/${project.id}`)}
-              className="flex flex-col justify-between hover:shadow-md hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all p-5 rounded-2xl group cursor-pointer"
+              className="flex flex-col justify-between hover:shadow-md hover:border-violet-500/40 dark:hover:border-violet-500/30 transition-all p-5 rounded-2xl group cursor-pointer bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06]"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-1.5">
                     <StatusBadge status={project.status} />
                     {project.orderId && (
-                      <span className="font-mono text-3xs font-bold bg-amber-400 text-black px-1.5 py-0.2 rounded">
+                      <span className="font-mono text-3xs font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 px-1.5 py-0.5 rounded">
                         #{project.orderId}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center space-x-1.5 text-2xs text-zinc-400 font-mono">
-                    <Calendar className="w-3 h-3 text-indigo-400" />
+                    <Calendar className="w-3 h-3 text-violet-400" />
                     <span>{formatDate(project.dueDate)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2 mb-1 text-3xs">
                   {project.platformName && (
-                    <span className="font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.2 rounded">
+                    <span className="font-semibold bg-zinc-100 dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded">
                       {project.platformName}
                     </span>
                   )}
@@ -135,7 +135,7 @@ export const ProjectListView: React.FC = () => {
                 </div>
 
                 <Link href={`/projects/${project.id}`}>
-                  <h3 className="text-base font-semibold text-zinc-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+                  <h3 className="text-base font-semibold text-zinc-950 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-1">
                     {project.name}
                   </h3>
                 </Link>
@@ -145,14 +145,14 @@ export const ProjectListView: React.FC = () => {
                 </p>
 
                 {(project.team?.name || project.department?.name) && (
-                  <div className="mt-2 text-3xs font-medium text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                  <div className="mt-2 text-3xs font-medium text-violet-700 dark:text-violet-400 flex items-center gap-1">
                     <span>Squad:</span>
-                    <span className="font-bold underline">{project.team?.name || project.department?.name}</span>
+                    <span className="font-semibold underline">{project.team?.name || project.department?.name}</span>
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/80 space-y-2.5">
+              <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.04] space-y-2.5">
                 <div className="flex items-center justify-between text-2xs text-zinc-500">
                   <span className="font-medium text-zinc-700 dark:text-zinc-300">
                     {project.metrics.progress}% Complete
@@ -182,7 +182,7 @@ export const ProjectListView: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                        className="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40"
                       >
                         Kanban Board
                       </Button>

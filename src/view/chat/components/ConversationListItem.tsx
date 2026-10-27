@@ -49,7 +49,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
       className={cn(
         "w-full p-3.5 flex items-center space-x-3 text-left transition-colors cursor-pointer",
         isActive
-          ? "bg-orange-50 dark:bg-orange-950/20 border-r-4 border-orange-500"
+          ? "bg-violet-50/70 dark:bg-violet-950/30 border-r-2 border-violet-600"
           : "hover:bg-zinc-50 dark:hover:bg-zinc-900/60"
       )}
     >
@@ -59,10 +59,10 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
             <img
               src={avatarUrl}
               alt={title}
-              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-zinc-200 dark:border-zinc-750 shadow-2xs"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold text-sm shadow-2xs">
               <Users className="w-5 h-5" />
             </div>
           )
@@ -121,7 +121,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
           </p>
 
           {(c.unreadCount || 0) > 0 && (
-            <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-orange-500 text-white font-extrabold text-3xs shrink-0 shadow-2xs">
+            <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-violet-600 text-white font-bold text-3xs shrink-0 shadow-2xs">
               {c.unreadCount}
             </span>
           )}

@@ -88,15 +88,15 @@ export const DashboardView: React.FC = () => {
       />
 
       {/* 2. Dashboard Mode Switcher (Overview vs Newsfeed) */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 w-fit shadow-xs">
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] w-fit shadow-xs">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer",
             activeTab === "overview"
-              ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-white hover:bg-orange-50/50 dark:hover:bg-zinc-800"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           )}
         >
           <LayoutDashboard className="w-4 h-4" />
@@ -107,15 +107,15 @@ export const DashboardView: React.FC = () => {
           type="button"
           onClick={() => setActiveTab("newsfeed")}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer",
             activeTab === "newsfeed"
-              ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-white hover:bg-orange-50/50 dark:hover:bg-zinc-800"
+              ? "bg-violet-600 text-white shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           )}
         >
           <Newspaper className="w-4 h-4" />
           <span>Team Newsfeed</span>
-          <span className="px-1.5 py-0.2 rounded-full text-3xs font-mono font-bold bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300">
+          <span className="px-1.5 py-0.2 rounded-full text-3xs font-mono font-semibold bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300">
             Live
           </span>
         </button>

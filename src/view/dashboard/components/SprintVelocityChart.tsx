@@ -12,13 +12,13 @@ interface SprintVelocityChartProps {
 
 export const SprintVelocityChart: React.FC<SprintVelocityChartProps> = ({ trends, isLoading }) => {
   return (
-    <Card className="xl:col-span-7 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+    <Card className="xl:col-span-7 bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle>Sprint & Delivery Velocity</CardTitle>
           <CardDescription>Daily completed vs newly opened tasks over the last 14 days</CardDescription>
         </div>
-        <span className="px-2.5 py-1 rounded-full text-3xs font-mono font-bold bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+        <span className="px-2.5 py-1 rounded-full text-3xs font-mono font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
           Deterministic Trajectory
         </span>
       </CardHeader>
