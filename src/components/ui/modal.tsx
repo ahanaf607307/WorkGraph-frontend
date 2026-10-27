@@ -58,7 +58,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal Dialog */}
       <div
         className={cn(
-          "relative w-full rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 shadow-2xl z-10 animate-in zoom-in-95 duration-200",
+          "relative w-full rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.08] p-6 shadow-2xl z-10 animate-in zoom-in-95 duration-200",
           maxWidths[maxWidth],
           className
         )}

@@ -41,7 +41,7 @@ export const TabsList: React.FC<{
   return (
     <div
       className={cn(
-        "inline-flex h-11 items-center justify-start rounded-2xl bg-zinc-100 dark:bg-zinc-900/80 p-1 text-zinc-500 border border-zinc-200 dark:border-zinc-800/80 overflow-x-auto max-w-full",
+        "inline-flex items-center justify-start rounded-xl bg-white dark:bg-[#0f1118] p-1 text-zinc-500 border border-zinc-200/70 dark:border-white/[0.06] shadow-xs overflow-x-auto max-w-full gap-1",
         className
       )}
     >
@@ -67,10 +67,10 @@ export const TabsTrigger: React.FC<{
       aria-selected={isActive}
       onClick={() => ctx?.onValueChange(value)}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer gap-2",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer gap-2",
         isActive
-          ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs border border-zinc-200/60 dark:border-zinc-700/60"
-          : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white",
+          ? "bg-violet-600 text-white shadow-xs font-semibold"
+          : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50",
         className
       )}
     >

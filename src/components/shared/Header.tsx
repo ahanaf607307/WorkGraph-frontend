@@ -81,35 +81,35 @@ export const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-black/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50 select-none transition-colors">
+    <header className="h-15 border-b border-zinc-200/60 dark:border-white/[0.06] bg-white/80 dark:bg-[#090a0f]/80 backdrop-blur-xl px-5 flex items-center justify-between sticky top-0 z-40 select-none transition-colors">
       <div className="flex items-center space-x-3">
-        <h1 className="text-base font-bold text-zinc-950 dark:text-white">
+        <h1 className="text-sm font-bold text-zinc-950 dark:text-white tracking-tight">
           {getBreadcrumbTitle()}
         </h1>
       </div>
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2.5">
         {/* Company Registration Badge / Workspace Switcher (Right Side) */}
         {user?.role === "SYSTEM_OWNER" ? (
-          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 text-amber-700 dark:text-amber-400 font-bold text-xs shadow-2xs">
-            <Shield className="w-4 h-4 text-amber-500" />
+          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-violet-500/10 dark:bg-violet-950/40 border border-violet-500/20 text-violet-700 dark:text-violet-300 font-bold text-xs">
+            <Shield className="w-4 h-4 text-violet-500" />
             <span>Platform Super-Admin</span>
           </div>
         ) : currentOrg ? (
           <div className="relative">
             <button
               onClick={() => setShowOrgDropdown(!showOrgDropdown)}
-              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-orange-50/80 dark:bg-zinc-900 hover:bg-orange-100/70 dark:hover:bg-zinc-800 border border-orange-200/80 dark:border-zinc-700 transition-all cursor-pointer shadow-2xs"
+              className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl bg-zinc-100/70 dark:bg-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/[0.08] border border-zinc-200/60 dark:border-white/[0.06] transition-all cursor-pointer"
             >
-              <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-orange-500 to-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0">
-                {currentOrg.name?.[0]?.toUpperCase() || "C"}
+              <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                {currentOrg.name?.[0]?.toUpperCase() || "W"}
               </div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-xs font-extrabold text-zinc-950 dark:text-white max-w-[170px] truncate">
+                <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 max-w-[150px] truncate">
                   {currentOrg.name}
                 </span>
-                <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-zinc-700 px-1.5 py-0.2 rounded uppercase">
-                  {currentOrg.myRole === "OWNER" ? "System Admin" : currentOrg.myRole}
+                <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-violet-600 dark:text-violet-400 border border-zinc-200 dark:border-zinc-700 px-1 py-0.2 rounded uppercase">
+                  {currentOrg.myRole === "OWNER" ? "Admin" : currentOrg.myRole}
                 </span>
               </div>
               {organizations.length > 1 && (
@@ -123,7 +123,7 @@ export const Header: React.FC = () => {
                   className="fixed inset-0 z-[9998]"
                   onClick={() => setShowOrgDropdown(false)}
                 />
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 dark:bg-[#0f1118]/95 backdrop-blur-xl border border-zinc-200/80 dark:border-white/[0.08] shadow-2xl p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150">
                   <div className="text-2xs font-bold uppercase text-zinc-400 px-3 py-1.5">
                     Switch Workspace
                   </div>
@@ -135,15 +135,15 @@ export const Header: React.FC = () => {
                         setShowOrgDropdown(false);
                       }}
                       className={cn(
-                        "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-semibold transition-colors text-left cursor-pointer",
+                        "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left cursor-pointer",
                         currentOrg.id === org.id
-                          ? "bg-orange-500 text-white font-bold"
-                          : "hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                          ? "bg-violet-600 text-white font-bold"
+                          : "hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-zinc-700 dark:text-zinc-300"
                       )}
                     >
                       <span className="truncate">{org.name}</span>
                       <span className="text-3xs uppercase font-mono opacity-80">
-                        {org.myRole === "OWNER" ? "SYS ADMIN" : org.myRole}
+                        {org.myRole === "OWNER" ? "ADMIN" : org.myRole}
                       </span>
                     </button>
                   ))}
@@ -157,9 +157,9 @@ export const Header: React.FC = () => {
         <Link
           href="/chat"
           title="Direct & Group Messages"
-          className="p-2 text-zinc-600 hover:text-black dark:text-zinc-300 dark:hover:text-amber-400 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors cursor-pointer shadow-2xs"
+          className="p-2 text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white rounded-xl hover:bg-zinc-100/80 dark:hover:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06] transition-colors cursor-pointer"
         >
-          <MessageSquare className="w-4.5 h-4.5" />
+          <MessageSquare className="w-4 h-4" />
         </Link>
 
         {/* Dark / Light Mode Toggle Button */}
@@ -168,18 +168,12 @@ export const Header: React.FC = () => {
           onClick={toggleTheme}
           aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-          className="p-2 text-zinc-700 hover:text-black dark:text-zinc-300 dark:hover:text-amber-400 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+          className="p-2 text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white rounded-xl hover:bg-zinc-100/80 dark:hover:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06] transition-all flex items-center gap-1.5 cursor-pointer"
         >
           {theme === "dark" ? (
-            <>
-              <Sun className="w-4 h-4 text-amber-400" />
-              <span className="hidden md:inline text-xs font-semibold text-amber-400">Light</span>
-            </>
+            <Sun className="w-4 h-4 text-amber-400" />
           ) : (
-            <>
-              <Moon className="w-4 h-4 text-zinc-800" />
-              <span className="hidden md:inline text-xs font-semibold text-zinc-800">Dark</span>
-            </>
+            <Moon className="w-4 h-4 text-zinc-700" />
           )}
         </button>
 
@@ -187,11 +181,11 @@ export const Header: React.FC = () => {
         <div className="relative">
           <button
             onClick={() => setShowNotifMenu(!showNotifMenu)}
-            className="relative p-2 text-zinc-600 hover:text-black dark:text-zinc-300 dark:hover:text-amber-400 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors cursor-pointer shadow-2xs"
+            className="relative p-2 text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white rounded-xl hover:bg-zinc-100/80 dark:hover:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06] transition-colors cursor-pointer"
           >
-            <Bell className="w-4.5 h-4.5" />
+            <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-orange-500 ring-2 ring-white dark:ring-black animate-pulse" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-violet-600 ring-2 ring-white dark:ring-[#090a0f]" />
             )}
           </button>
 
@@ -201,14 +195,14 @@ export const Header: React.FC = () => {
                 className="fixed inset-0 z-[9998]"
                 onClick={() => setShowNotifMenu(false)}
               />
-              <div className="absolute right-0 mt-2 w-80 md:w-96 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-4 z-[9999] animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 mb-3">
+              <div className="absolute right-0 mt-2 w-80 md:w-96 rounded-2xl bg-white/95 dark:bg-[#0f1118]/95 backdrop-blur-xl border border-zinc-200/80 dark:border-white/[0.08] shadow-2xl p-4 z-[9999] animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-white/[0.06] mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-sm font-bold text-zinc-950 dark:text-white">
                     Notifications
                   </span>
                   {unreadCount > 0 && (
-                    <span className="px-2 py-0.2 rounded-full text-2xs bg-orange-100 dark:bg-orange-950 text-orange-900 dark:text-orange-300 font-bold border border-orange-300 dark:border-orange-700">
+                    <span className="px-2 py-0.2 rounded-full text-2xs bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300 font-bold border border-violet-200 dark:border-violet-800">
                       {unreadCount} new
                     </span>
                   )}
@@ -216,9 +210,10 @@ export const Header: React.FC = () => {
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 font-semibold flex items-center cursor-pointer"
+                    className="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 font-medium flex items-center cursor-pointer"
                   >
-                    <Check className="w-3.5 h-3.5 mr-1" /> Mark all read
+                    <Check className="w-3.5 h-3.5 mr-1" />
+                    <span>Mark all read</span>
                   </button>
                 )}
               </div>

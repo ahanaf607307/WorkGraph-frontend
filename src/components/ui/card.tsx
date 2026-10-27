@@ -9,8 +9,8 @@ export const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-2xs transition-all",
-        props.onClick && "cursor-pointer hover:border-amber-400/50 dark:hover:border-amber-400/50",
+        "rounded-2xl border border-zinc-200/70 dark:border-white/[0.06] bg-white dark:bg-[#0f1118] shadow-xs transition-all",
+        props.onClick && "cursor-pointer hover:border-violet-500/40 dark:hover:border-violet-500/30",
         className
       )}
       {...props}

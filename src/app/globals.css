@@ -3,13 +3,17 @@
 @custom-variant dark (&:where([class~="dark"], [class~="dark"] *));
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #09090b;
+  --card: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.07);
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+  --background: #090a0f;
+  --foreground: #f4f4f5;
+  --card: #0f1118;
+  --card-border: rgba(255, 255, 255, 0.07);
 }
 
 html.dark {
@@ -20,30 +24,65 @@ html.light {
   color-scheme: light;
 }
 
+.text-3xs {
+  font-size: 0.625rem;
+  line-height: 0.85rem;
+}
+
 .text-2xs {
   font-size: 0.6875rem;
   line-height: 0.95rem;
 }
 
-/* Custom sleek scrollbars */
+/* Custom sleek micro scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(161, 161, 170, 0.4);
+  background: rgba(161, 161, 170, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(161, 161, 170, 0.7);
+  background: rgba(161, 161, 170, 0.5);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/* Smooth glass and surface utility classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass-panel {
+  background: rgba(11, 13, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+}
+
+.dark .glass-card {
+  background: #0f1118;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* Global cursor pointer rules for all interactive and hoverable elements */
