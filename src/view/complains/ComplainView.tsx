@@ -9,7 +9,6 @@ import {
 import {
   AlertCircle,
   Lock,
-  Unlock,
   KeyRound,
   Plus,
   FileText,
@@ -19,8 +18,6 @@ import {
   Clock,
   Sparkles,
   Send,
-  Eye,
-  EyeOff,
   UserX,
   MessageSquare,
 } from "lucide-react";
@@ -69,7 +66,6 @@ export const ComplainView: React.FC = () => {
   const [adminComment, setAdminComment] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  // Check PIN status on load
   useEffect(() => {
     const checkPin = async () => {
       try {
@@ -143,7 +139,7 @@ export const ComplainView: React.FC = () => {
         linkUrl: linkUrl.trim() || undefined,
         isAnonymous,
       });
-      toast.success("Complaint submitted securely to System Administration!");
+      toast.success("Confidential complaint submitted securely!");
       setShowCreateModal(false);
       setTitle("");
       setDescription("");
@@ -164,11 +160,15 @@ export const ComplainView: React.FC = () => {
 
     try {
       setUpdatingStatus(true);
-      await complainActions.updateComplaintStatus(unlockedPin, selectedComplaint.id, {
-        status: newStatus,
-        adminComment: adminComment.trim() || undefined,
-      });
-      toast.success("Complaint status and administrative comment saved!");
+      await complainActions.updateComplaintStatus(
+        unlockedPin,
+        selectedComplaint.id,
+        {
+          status: newStatus,
+          adminComment: adminComment.trim() || undefined,
+        }
+      );
+      toast.success("Complaint status and investigation response saved!");
       setSelectedComplaint(null);
       setAdminComment("");
       loadComplaints(unlockedPin);
@@ -181,39 +181,47 @@ export const ComplainView: React.FC = () => {
 
   const handleLockVault = () => {
     setUnlockedPin(null);
+    setComplaints([]);
     setPinInput("");
     setPinConfirm("");
-    setComplaints([]);
-    toast.info("Complaints vault locked.");
+    toast.info("Vault locked securely.");
   };
+
+  if (!pinChecked) {
+    return (
+      <div className="p-12 text-center text-xs text-zinc-400 font-mono">
+        Checking vault security authentication...
+      </div>
+    );
+  }
 
   // Locked State Screen
   if (!unlockedPin) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center p-6 select-text">
-        <div className="w-full max-w-md p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center mx-auto shadow-inner">
-            <Lock className="w-8 h-8" />
+      <div className="flex min-h-[60vh] items-center justify-center p-6 select-text">
+        <div className="w-full max-w-sm p-7 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] shadow-2xl text-center space-y-5">
+          <div className="w-12 h-12 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center mx-auto">
+            <Lock className="w-6 h-6" />
           </div>
 
-          <div className="space-y-2">
-            <span className="px-3 py-1 rounded-full text-3xs font-mono font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+          <div className="space-y-1.5">
+            <span className="px-2.5 py-0.5 rounded-full text-3xs font-mono font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
               PIN-Protected Vault
             </span>
-            <h2 className="text-xl font-black text-zinc-950 dark:text-white">
+            <h2 className="text-base font-bold text-zinc-950 dark:text-white">
               {hasPin ? "Enter Security PIN" : "Create Security PIN"}
             </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-400 leading-relaxed">
               {hasPin
-                ? "Access to complaints, status reports, and investigation comments is strictly confidential. Enter your 4-digit PIN."
-                : "Configure your confidential 4-digit Security PIN to access and track complaints."}
+                ? "Confidential reports and grievance comments require verified PIN authentication."
+                : "Create a 4-digit Security PIN to access your confidential complaints portal."}
             </p>
           </div>
 
-          <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                {hasPin ? "4-Digit PIN *" : "Create 4-Digit PIN *"}
+          <form onSubmit={handlePinSubmit} className="space-y-3.5 text-left">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                {hasPin ? "4-Digit PIN" : "Create 4-Digit PIN"}
               </label>
               <input
                 type="password"
@@ -222,14 +230,14 @@ export const ComplainView: React.FC = () => {
                 onChange={(e) => setPinInput(e.target.value)}
                 placeholder="••••"
                 required
-                className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center tracking-widest text-lg font-mono focus:outline-none focus:border-violet-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-center tracking-widest text-base font-mono focus:outline-none focus:border-violet-500"
               />
             </div>
 
             {!hasPin && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Confirm 4-Digit PIN *
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  Confirm 4-Digit PIN
                 </label>
                 <input
                   type="password"
@@ -238,21 +246,21 @@ export const ComplainView: React.FC = () => {
                   onChange={(e) => setPinConfirm(e.target.value)}
                   placeholder="••••"
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center tracking-widest text-lg font-mono focus:outline-none focus:border-violet-500"
+                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-center tracking-widest text-base font-mono focus:outline-none focus:border-violet-500"
                 />
               </div>
             )}
 
             {pinError && (
-              <p className="text-xs text-red-500 font-semibold text-center">{pinError}</p>
+              <p className="text-2xs text-rose-500 font-medium text-center">{pinError}</p>
             )}
 
             <button
               type="submit"
               disabled={verifyingPin}
-              className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md shadow-violet-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
+              className="w-full py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              <KeyRound className="w-4 h-4" />
+              <KeyRound className="w-3.5 h-3.5" />
               <span>{verifyingPin ? "Verifying..." : hasPin ? "Unlock Vault" : "Set PIN & Unlock"}</span>
             </button>
           </form>
@@ -264,40 +272,35 @@ export const ComplainView: React.FC = () => {
   // Unlocked State Screen
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-violet-500/20">
-            <AlertCircle className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-zinc-950 dark:text-white flex items-center gap-2">
-              Confidential Complaints Vault
-            </h1>
-            <p className="text-xs text-zinc-500">
-              {isSystemAdmin
-                ? "Administrative review vault for workplace grievances, harassment, and ethical reports"
-                : "Secure, PIN-protected grievance portal. Only you and System Admin can view your reports."}
-            </p>
-          </div>
+      {/* Sleek Open Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+        <div>
+          <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+            <span>Confidential Complaints Vault</span>
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            {isSystemAdmin
+              ? "Administrative review vault for grievances, harassment, and ethical workplace reports"
+              : "Secure grievance portal. Reports are visible only to you and the System Administrator."}
+          </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleLockVault}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-300 text-xs font-medium cursor-pointer transition-colors"
           >
-            <Lock className="w-3.5 h-3.5" />
+            <Lock className="w-3 h-3" />
             <span>Lock Vault</span>
           </button>
 
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md shadow-violet-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Submit Complaint</span>
           </button>
         </div>
@@ -309,19 +312,19 @@ export const ComplainView: React.FC = () => {
           Decryption & loading complaints...
         </div>
       ) : complaints.length === 0 ? (
-        <div className="p-12 text-center space-y-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800">
-          <div className="w-16 h-16 rounded-3xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
-            <ShieldCheck className="w-8 h-8" />
+        <div className="p-12 text-center space-y-2 bg-white dark:bg-[#0f1118] rounded-2xl border border-zinc-200/70 dark:border-white/[0.06]">
+          <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             No Active Complaints
           </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+          <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
             All submitted grievances are encrypted and visible only through verified PIN authentication.
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {complaints.map((item) => {
             const isResolved = item.status === "RESOLVED";
             const isInvestigation = item.status === "UNDER_INVESTIGATION";
@@ -330,29 +333,29 @@ export const ComplainView: React.FC = () => {
             return (
               <div
                 key={item.id}
-                className="p-5 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs hover:border-violet-500/40 transition-colors space-y-4"
+                className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-colors space-y-3"
               >
                 {/* Header */}
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider border ${
+                      className={`px-2 py-0.5 rounded-full text-3xs font-medium uppercase tracking-wider ${
                         isResolved
-                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                          ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                           : isInvestigation
-                          ? "bg-violet-500/10 text-violet-500 border-violet-500/20"
+                          ? "bg-violet-500/10 text-violet-500 border border-violet-500/20"
                           : isSubmitted
-                          ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"
+                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          : "bg-zinc-100 dark:bg-white/[0.04] text-zinc-400"
                       }`}
                     >
                       {item.status.replace("_", " ")}
                     </span>
 
                     {item.isAnonymous && (
-                      <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-500 flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-full text-3xs font-mono bg-zinc-100 dark:bg-white/[0.04] text-zinc-500 flex items-center gap-1">
                         <UserX className="w-3 h-3" />
-                        Anonymous Submission
+                        Anonymous
                       </span>
                     )}
                   </div>
@@ -370,7 +373,7 @@ export const ComplainView: React.FC = () => {
                           setNewStatus(item.status);
                           setAdminComment(item.adminComment || "");
                         }}
-                        className="px-2.5 py-1 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-3xs font-bold transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-3xs font-medium transition-colors cursor-pointer"
                       >
                         Review / Comment
                       </button>
@@ -380,26 +383,26 @@ export const ComplainView: React.FC = () => {
 
                 {/* Content */}
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-950 dark:text-white mb-1">
+                  <h3 className="text-xs font-bold text-zinc-950 dark:text-white mb-1">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-50 dark:bg-zinc-950/60 p-3.5 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 font-sans">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line font-sans">
                     {item.description}
                   </p>
                 </div>
 
                 {/* Attachments */}
                 {(item.documentUrl || item.linkUrl) && (
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-2 pt-0.5">
                     {item.documentUrl && (
                       <a
                         href={item.documentUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="px-3 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 dark:text-violet-400 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-violet-50 dark:bg-violet-950/30 hover:bg-violet-100 dark:hover:bg-violet-900/50 text-violet-600 dark:text-violet-400 text-2xs font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <FileText className="w-3.5 h-3.5" />
-                        <span>Supporting Evidence / Document</span>
+                        <FileText className="w-3 h-3" />
+                        <span>Supporting Evidence</span>
                       </a>
                     )}
                     {item.linkUrl && (
@@ -407,10 +410,10 @@ export const ComplainView: React.FC = () => {
                         href={item.linkUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-700 dark:text-zinc-300 text-2xs font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>External Reference</span>
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Reference</span>
                       </a>
                     )}
                   </div>
@@ -418,10 +421,10 @@ export const ComplainView: React.FC = () => {
 
                 {/* Admin Comment Section */}
                 {item.adminComment && (
-                  <div className="p-4 rounded-2xl bg-violet-500/5 dark:bg-violet-950/30 border border-violet-500/20 space-y-1.5">
-                    <div className="text-3xs font-mono font-bold uppercase text-violet-600 dark:text-violet-400 flex items-center gap-1.5">
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span>System Administrator Investigation & Comment</span>
+                  <div className="p-3 rounded-xl bg-violet-50/40 dark:bg-violet-950/20 border border-violet-200/60 dark:border-violet-900/30 space-y-0.5">
+                    <div className="text-3xs font-semibold uppercase text-violet-600 dark:text-violet-400 flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" />
+                      <span>Administrator Comment</span>
                     </div>
                     <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
                       {item.adminComment}
@@ -430,25 +433,20 @@ export const ComplainView: React.FC = () => {
                 )}
 
                 {/* Footer */}
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-2xs text-zinc-400">
+                <div className="pt-2 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between text-3xs text-zinc-400">
                   <div className="flex items-center gap-2">
                     {item.isAnonymous ? (
-                      <span className="font-semibold text-zinc-500 italic">
-                        Submitted Anonymously
-                      </span>
+                      <span className="italic">Submitted Anonymously</span>
                     ) : (
                       <>
                         <Avatar name={item.author?.name} size="sm" />
-                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                          {item.author?.name}
-                        </span>
-                        <span className="font-mono text-3xs">({item.author?.email})</span>
+                        <span>{item.author?.name}</span>
                       </>
                     )}
                   </div>
 
-                  <span className="font-mono text-3xs">
-                    Last updated {new Date(item.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  <span className="font-mono">
+                    Updated {new Date(item.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               </div>
@@ -459,65 +457,58 @@ export const ComplainView: React.FC = () => {
 
       {/* SUBMIT COMPLAINT MODAL */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold">
-                <AlertCircle className="w-5 h-5" />
-              </div>
-              <div>
-                <DialogTitle className="text-base font-bold">Submit Confidential Grievance</DialogTitle>
-                <DialogDescription className="text-xs text-zinc-500">
-                  Direct encrypted report to the System Administrator
-                </DialogDescription>
-              </div>
-            </div>
+        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
+            <DialogTitle className="text-sm font-bold">Submit Confidential Grievance</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Encrypted grievance delivered directly to the System Administrator
+            </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+          <form onSubmit={handleCreateSubmit} className="p-5 space-y-3.5">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Grievance Title *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Workspace harassment or process bottleneck issue"
+                placeholder="e.g. Workspace issue, harassment, or ethical report"
                 required
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Detailed Description *
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                placeholder="Detail what occurred, dates, parties involved, and specific context..."
+                placeholder="Detail what occurred, dates, parties involved, and context..."
                 required
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 font-sans"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 font-sans"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                Supporting Evidence / Document URL (Optional)
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Supporting Evidence Link (Optional)
               </label>
               <input
                 type="url"
                 value={documentUrl}
                 onChange={(e) => setDocumentUrl(e.target.value)}
                 placeholder="https://drive.google.com/..."
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Reference Link (Optional)
               </label>
               <input
@@ -525,7 +516,7 @@ export const ComplainView: React.FC = () => {
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
               />
             </div>
 
@@ -537,24 +528,24 @@ export const ComplainView: React.FC = () => {
                 className="rounded accent-violet-600"
               />
               <span className="text-xs text-zinc-700 dark:text-zinc-300">
-                Submit Anonymously (Hide my name and identity)
+                Submit Anonymously (Hide my name and email)
               </span>
             </label>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-3.5 h-3.5" />
                 <span>{submitting ? "Submitting..." : "Submit Grievance"}</span>
               </button>
             </div>
@@ -567,23 +558,23 @@ export const ComplainView: React.FC = () => {
         open={!!selectedComplaint}
         onOpenChange={(open) => !open && setSelectedComplaint(null)}
       >
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-            <DialogTitle className="text-base font-bold">Review & Comment on Complaint</DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">
-              Provide resolution status and administrative comment for &quot;{selectedComplaint?.title}&quot;
+        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
+            <DialogTitle className="text-sm font-bold">Review & Comment on Complaint</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Provide resolution status and comment for &quot;{selectedComplaint?.title}&quot;
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleAdminUpdateSubmit} className="p-6 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+          <form onSubmit={handleAdminUpdateSubmit} className="p-5 space-y-3.5">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Investigation Status *
               </label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as any)}
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
               >
                 <option value="SUBMITTED">Submitted (Pending Review)</option>
                 <option value="UNDER_INVESTIGATION">Under Investigation</option>
@@ -592,31 +583,31 @@ export const ComplainView: React.FC = () => {
               </select>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                Administrator Comment & Action Taken
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Administrator Response & Actions
               </label>
               <textarea
                 value={adminComment}
                 onChange={(e) => setAdminComment(e.target.value)}
                 rows={4}
-                placeholder="Describe actions taken, policy review, resolution summary, or guidance..."
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 font-sans"
+                placeholder="Actions taken, investigation summary, or resolution guidance..."
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 font-sans"
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setSelectedComplaint(null)}
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={updatingStatus}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold shadow-xs cursor-pointer"
               >
                 {updatingStatus ? "Saving..." : "Save Resolution"}
               </button>

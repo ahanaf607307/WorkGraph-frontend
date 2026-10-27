@@ -5,7 +5,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../hooks/useAuth";
 import {
   announcementActions,
-  AnnouncementItem,
 } from "../../modules/announcement/actions/announcement.actions";
 import { Avatar } from "../../components/ui/avatar";
 import {
@@ -46,7 +45,6 @@ export const AnnouncementView: React.FC = () => {
     user?.role === "system_owner" ||
     currentOrg?.myRole === "OWNER";
 
-  // Load announcements (available for both system owner and workspace members)
   const { data: announcements = [], isLoading } = useQuery({
     queryKey: ["announcements"],
     queryFn: () => announcementActions.getAnnouncements(),
@@ -104,30 +102,25 @@ export const AnnouncementView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-violet-500/20">
-            <Megaphone className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-zinc-950 dark:text-white flex items-center gap-2">
-              System Updates & Announcements
-            </h1>
-            <p className="text-xs text-zinc-500">
-              Live enterprise system releases, infrastructure updates, and feature rollout changelogs
-            </p>
-          </div>
+    <div className="space-y-6 max-w-5xl mx-auto pb-12 select-text">
+      {/* Sleek Open Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+        <div>
+          <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+            <span>System Updates & Announcements</span>
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Enterprise system releases, infrastructure updates, and feature rollout changelogs
+          </p>
         </div>
 
         {isSystemOwner && (
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md shadow-violet-600/20 transition-all cursor-pointer w-fit"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Publish Update</span>
           </button>
         )}
@@ -135,99 +128,94 @@ export const AnnouncementView: React.FC = () => {
 
       {/* Announcements Timeline */}
       {isLoading ? (
-        <div className="p-12 text-center text-xs text-zinc-400">Loading system announcements...</div>
+        <div className="p-12 text-center text-xs text-zinc-400 font-mono">Loading announcements...</div>
       ) : announcements.length === 0 ? (
-        <div className="p-12 text-center space-y-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800">
-          <div className="w-16 h-16 rounded-3xl bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400 flex items-center justify-center mx-auto">
-            <Sparkles className="w-8 h-8" />
+        <div className="p-12 text-center space-y-2 bg-white dark:bg-[#0f1118] rounded-2xl border border-zinc-200/70 dark:border-white/[0.06]">
+          <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
+            <Sparkles className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             No System Updates Yet
           </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            System Administrators and System Owner post platform changelogs, scheduled maintenances, and feature releases here.
+          <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
+            Platform changelogs and announcements will appear here.
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {announcements.map((item) => (
             <div
               key={item.id}
-              className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs hover:border-violet-500/40 transition-colors space-y-5"
+              className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-colors space-y-3.5"
             >
               {/* Top metadata */}
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-800 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    {item.tag || "System Update"}
+                  <span className="px-2.5 py-0.5 rounded-full text-3xs font-medium bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    <span>{item.tag || "System Update"}</span>
                   </span>
 
                   {item.version && (
-                    <span className="px-2.5 py-0.5 rounded-lg text-2xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+                    <span className="px-2 py-0.2 rounded-md text-3xs font-mono bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-300">
                       {item.version}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-2xs text-zinc-400 font-mono">
-                  <Calendar className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-1 text-3xs text-zinc-400 font-mono">
+                  <Calendar className="w-3 h-3" />
                   <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
 
               {/* Title & Content */}
               <div>
-                <h2 className="text-lg font-bold text-zinc-950 dark:text-white mb-2">
+                <h2 className="text-sm font-bold text-zinc-950 dark:text-white mb-1.5">
                   {item.title}
                 </h2>
-                <div className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-50/70 dark:bg-zinc-950/50 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 font-sans">
+                <div className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line font-sans">
                   {item.content}
                 </div>
               </div>
 
               {/* Author footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800 text-2xs">
+              <div className="flex items-center justify-between pt-2.5 border-t border-zinc-100 dark:border-white/[0.04] text-3xs">
                 <div className="flex items-center gap-2">
                   <Avatar name={item.author?.name} size="sm" />
-                  <div>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                      {item.author?.name || "System Admin"}
-                    </span>
-                    <span className="text-zinc-400 ml-2 font-mono">
-                      ({item.author?.role || "System Management"})
-                    </span>
-                  </div>
+                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                    {item.author?.name || "System Admin"}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold font-mono">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Official Update</span>
+                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Official Announcement</span>
                 </div>
               </div>
 
               {/* Comments Section */}
-              <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  <MessageSquare className="w-4 h-4 text-violet-500" />
-                  <span>Discussion & Comments ({item.comments?.length || 0})</span>
+              <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.04] space-y-2.5">
+                <div className="flex items-center gap-1.5 text-2xs font-semibold text-zinc-600 dark:text-zinc-400">
+                  <MessageSquare className="w-3.5 h-3.5 text-violet-500" />
+                  <span>Discussion ({item.comments?.length || 0})</span>
                 </div>
 
                 {/* Comment list */}
                 {item.comments && item.comments.length > 0 && (
-                  <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                  <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
                     {item.comments.map((comment) => (
                       <div
                         key={comment.id}
-                        className="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/60 space-y-1"
+                        className="p-2.5 rounded-xl bg-zinc-50/70 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.04] space-y-1"
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <Avatar name={comment.user?.name} size="sm" />
-                            <span className="text-xs font-semibold text-zinc-900 dark:text-white">
+                            <span className="text-xs font-medium text-zinc-900 dark:text-white">
                               {comment.user?.name}
                             </span>
-                            <span className="text-3xs font-mono px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
+                            <span className="text-3xs font-mono px-1 py-0.2 rounded bg-zinc-200/70 dark:bg-white/[0.05] text-zinc-500">
                               {comment.user?.role || "MEMBER"}
                             </span>
                           </div>
@@ -247,7 +235,7 @@ export const AnnouncementView: React.FC = () => {
                 )}
 
                 {/* Comment input form */}
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-0.5">
                   <input
                     type="text"
                     value={commentInputs[item.id] || ""}
@@ -260,21 +248,21 @@ export const AnnouncementView: React.FC = () => {
                         handleAddComment(item.id);
                       }
                     }}
-                    placeholder="Write a comment or query on this update..."
-                    className="flex-1 px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                    placeholder="Write a response or question..."
+                    className="flex-1 px-3 py-1.5 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
                   />
                   <button
                     type="button"
                     disabled={submittingCommentId === item.id || !commentInputs[item.id]?.trim()}
                     onClick={() => handleAddComment(item.id)}
-                    className="px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     {submittingCommentId === item.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : (
                       <Send className="w-3.5 h-3.5" />
                     )}
-                    <span>Comment</span>
+                    <span>Send</span>
                   </button>
                 </div>
               </div>
@@ -285,56 +273,49 @@ export const AnnouncementView: React.FC = () => {
 
       {/* CREATE ANNOUNCEMENT MODAL */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-lg bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold">
-                <Megaphone className="w-5 h-5" />
-              </div>
-              <div>
-                <DialogTitle className="text-base font-bold">Publish System Update</DialogTitle>
-                <DialogDescription className="text-xs text-zinc-500">
-                  Broadcast official updates and changelogs to all workspace members
-                </DialogDescription>
-              </div>
-            </div>
+        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
+            <DialogTitle className="text-sm font-bold">Publish System Update</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Broadcast announcements and release notes to all workspace members
+            </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+          <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Update Title *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Work Graph 2.0 Release - Real-Time Socket.IO & Media Uploads"
+                placeholder="e.g. Work Graph 2.0 Release - Real-Time Communication"
                 required
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   Tag / Category
                 </label>
                 <select
                   value={tag}
                   onChange={(e) => setTag(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
                 >
                   <option value="System Update">System Update</option>
                   <option value="Major Release">Major Release</option>
                   <option value="Security Patch">Security Patch</option>
-                  <option value="Maintenance">Maintenance Window</option>
+                  <option value="Maintenance">Maintenance</option>
                   <option value="Feature Drop">Feature Drop</option>
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   Version
                 </label>
                 <input
@@ -342,48 +323,45 @@ export const AnnouncementView: React.FC = () => {
                   value={version}
                   onChange={(e) => setVersion(e.target.value)}
                   placeholder="e.g. v2.4.0"
-                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 font-mono"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 font-mono"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Changelog / Release Details *
               </label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={5}
-                placeholder="Detail what changes, improvements, and fixes were implemented in this system update..."
+                rows={4}
+                placeholder="Describe updates, fixes, and improvements implemented..."
                 required
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 leading-relaxed font-sans"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 leading-relaxed font-sans"
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={createAnnouncementMutation.isPending}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
               >
                 {createAnnouncementMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>Broadcasting...</span>
                   </>
                 ) : (
-                  <>
-                    <Plus className="w-4 h-4" />
-                    <span>Broadcast Update</span>
-                  </>
+                  <span>Broadcast Update</span>
                 )}
               </button>
             </div>

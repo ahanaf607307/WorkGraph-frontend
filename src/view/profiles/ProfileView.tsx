@@ -17,9 +17,7 @@ import {
   XCircle,
   Loader2,
   Search,
-  ExternalLink,
   ShieldCheck,
-  Building,
   User,
   Sparkles,
 } from "lucide-react";
@@ -159,29 +157,24 @@ export const ProfileView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-violet-500/20">
-            <Monitor className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-zinc-950 dark:text-white flex items-center gap-2">
-              Profiles & Client Portals
-            </h1>
-            <p className="text-xs text-zinc-500">
-              Company sales & client profiles across Upwork, Fiverr, and platforms with real-time station binding
-            </p>
-          </div>
+      {/* Sleek Open Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+        <div>
+          <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+            <span>Profiles & Client Portals</span>
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Registered agency and client profiles with real-time station binding
+          </p>
         </div>
 
         {isSystemAdmin && (
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md shadow-violet-600/20 transition-all cursor-pointer w-fit"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Add Profile</span>
           </button>
         )}
@@ -190,13 +183,13 @@ export const ProfileView: React.FC = () => {
       {/* Search & Filter */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search profiles, usernames, platforms..."
-            className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
           />
         </div>
       </div>
@@ -207,15 +200,15 @@ export const ProfileView: React.FC = () => {
           Loading platform profiles...
         </div>
       ) : filteredProfiles.length === 0 ? (
-        <div className="p-12 text-center space-y-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800">
-          <div className="w-16 h-16 rounded-3xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
-            <Sparkles className="w-8 h-8" />
+        <div className="p-12 text-center space-y-2 bg-white dark:bg-[#0f1118] rounded-2xl border border-zinc-200/70 dark:border-white/[0.06]">
+          <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
+            <Sparkles className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             No Profiles Registered
           </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            Add client platform profiles so Sales (Seals) department members can log into stations.
+          <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
+            Register client platform profiles so Sales department members can operate stations.
           </p>
         </div>
       ) : (
@@ -225,61 +218,59 @@ export const ProfileView: React.FC = () => {
             return (
               <div
                 key={p.id}
-                className="p-5 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs hover:border-violet-500/40 transition-all flex flex-col justify-between space-y-4"
+                className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-all flex flex-col justify-between space-y-3"
               >
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg text-3xs font-mono font-bold bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                    <span className="px-2 py-0.5 rounded-md text-3xs font-mono font-medium bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400">
                       {p.platform || "Platform"}
                     </span>
 
                     {activeStation ? (
-                      <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Station {activeStation.stationNumber} Active
+                      <span className="px-2 py-0.5 rounded-full text-3xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        Desk {activeStation.stationNumber}
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-400">
+                      <span className="px-2 py-0.5 rounded-full text-3xs text-zinc-400 bg-zinc-100 dark:bg-white/[0.03]">
                         Available
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <h3 className="text-base font-extrabold text-zinc-950 dark:text-white">
+                    <h3 className="text-sm font-bold text-zinc-950 dark:text-white">
                       {p.name}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-xs text-violet-600 dark:text-violet-400 font-mono font-semibold mt-0.5">
+                    <div className="flex items-center gap-1 text-xs text-violet-600 dark:text-violet-400 font-mono mt-0.5">
                       <span>@{p.username}</span>
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                     </div>
                   </div>
 
                   {p.service && (
-                    <div className="text-2xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                      <span className="font-semibold text-zinc-600 dark:text-zinc-300">
-                        Service Line:
-                      </span>
-                      <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 font-medium">
+                    <div className="text-2xs text-zinc-400 flex items-center gap-1.5 pt-0.5">
+                      <span>Service:</span>
+                      <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 font-medium">
                         {p.service.name}
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-2xs text-zinc-400">
+                <div className="pt-2.5 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between text-3xs text-zinc-400">
                   {activeStation?.currentUser ? (
                     <div className="flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-violet-500" />
-                      <span className="text-zinc-600 dark:text-zinc-300 font-medium">
-                        Occupant: {activeStation.currentUser.name}
+                      <User className="w-3 h-3 text-violet-500" />
+                      <span className="text-zinc-700 dark:text-zinc-300">
+                        {activeStation.currentUser.name}
                       </span>
                     </div>
                   ) : (
                     <span className="italic">No active occupant</span>
                   )}
 
-                  <span className="font-mono text-3xs">
+                  <span className="font-mono">
                     {new Date(p.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -291,24 +282,17 @@ export const ProfileView: React.FC = () => {
 
       {/* CREATE PROFILE MODAL */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold">
-                <Monitor className="w-5 h-5" />
-              </div>
-              <div>
-                <DialogTitle className="text-base font-bold">Add Platform Profile</DialogTitle>
-                <DialogDescription className="text-xs text-zinc-500">
-                  Register verified portal username with real-time validation
-                </DialogDescription>
-              </div>
-            </div>
+        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
+            <DialogTitle className="text-sm font-bold">Add Platform Profile</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Register portal account with real-time uniqueness validation
+            </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+          <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                 Profile Display Name *
               </label>
               <input
@@ -317,13 +301,13 @@ export const ProfileView: React.FC = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. AI Nest Main Account"
                 required
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   Profile Username *
                 </label>
                 {usernameChecking && (
@@ -334,8 +318,8 @@ export const ProfileView: React.FC = () => {
                 )}
                 {!usernameChecking && usernameStatus && (
                   <span
-                    className={`text-3xs font-mono font-bold flex items-center gap-1 ${
-                      usernameStatus.available ? "text-emerald-500" : "text-red-500"
+                    className={`text-3xs font-mono font-semibold flex items-center gap-1 ${
+                      usernameStatus.available ? "text-emerald-500" : "text-rose-500"
                     }`}
                   >
                     {usernameStatus.available ? (
@@ -358,28 +342,25 @@ export const ProfileView: React.FC = () => {
                 onChange={(e) => setUsername(e.target.value.toLowerCase().trim())}
                 placeholder="e.g. ai_nest"
                 required
-                className={`w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border text-xs focus:outline-none font-mono ${
+                className={`w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border text-xs focus:outline-none font-mono ${
                   usernameStatus
                     ? usernameStatus.available
-                      ? "border-emerald-500 focus:border-emerald-500"
-                      : "border-red-500 focus:border-red-500"
-                    : "border-zinc-200 dark:border-zinc-800 focus:border-violet-500"
+                      ? "border-emerald-500/80 focus:border-emerald-500"
+                      : "border-rose-500/80 focus:border-rose-500"
+                    : "border-zinc-200 dark:border-white/[0.08] focus:border-violet-500"
                 }`}
               />
-              <p className="text-3xs text-zinc-400">
-                Must be unique per workspace. Verified live before usage.
-              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   Platform
                 </label>
                 <select
                   value={platform}
                   onChange={(e) => setPlatform(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
                 >
                   <option value="Upwork">Upwork</option>
                   <option value="Fiverr">Fiverr</option>
@@ -389,14 +370,14 @@ export const ProfileView: React.FC = () => {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   Service Line
                 </label>
                 <select
                   value={serviceId}
                   onChange={(e) => setServiceId(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
                 >
                   <option value="">No restriction</option>
                   {services.map((s) => (
@@ -408,18 +389,18 @@ export const ProfileView: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving || (usernameStatus !== null && !usernameStatus.available)}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
               >
                 {saving ? "Registering..." : "Register Profile"}
               </button>

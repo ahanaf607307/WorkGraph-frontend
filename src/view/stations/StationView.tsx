@@ -11,13 +11,11 @@ import {
   Monitor,
   LogIn,
   LogOut,
-  User,
-  ShieldAlert,
-  Sparkles,
   Search,
   CheckCircle2,
   Clock,
   Layers,
+  Sparkles,
 } from "lucide-react";
 import { Avatar } from "../../components/ui/avatar";
 import {
@@ -65,7 +63,6 @@ export const StationView: React.FC = () => {
   const myOccupiedStation = stations.find((s) => s.currentUser?.id === user?.id);
 
   // Filter profiles eligible for this member:
-  // If member has assigned serviceId, enforce that profile matches their service line!
   const eligibleProfiles = profiles.filter((p) => {
     if (currentOrg?.serviceId && p.serviceId) {
       return p.serviceId === currentOrg.serviceId;
@@ -115,14 +112,10 @@ export const StationView: React.FC = () => {
     }
   };
 
-  const handleLeave = async (stationId: string, stationNumber: number) => {
-    if (!confirm(`Are you sure you want to log out and leave Station ${stationNumber}?`)) {
-      return;
-    }
-
+  const handleLeave = async (stationId: string, stationNum: number) => {
     try {
       await stationActions.leaveStation(stationId);
-      toast.success(`Left Station ${stationNumber}`);
+      toast.success(`Left Station ${stationNum}`);
       loadData();
     } catch (err: any) {
       toast.error(err.message || "Failed to leave station");
@@ -130,35 +123,30 @@ export const StationView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-violet-500/20">
-            <Monitor className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-zinc-950 dark:text-white flex items-center gap-2">
-              Sales Operational Stations
-            </h1>
-            <p className="text-xs text-zinc-500">
-              Station desk units for Sales (Seals) department members to log into active client portal profiles
-            </p>
-          </div>
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {/* Sleek, Uncluttered Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
+        <div>
+          <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+            <span>Sales Operational Stations</span>
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Real-time desk units for Sales members to join and operate client profiles
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {myOccupiedStation ? (
-            <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-xs">
-              <span className="font-mono font-bold text-violet-600 dark:text-violet-400">
-                You are on Station {myOccupiedStation.stationNumber}
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs">
+              <span className="font-medium text-violet-600 dark:text-violet-400">
+                Desk {myOccupiedStation.stationNumber} Active
               </span>
               <button
                 type="button"
                 onClick={() =>
                   handleLeave(myOccupiedStation.id, myOccupiedStation.stationNumber)
                 }
-                className="px-3 py-1 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-2xs transition-colors cursor-pointer flex items-center gap-1"
+                className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:text-rose-400 text-2xs font-semibold transition-colors cursor-pointer flex items-center gap-1"
               >
                 <LogOut className="w-3 h-3" />
                 <span>Leave</span>
@@ -168,21 +156,21 @@ export const StationView: React.FC = () => {
             <button
               type="button"
               onClick={() => handleOpenJoin()}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md shadow-violet-600/20 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer"
             >
-              <LogIn className="w-4 h-4" />
+              <LogIn className="w-3.5 h-3.5" />
               <span>Join Station</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Service Line Notice Banner */}
+      {/* Service Line Notice (Subtle, Not Loud) */}
       {currentOrg?.serviceId && (
-        <div className="p-4 rounded-2xl bg-violet-50/50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-900/40 flex items-center gap-3 text-xs text-violet-700 dark:text-violet-300">
-          <Layers className="w-4 h-4 shrink-0" />
+        <div className="px-3.5 py-2.5 rounded-xl bg-violet-50/60 dark:bg-violet-950/20 border border-violet-200/60 dark:border-violet-900/30 flex items-center gap-2.5 text-xs text-violet-700 dark:text-violet-300">
+          <Layers className="w-4 h-4 shrink-0 text-violet-500" />
           <span>
-            You have an assigned Service Line restriction. You are authorized to join and operate client profiles matching your designated service line.
+            Operating under an assigned Service Line restriction. Available client profiles are filtered to your designated specialization.
           </span>
         </div>
       )}
@@ -193,7 +181,7 @@ export const StationView: React.FC = () => {
           Loading operational stations...
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {stations.map((st) => {
             const isOccupied = st.status === "OCCUPIED" && st.currentUser;
             const isMe = st.currentUser?.id === user?.id;
@@ -201,126 +189,124 @@ export const StationView: React.FC = () => {
             return (
               <div
                 key={st.id}
-                className={`p-6 rounded-3xl border transition-all flex flex-col justify-between space-y-5 shadow-xs ${
+                className={`p-5 rounded-2xl border transition-all flex flex-col justify-between min-h-[220px] ${
                   isMe
-                    ? "bg-violet-50/30 dark:bg-violet-950/20 border-violet-500 shadow-violet-500/10"
+                    ? "bg-violet-50/20 dark:bg-violet-950/15 border-violet-500/60 ring-1 ring-violet-500/20"
                     : isOccupied
-                    ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
-                    : "bg-white dark:bg-zinc-900/60 border-dashed border-zinc-300 dark:border-zinc-800 hover:border-violet-500/50"
+                    ? "bg-white dark:bg-[#0f1118] border-zinc-200/70 dark:border-white/[0.06] shadow-xs"
+                    : "bg-white/60 dark:bg-[#0f1118]/40 border-dashed border-zinc-300/80 dark:border-white/[0.08] hover:border-violet-500/40"
                 }`}
               >
-                {/* Station Card Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs ${
-                        isOccupied
-                          ? "bg-violet-600 text-white shadow-xs"
-                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 font-mono"
-                      }`}
-                    >
-                      S{st.stationNumber}
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-extrabold text-zinc-950 dark:text-white">
+                {/* Header */}
+                <div>
+                  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-white/[0.04]">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${
+                          isOccupied
+                            ? "bg-violet-600 text-white"
+                            : "bg-zinc-100 dark:bg-white/[0.05] text-zinc-500"
+                        }`}
+                      >
+                        S{st.stationNumber}
+                      </div>
+                      <span className="text-xs font-bold text-zinc-900 dark:text-white">
                         Station {st.stationNumber}
-                      </h3>
-                      <span className="text-3xs text-zinc-400 font-mono">
-                        Workspace Unit
                       </span>
                     </div>
+
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-3xs font-semibold uppercase tracking-wider flex items-center gap-1 ${
+                        isOccupied
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          : "bg-zinc-100 dark:bg-white/[0.04] text-zinc-400"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          isOccupied ? "bg-emerald-500" : "bg-zinc-400"
+                        }`}
+                      />
+                      <span>{isOccupied ? "Occupied" : "Available"}</span>
+                    </span>
                   </div>
 
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-3xs font-mono font-bold uppercase tracking-wider ${
-                      isOccupied
-                        ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"
-                    }`}
-                  >
-                    {isOccupied ? "Occupied" : "Available"}
-                  </span>
-                </div>
-
-                {/* Body Content */}
-                {isOccupied ? (
-                  <div className="space-y-4">
-                    {/* Active Occupant */}
-                    <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/60 space-y-2">
-                      <div className="text-3xs text-zinc-400 font-mono uppercase tracking-wider">
-                        Active Sales Member
-                      </div>
+                  {/* Body Content */}
+                  {isOccupied ? (
+                    <div className="pt-3 space-y-3">
+                      {/* Occupant Row */}
                       <div className="flex items-center gap-2.5">
                         <Avatar name={st.currentUser?.name} size="sm" />
-                        <div className="truncate">
-                          <div className="text-xs font-bold text-zinc-900 dark:text-white truncate flex items-center gap-1.5">
+                        <div className="truncate flex-1">
+                          <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-1.5">
                             <span>{st.currentUser?.name}</span>
                             {isMe && (
-                              <span className="text-3xs font-mono bg-violet-500 text-white px-1.5 py-0.2 rounded font-bold">
+                              <span className="text-3xs font-mono bg-violet-600 text-white px-1.5 py-0.2 rounded font-bold">
                                 You
                               </span>
                             )}
                           </div>
-                          <div className="text-3xs text-zinc-400 font-mono">
+                          <div className="text-3xs text-zinc-400 truncate">
                             {st.currentUser?.email}
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Active Profile */}
-                    {st.currentProfile && (
-                      <div className="p-3.5 rounded-2xl bg-violet-500/5 dark:bg-violet-950/30 border border-violet-500/15 space-y-1">
-                        <div className="text-3xs text-violet-500 font-mono uppercase tracking-wider flex items-center justify-between">
-                          <span>Operating Profile</span>
-                          <span>{st.currentProfile.platform || "Upwork"}</span>
-                        </div>
-                        <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
-                          {st.currentProfile.name}
-                        </div>
-                        <div className="text-2xs text-violet-600 dark:text-violet-400 font-mono font-semibold">
-                          @{st.currentProfile.username}
-                        </div>
-                        {st.currentProfile.service && (
-                          <div className="text-3xs text-zinc-400 pt-0.5">
-                            Line: {st.currentProfile.service.name}
+                      {/* Profile Tag */}
+                      {st.currentProfile && (
+                        <div className="p-2 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.04] text-xs">
+                          <div className="flex items-center justify-between text-3xs text-zinc-400">
+                            <span>Profile</span>
+                            <span>{st.currentProfile.platform || "Portal"}</span>
                           </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="py-6 text-center space-y-2">
-                    <Monitor className="w-8 h-8 text-zinc-300 dark:text-zinc-700 mx-auto" />
-                    <p className="text-xs text-zinc-400">Desk unit is vacant and ready</p>
-                  </div>
-                )}
-
-                {/* Footer Actions */}
-                <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-2xs">
-                  {isOccupied && st.joinedAt ? (
-                    <div className="flex items-center gap-1 text-zinc-400 font-mono text-3xs">
-                      <Clock className="w-3 h-3" />
-                      <span>Since {new Date(st.joinedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                          <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate mt-0.5">
+                            {st.currentProfile.name}
+                          </div>
+                          <div className="text-3xs font-mono text-violet-600 dark:text-violet-400">
+                            @{st.currentProfile.username}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
-                    <span className="text-3xs font-mono text-zinc-400">Open Desk</span>
+                    <div className="py-6 text-center space-y-1">
+                      <Monitor className="w-6 h-6 text-zinc-300 dark:text-zinc-700 mx-auto" />
+                      <p className="text-2xs text-zinc-400">Vacant Desk Unit</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between">
+                  {isOccupied && st.joinedAt ? (
+                    <div className="flex items-center gap-1 text-zinc-400 text-3xs font-mono">
+                      <Clock className="w-3 h-3" />
+                      <span>
+                        Since{" "}
+                        {new Date(st.joinedAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-3xs text-zinc-400">Ready</span>
                   )}
 
                   {isMe ? (
                     <button
                       type="button"
                       onClick={() => handleLeave(st.id, st.stationNumber)}
-                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-400 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:text-rose-400 text-2xs font-semibold transition-all cursor-pointer flex items-center gap-1"
                     >
                       <LogOut className="w-3 h-3" />
-                      <span>Leave Station</span>
+                      <span>Leave</span>
                     </button>
                   ) : !isOccupied ? (
                     <button
                       type="button"
                       onClick={() => handleOpenJoin(st.stationNumber)}
-                      className="px-3.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                      className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-2xs font-semibold transition-all cursor-pointer flex items-center gap-1"
                     >
                       <LogIn className="w-3 h-3" />
                       <span>Join Desk</span>
@@ -335,30 +321,23 @@ export const StationView: React.FC = () => {
 
       {/* JOIN STATION MODAL WITH PROFILE AUTO-SUGGEST */}
       <Dialog open={showJoinModal} onOpenChange={setShowJoinModal}>
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold">
-                <LogIn className="w-5 h-5" />
-              </div>
-              <div>
-                <DialogTitle className="text-base font-bold">Join Sales Station</DialogTitle>
-                <DialogDescription className="text-xs text-zinc-500">
-                  Select a station desk and your active portal profile
-                </DialogDescription>
-              </div>
-            </div>
+        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
+            <DialogTitle className="text-sm font-bold">Join Sales Station</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Select a desk unit and your operating client portal profile
+            </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleJoinSubmit} className="p-6 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                Station Desk Unit *
+          <form onSubmit={handleJoinSubmit} className="p-5 space-y-4">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Station Desk Unit
               </label>
               <select
                 value={selectedStationNumber}
                 onChange={(e) => setSelectedStationNumber(Number(e.target.value))}
-                className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 cursor-pointer"
               >
                 {stations.map((st) => (
                   <option key={st.id} value={st.stationNumber}>
@@ -369,10 +348,10 @@ export const StationView: React.FC = () => {
             </div>
 
             {/* Profile Auto-Suggest Search & Select */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300 flex items-center justify-between">
-                <span>Select Operating Profile *</span>
-                <span className="text-3xs font-mono text-zinc-400">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 flex items-center justify-between">
+                <span>Select Client Profile</span>
+                <span className="text-3xs text-zinc-400 font-mono">
                   {searchedProfiles.length} available
                 </span>
               </label>
@@ -383,37 +362,37 @@ export const StationView: React.FC = () => {
                   type="text"
                   value={profileSearch}
                   onChange={(e) => setProfileSearch(e.target.value)}
-                  placeholder="Auto-suggest profile (e.g. ai_nest)..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs focus:outline-none focus:border-violet-500"
+                  placeholder="Search profile name or username..."
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
                 />
               </div>
 
               {searchedProfiles.length === 0 ? (
-                <div className="p-4 text-center text-xs text-zinc-400 border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-900">
-                  No profiles matching your query or service line restriction.
+                <div className="p-4 text-center text-xs text-zinc-400 border border-zinc-200/60 dark:border-white/[0.06] rounded-xl bg-zinc-50 dark:bg-white/[0.02]">
+                  No profiles matching your query.
                 </div>
               ) : (
-                <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 border border-zinc-100 dark:border-zinc-800 rounded-xl p-1.5">
+                <div className="max-h-48 overflow-y-auto space-y-1 pr-1 border border-zinc-100 dark:border-white/[0.04] rounded-xl p-1">
                   {searchedProfiles.map((p) => {
                     const isSelected = selectedProfileId === p.id;
                     return (
                       <div
                         key={p.id}
                         onClick={() => setSelectedProfileId(p.id)}
-                        className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between ${
+                        className={`p-2 rounded-lg cursor-pointer transition-all flex items-center justify-between ${
                           isSelected
-                            ? "bg-violet-600 text-white shadow-xs"
-                            : "hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-900 dark:text-zinc-100"
+                            ? "bg-violet-600 text-white"
+                            : "hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-zinc-900 dark:text-zinc-100"
                         }`}
                       >
                         <div className="truncate">
-                          <div className="text-xs font-bold truncate">{p.name}</div>
+                          <div className="text-xs font-semibold truncate">{p.name}</div>
                           <div
                             className={`text-3xs font-mono truncate ${
                               isSelected ? "text-violet-100" : "text-violet-600 dark:text-violet-400"
                             }`}
                           >
-                            @{p.username} • {p.platform || "Upwork"}
+                            @{p.username} • {p.platform || "Portal"}
                           </div>
                         </div>
 
@@ -425,20 +404,20 @@ export const StationView: React.FC = () => {
               )}
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
               <button
                 type="button"
                 onClick={() => setShowJoinModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={joining || !selectedProfileId}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
               >
-                {joining ? "Logging in..." : "Join Station"}
+                {joining ? "Joining..." : "Confirm & Join"}
               </button>
             </div>
           </form>
