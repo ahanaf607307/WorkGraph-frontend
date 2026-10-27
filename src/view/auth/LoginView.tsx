@@ -26,7 +26,7 @@ export const LoginView: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "admin@test.com",
+      email: "systemadmin@test.com",
       password: "123456",
     },
   });
@@ -50,9 +50,12 @@ export const LoginView: React.FC = () => {
     }
   };
 
-  const setDemoAccount = (email: string) => {
-    setValue("email", email);
-    setValue("password", "123456");
+  const setDemoAccount = (email: string, roleName: string) => {
+    setValue("email", email, { shouldValidate: true, shouldDirty: true });
+    setValue("password", "123456", { shouldValidate: true, shouldDirty: true });
+    toast.info(`Filled credentials for ${roleName}`, {
+      description: `${email} • Password: 123456`,
+    });
   };
 
   return (
@@ -109,7 +112,7 @@ export const LoginView: React.FC = () => {
               Sign in to Work Graph
             </h2>
             <p className="mt-2 text-sm text-zinc-500">
-              Enter your credentials to access your enterprise workspace.
+              Select any role below to auto-fill test credentials and sign in.
             </p>
           </div>
 
@@ -133,56 +136,101 @@ export const LoginView: React.FC = () => {
             />
 
             <Button type="submit" variant="primary" size="lg" className="w-full mt-2" isLoading={isLoading}>
-              Sign In <ArrowRight className="w-4 h-4 ml-2" />
+              Sign In to Workspace <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </form>
 
-          {/* Quick Demo Credentials */}
-          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-              Quick Test Accounts (Password: 123456)
+          {/* Quick Demo Credentials for All System Roles */}
+          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-2xs font-bold text-zinc-400 uppercase tracking-wider font-mono">
+                Test Role Logins (1-Click Fillup)
+              </span>
+              <span className="text-3xs bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 font-bold px-1.5 py-0.5 rounded">
+                Password: 123456
+              </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* System Owner */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("admin@test.com")}
-                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                onClick={() => setDemoAccount("system@test.com", "System Owner")}
+                className="p-3 text-xs font-medium text-left rounded-xl border border-purple-300/80 dark:border-purple-700/60 bg-purple-50/50 dark:bg-purple-950/20 hover:border-purple-500 hover:bg-purple-100/60 dark:hover:bg-purple-900/30 transition-all cursor-pointer shadow-2xs group"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Owner / GM</div>
-                <div className="text-zinc-400 truncate">admin@test.com</div>
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                    👑 System Owner
+                  </span>
+                  <span className="text-3xs font-mono font-bold bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-1.5 py-0.2 rounded">Platform Head</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Platform overview & company approvals</div>
+                <div className="text-3xs text-purple-600 dark:text-purple-400 font-mono mt-1 font-semibold">system@test.com</div>
               </button>
+
+              {/* System Admin */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("user1@test.com")}
-                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                onClick={() => setDemoAccount("systemadmin@test.com", "System Admin")}
+                className="p-3 text-xs font-medium text-left rounded-xl border border-amber-300/80 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/20 hover:border-amber-500 hover:bg-amber-100/60 dark:hover:bg-amber-900/30 transition-all cursor-pointer shadow-2xs group"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Operation Mgr (Multi-Squad)</div>
-                <div className="text-zinc-400 truncate">user1@test.com</div>
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                    🏢 System Admin
+                  </span>
+                  <span className="text-3xs font-mono font-bold bg-amber-400 text-black px-1.5 py-0.2 rounded">Company Head</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Manages Depts, Designations & Titles</div>
+                <div className="text-3xs text-amber-600 dark:text-amber-400 font-mono mt-1 font-semibold">systemadmin@test.com</div>
               </button>
+
+              {/* Admin */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("user2@test.com")}
-                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                onClick={() => setDemoAccount("admin@test.com", "Admin")}
+                className="p-3 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-orange-400 dark:hover:border-orange-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Team Leader</div>
-                <div className="text-zinc-400 truncate">user2@test.com</div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                    🛡️ Admin
+                  </span>
+                  <span className="text-3xs font-mono bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.2 rounded">Ops Admin</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Squads, Projects, Operations Manager</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-1">admin@test.com</div>
               </button>
+
+              {/* Member */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("user3@test.com")}
-                className="p-2 text-xs font-medium text-left rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-amber-400 dark:hover:border-amber-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                onClick={() => setDemoAccount("user2@test.com", "Member")}
+                className="p-3 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-orange-400 dark:hover:border-orange-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
               >
-                <div className="font-bold text-amber-600 dark:text-amber-400">Squad Engineer</div>
-                <div className="text-zinc-400 truncate">user3@test.com</div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                    👥 Member
+                  </span>
+                  <span className="text-3xs font-mono bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.2 rounded">Team Lead</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Team deliverables, squad chat & tasks</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-1">user2@test.com</div>
               </button>
             </div>
           </div>
 
-          <div className="text-center text-sm text-zinc-500">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
-              Create workspace
-            </Link>
+          <div className="text-center text-sm text-zinc-500 space-y-2">
+            <div>
+              Are you an employee or team member?{" "}
+              <Link href="/register/member" className="font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
+                Sign up with Employee ID →
+              </Link>
+            </div>
+            <div>
+              Registering a new company?{" "}
+              <Link href="/register" className="font-bold text-zinc-900 dark:text-white hover:underline cursor-pointer">
+                Create company workspace
+              </Link>
+            </div>
           </div>
         </div>
       </div>

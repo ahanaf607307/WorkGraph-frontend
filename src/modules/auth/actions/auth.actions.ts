@@ -59,4 +59,23 @@ export const authActions = {
   getProfile: async (): Promise<User> => {
     return apiClient<User>("/user/profile/me");
   },
+
+  registerMember: async (data: any): Promise<any> => {
+    const { confirmPassword, ...payload } = data;
+    return apiClient<any>("/user/register-member", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  verifyEmail: async (data: { email: string; code: string }): Promise<any> => {
+    return apiClient<any>("/user/verify-email", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getPublicWorkspaces: async (): Promise<any[]> => {
+    return apiClient<any[]>("/user/workspaces");
+  },
 };
