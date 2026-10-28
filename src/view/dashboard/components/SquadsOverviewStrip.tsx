@@ -34,7 +34,7 @@ export const SquadsOverviewStrip: React.FC<SquadsOverviewStripProps> = ({ allTea
                 {team.name}
               </span>
               <span className="text-3xs font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
-                {team._count?.members || 0} members
+                {(team.members?.length ?? team._count?.members ?? 0) + (team.leaderId || team.leader ? 1 : 0) + (team.coLeaderId || team.coLeader ? 1 : 0)} members
               </span>
             </div>
 

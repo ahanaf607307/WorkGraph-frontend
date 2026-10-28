@@ -73,6 +73,37 @@ export const DashboardView: React.FC = () => {
 
   const allTeams = departments.flatMap((d) => d.teams || []);
 
+  const orgRole = (currentOrg?.myRole || "").toUpperCase();
+  const userRole = (user?.role || "").toUpperCase();
+  const isWorkspaceAdminOrAdmin =
+    userRole === "SYSTEM_OWNER" ||
+    userRole === "SYSTEM_ADMIN" ||
+    userRole === "WORKSPACE_ADMIN" ||
+    orgRole === "SYSTEM_ADMIN" ||
+    orgRole === "WORKSPACE_ADMIN" ||
+    orgRole === "ADMIN" ||
+    orgRole === "OWNER";
+
+  const userTeamIds = React.useMemo(() => {
+    if (isWorkspaceAdminOrAdmin) return [];
+    const set = new Set<string>();
+    if (currentOrg?.teamId) set.add(currentOrg.teamId);
+    allTeams.forEach((t) => {
+      if (t.leaderId === user?.id || t.coLeaderId === user?.id) set.add(t.id);
+      if (t.members?.some((m: any) => m.userId === user?.id || m.user?.id === user?.id)) set.add(t.id);
+    });
+    return Array.from(set);
+  }, [isWorkspaceAdminOrAdmin, currentOrg?.teamId, allTeams, user?.id]);
+
+  const scopedTeams = isWorkspaceAdminOrAdmin
+    ? allTeams
+    : allTeams.filter((t) => userTeamIds.includes(t.id));
+
+  const scopedProjects = React.useMemo(() => {
+    if (isWorkspaceAdminOrAdmin || !projects) return projects;
+    return projects.filter((p) => p.teamId && userTeamIds.includes(p.teamId));
+  }, [isWorkspaceAdminOrAdmin, projects, userTeamIds]);
+
   return (
     <div className="w-full space-y-6 select-none">
       {/* 1. Executive Hero Banner */}
@@ -88,8 +119,8 @@ export const DashboardView: React.FC = () => {
         <DashboardMetricCards
           overview={overview}
           isLoading={loadingOverview}
-          totalTeamsCount={allTeams.length}
-          departmentsCount={departments.length}
+          totalTeamsCount={scopedTeams.length}
+          departmentsCount={isWorkspaceAdminOrAdmin ? departments.length : (scopedTeams.length > 0 ? 1 : 0)}
         />
 
         {/* Sprint Velocity & Task Status Distribution Charts */}
@@ -102,11 +133,11 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Departments & Squads Overview Strip */}
-        <SquadsOverviewStrip allTeams={allTeams} />
+        <SquadsOverviewStrip allTeams={scopedTeams} />
 
         {/* Recent Projects & Risk Engine Bottlenecks */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-          <RecentProjectsCard projects={projects} isLoading={loadingProjects} />
+          <RecentProjectsCard projects={scopedProjects} isLoading={loadingProjects} />
           <RiskBottlenecksCard highRiskTasks={highRiskTasks} isLoading={loadingRisks} />
         </div>
 

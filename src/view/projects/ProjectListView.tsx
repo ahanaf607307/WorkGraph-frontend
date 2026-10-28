@@ -21,12 +21,34 @@ import { formatDate } from "../../lib/utils";
 
 export const ProjectListView: React.FC = () => {
   const router = useRouter();
-  const { currentOrg } = useAuth();
+  const { currentOrg, user } = useAuth();
   const orgId = currentOrg?.id;
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const orgRole = (currentOrg?.myRole || "").toUpperCase();
+  const userRole = (user?.role || "").toUpperCase();
+  const designation = ((currentOrg as any)?.designation || "").toUpperCase();
+
+  const isPrivileged =
+    userRole === "SYSTEM_OWNER" ||
+    userRole === "SYSTEM_ADMIN" ||
+    userRole === "WORKSPACE_ADMIN" ||
+    orgRole === "SYSTEM_ADMIN" ||
+    orgRole === "WORKSPACE_ADMIN" ||
+    orgRole === "ADMIN" ||
+    orgRole === "OWNER";
+
+  const isLeaderOrManager =
+    orgRole === "TEAM_LEADER" ||
+    orgRole === "CO_LEADER" ||
+    userRole === "TEAM_LEADER" ||
+    userRole === "CO_LEADER" ||
+    ["TEAM_LEADER", "CO_LEADER", "PROJECT_MANAGER", "OPERATION_MANAGER", "GENERAL_MANAGER", "ASSISTANT_GENERAL_MANAGER", "HEAD_OF_TECHNICAL_OPERATIONS"].includes(designation);
+
+  const canCreateProject = isPrivileged || isLeaderOrManager;
 
   const { data: projects, isLoading } = useQuery({
     queryKey: ["projects", orgId, statusFilter, search],
@@ -46,9 +68,11 @@ export const ProjectListView: React.FC = () => {
             Manage your organization&apos;s development initiatives, deliverables, and team roadmaps.
           </p>
         </div>
-        <Button variant="primary" size="md" onClick={() => setIsModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-1.5" /> Create Project
-        </Button>
+        {canCreateProject && (
+          <Button variant="primary" size="md" onClick={() => setIsModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-1.5" /> Create Project
+          </Button>
+        )}
       </div>
 
       {/* Filter and Search Bar */}
@@ -94,8 +118,8 @@ export const ProjectListView: React.FC = () => {
               ? "No projects match your current filters. Try resetting search."
               : "Your organization does not have any active projects yet."
           }
-          actionLabel="Create First Project"
-          onAction={() => setIsModalOpen(true)}
+          actionLabel={canCreateProject ? "Create First Project" : undefined}
+          onAction={canCreateProject ? () => setIsModalOpen(true) : undefined}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
