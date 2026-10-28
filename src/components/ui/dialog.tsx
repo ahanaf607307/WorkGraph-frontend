@@ -96,9 +96,10 @@ export const DialogContent: React.FC<{
         <button
           type="button"
           onClick={() => ctx.onOpenChange(false)}
-          className="absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-50 p-2 text-zinc-400 hover:text-zinc-950 dark:hover:text-white rounded-xl hover:bg-zinc-100 dark:hover:bg-white/[0.08] transition-all cursor-pointer pointer-events-auto shadow-xs border border-transparent dark:border-white/[0.04]"
+          title="Close dialog"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
           <span className="sr-only">Close</span>
         </button>
 
@@ -112,7 +113,7 @@ export const DialogHeader: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className }) => (
-  <div className={cn("flex flex-col space-y-1.5 text-left mb-4 pr-6", className)}>
+  <div className={cn("flex flex-col space-y-1.5 text-left mb-4 pr-12 relative", className)}>
     {children}
   </div>
 );

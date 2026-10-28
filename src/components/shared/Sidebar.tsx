@@ -23,6 +23,9 @@ import {
   AlertCircle,
   Table,
   Newspaper,
+  Inbox,
+  BarChart3,
+  Video,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { cn } from "../../lib/utils";
@@ -51,12 +54,31 @@ export const Sidebar: React.FC = () => {
     currentOrg?.myRole === "ADMIN" ||
     user?.role === "SYSTEM_OWNER";
 
+  const isPrivileged =
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "system_owner" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    currentOrg?.myRole === "ADMIN";
+
+  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
+  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
+  const isSalesMember =
+    !isPrivileged &&
+    (deptName.includes("sale") || deptName.includes("seal") || deptCode === "SALES" || user?.email?.toLowerCase().includes("sales"));
+
+  const isLeaderOrCoLeader =
+    (currentOrg as any)?.designation === "TEAM_LEADER" ||
+    (currentOrg as any)?.designation === "CO_LEADER";
+
+  const canAccessManagementDirectory = isSystemAdminOrAdmin || isLeaderOrCoLeader;
+
   const sections: NavSection[] = isSystemOwner
     ? [
         {
           items: [
             { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-            { label: "News Feed", href: "/newsfeed", icon: Newspaper },
             { label: "Approval Queue", href: "/workspaces", icon: Layers },
             { label: "Announcements", href: "/announcements", icon: Megaphone },
           ],
@@ -67,9 +89,10 @@ export const Sidebar: React.FC = () => {
           title: "Main",
           items: [
             { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-            { label: "News Feed", href: "/newsfeed", icon: Newspaper },
             { label: "Projects", href: "/projects", icon: FolderKanban },
-            { label: "Team", href: "/team", icon: Users },
+            ...(!isSalesMember ? [{ label: "Team", href: "/team", icon: Users }] : []),
+            { label: "Workload", href: "/workload", icon: BarChart3 },
+            { label: "Meeting", href: "/meeting", icon: Video },
           ],
         },
         {
@@ -78,14 +101,24 @@ export const Sidebar: React.FC = () => {
             { label: "Stations", href: "/stations", icon: Monitor },
             { label: "Update Sheet", href: "/updates", icon: Table },
             { label: "Issue Sheet", href: "/issues", icon: HelpCircle },
+            { label: "Queue", href: "/queue", icon: Inbox },
           ],
         },
         {
           title: "Directory & Goals",
           items: [
-            { label: "Departments", href: "/departments", icon: Building2 },
-            { label: "Services", href: "/services", icon: Layers },
-            { label: "Client Profiles", href: "/profiles", icon: Monitor },
+            ...(canAccessManagementDirectory
+              ? [
+                  { label: "Departments", href: "/departments", icon: Building2 },
+                  { label: "Services", href: "/services", icon: Layers },
+                ]
+              : []),
+            ...(canAccessManagementDirectory || isSalesMember
+              ? [
+                  { label: "Client Profiles", href: "/profiles", icon: Monitor },
+                  { label: "Client Meeting", href: "/client-meetings", icon: Video },
+                ]
+              : []),
             { label: "Targets", href: "/targets", icon: Target },
           ],
         },
@@ -95,7 +128,9 @@ export const Sidebar: React.FC = () => {
             { label: "Attendance", href: "/attendance", icon: CalendarCheck2 },
             { label: "Notice Board", href: "/notices", icon: BellRing },
             { label: "Complaints Vault", href: "/complains", icon: AlertCircle },
-            { label: "Activity Log", href: "/analytics", icon: Activity },
+            ...(isSystemAdminOrAdmin || isLeaderOrCoLeader
+              ? [{ label: "Activity Log", href: "/activity", icon: Activity }]
+              : []),
           ],
         },
         ...(isSystemAdminOrAdmin

@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { MessageSquare, Clock, Users, RefreshCw, LogOut } from "lucide-react";
+import { MessageSquare, Clock, Users, RefreshCw, LogOut, Newspaper } from "lucide-react";
 
 export const AppLayout: React.FC<{
   children: React.ReactNode;
@@ -57,8 +57,45 @@ export const AppLayout: React.FC<{
     currentOrg &&
     (currentOrg.isApproved === false || currentOrg.membershipStatus === "PENDING");
 
+  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
+  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
+  const designationName = (currentOrg as any)?.designationRel?.name?.toLowerCase() || "";
+  const customDesig = (currentOrg as any)?.customDesignation?.toLowerCase() || "";
+  const serviceName = (currentOrg as any)?.service?.name?.toLowerCase() || "";
+  const userEmail = user?.email?.toLowerCase() || "";
+  const userName = user?.name?.toLowerCase() || "";
+
+  const isSalesMember =
+    deptName.includes("sale") ||
+    deptName.includes("seal") ||
+    deptCode === "SALES" ||
+    (currentOrg as any)?.designation === "SALES" ||
+    designationName.includes("sale") ||
+    designationName.includes("seal") ||
+    customDesig.includes("sale") ||
+    customDesig.includes("seal") ||
+    serviceName.includes("sale") ||
+    serviceName.includes("seal") ||
+    userEmail.includes("sale") ||
+    userEmail.includes("seal") ||
+    userName.includes("sale") ||
+    userName.includes("seal");
+
+  const isPrivileged =
+    isSystemOwner ||
+    currentOrg?.myRole === "OWNER" ||
+    currentOrg?.myRole === "ADMIN" ||
+    (currentOrg as any)?.designation === "TEAM_LEADER" ||
+    (currentOrg as any)?.designation === "CO_LEADER" ||
+    (currentOrg as any)?.designation === "OPERATION_MANAGER" ||
+    (currentOrg as any)?.designation === "GENERAL_MANAGER";
+
+  const hasService = Boolean((currentOrg as any)?.serviceId);
+
   const isWaitingTeamAssignment =
-    !isSystemOwner &&
+    !isPrivileged &&
+    !isSalesMember &&
+    !hasService &&
     currentOrg &&
     currentOrg.isApproved !== false &&
     currentOrg.membershipStatus !== "PENDING" &&
@@ -180,6 +217,15 @@ export const AppLayout: React.FC<{
               <span>Sign Out</span>
             </button>
           </div>
+
+          <div className="pt-2 border-t border-zinc-100 dark:border-white/[0.04]">
+            <Link
+              href="/stations"
+              className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:underline flex items-center justify-center gap-1.5"
+            >
+              <span>Sales / Station Member? Proceed to Operational Stations →</span>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -201,18 +247,32 @@ export const AppLayout: React.FC<{
         </main>
       </div>
 
-      {/* Floating Messenger Quick Button (Bottom Right) */}
-      {!isChat && (
-        <Link
-          href="/chat"
-          title="Open Messages & Chat"
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-600/30 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group cursor-pointer"
-        >
-          <MessageSquare className="w-5 h-5 transition-transform group-hover:scale-110" />
-          <span className="sr-only">Open Messages & Chat</span>
-          <span className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#090a0f] rounded-full shadow-xs" />
-        </Link>
-      )}
+      {/* Floating Action Controls (Bottom Right) */}
+      <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
+        {!isChat && (
+          <Link
+            href="/chat"
+            title="Open Messages & Chat"
+            className="w-11 h-11 rounded-2xl bg-white dark:bg-[#141722] hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-white/[0.1] shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group cursor-pointer relative"
+          >
+            <MessageSquare className="w-4 h-4 text-violet-500 group-hover:scale-110 transition-transform" />
+            <span className="sr-only">Open Messages & Chat</span>
+            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#141722] rounded-full" />
+          </Link>
+        )}
+
+        {pathname !== "/newsfeed" && (
+          <Link
+            href="/newsfeed"
+            title="Global News Feed"
+            className="px-4 py-2.5 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/30 flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 group cursor-pointer border border-white/20 backdrop-blur-md"
+          >
+            <Newspaper className="w-4 h-4 transition-transform group-hover:scale-110" />
+            <span className="text-xs font-bold tracking-tight">News Feed</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          </Link>
+        )}
+      </div>
     </div>
   )
 };

@@ -59,6 +59,7 @@ export const Header: React.FC = () => {
 
   const getBreadcrumbTitle = () => {
     if (pathname.startsWith("/newsfeed")) return "Global News Feed";
+    if (pathname.startsWith("/queue")) return "Desk & Operations Queue";
     if (pathname.startsWith("/workspaces")) return "Company Workspace Registry & Approval Queue";
     if (pathname.startsWith("/chat")) return "Direct & Team Messages";
     if (pathname.startsWith("/attendance")) return "Daily Attendance & Work Log Tracker";
@@ -72,7 +73,8 @@ export const Header: React.FC = () => {
     if (pathname.includes("/list")) return "Task List";
     if (pathname.startsWith("/projects/")) return "Project Overview";
     if (pathname.startsWith("/projects")) return "Projects & Initiatives";
-    if (pathname.startsWith("/team")) return "Team & Workload Utilization";
+    if (pathname.startsWith("/team")) return "Squads & Teams Directory";
+    if (pathname.startsWith("/workload")) return "Workload & Capacity Analytics";
     if (pathname.startsWith("/analytics")) return "Productivity & Risk Analytics";
     if (pathname.startsWith("/notifications")) return "Notifications";
     if (pathname.startsWith("/settings")) return "Settings";
@@ -97,60 +99,18 @@ export const Header: React.FC = () => {
             <span>Platform Super-Admin</span>
           </div>
         ) : currentOrg ? (
-          <div className="relative">
-            <button
-              onClick={() => setShowOrgDropdown(!showOrgDropdown)}
-              className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl bg-zinc-100/70 dark:bg-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/[0.08] border border-zinc-200/60 dark:border-white/[0.06] transition-all cursor-pointer"
-            >
-              <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                {currentOrg.name?.[0]?.toUpperCase() || "W"}
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 max-w-[150px] truncate">
-                  {currentOrg.name}
-                </span>
-                <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-violet-600 dark:text-violet-400 border border-zinc-200 dark:border-zinc-700 px-1 py-0.2 rounded uppercase">
-                  {currentOrg.myRole === "OWNER" ? "Admin" : currentOrg.myRole}
-                </span>
-              </div>
-              {organizations.length > 1 && (
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              )}
-            </button>
-
-            {showOrgDropdown && organizations.length > 1 && (
-              <>
-                <div
-                  className="fixed inset-0 z-[9998]"
-                  onClick={() => setShowOrgDropdown(false)}
-                />
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 dark:bg-[#0f1118]/95 backdrop-blur-xl border border-zinc-200/80 dark:border-white/[0.08] shadow-2xl p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150">
-                  <div className="text-2xs font-bold uppercase text-zinc-400 px-3 py-1.5">
-                    Switch Workspace
-                  </div>
-                  {organizations.map((org) => (
-                    <button
-                      key={org.id}
-                      onClick={() => {
-                        setCurrentOrg(org);
-                        setShowOrgDropdown(false);
-                      }}
-                      className={cn(
-                        "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left cursor-pointer",
-                        currentOrg.id === org.id
-                          ? "bg-violet-600 text-white font-bold"
-                          : "hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-zinc-700 dark:text-zinc-300"
-                      )}
-                    >
-                      <span className="truncate">{org.name}</span>
-                      <span className="text-3xs uppercase font-mono opacity-80">
-                        {org.myRole === "OWNER" ? "ADMIN" : org.myRole}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+          <div className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl bg-zinc-100/70 dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06]">
+            <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+              {currentOrg.name?.[0]?.toUpperCase() || "W"}
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs font-semibold text-zinc-950 dark:text-zinc-100 max-w-[170px] truncate">
+                {currentOrg.name}
+              </span>
+              <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-violet-600 dark:text-violet-400 border border-zinc-200 dark:border-zinc-700 px-1 py-0.2 rounded uppercase">
+                {currentOrg.myRole === "OWNER" ? "System Admin" : currentOrg.myRole}
+              </span>
+            </div>
           </div>
         ) : null}
 

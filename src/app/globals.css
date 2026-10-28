@@ -121,14 +121,54 @@ details > summary,
   cursor: pointer !important;
 }
 
-/* Ensure select and its options specifically always show pointer cursor */
+/* Ensure inputs and textareas in dark mode have readable text and proper placeholder */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+.dark textarea,
+html.dark textarea {
+  color: #f4f4f5 !important;
+}
+
+.dark input::placeholder,
+html.dark input::placeholder,
+.dark textarea::placeholder,
+html.dark textarea::placeholder {
+  color: #71717a !important;
+}
+
+/* Ensure select and its options specifically always show pointer cursor & readable dark-mode styling */
 select {
   cursor: pointer !important;
 }
 
-select option {
+select option,
+option {
   cursor: pointer !important;
   padding: 8px 12px;
+  background-color: #ffffff;
+  color: #18181b;
+}
+
+/* Dark mode explicit styling for native select dropdown options */
+.dark select,
+html.dark select {
+  background-color: #141722 !important;
+  color: #f4f4f5 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark select option,
+html.dark select option,
+.dark option,
+html.dark option {
+  background-color: #141722 !important;
+  color: #f4f4f5 !important;
+}
+
+.dark optgroup,
+html.dark optgroup {
+  background-color: #141722 !important;
+  color: #a1a1aa !important;
 }
 
 /* Any table row, card, or element with interactive hover styling */
