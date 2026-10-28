@@ -80,9 +80,9 @@ export const Sidebar: React.FC = () => {
         {
           title: "Directory & Goals",
           items: [
-            { label: "Client Profiles", href: "/profiles", icon: Monitor },
-            { label: "Services", href: "/services", icon: Layers },
             { label: "Departments", href: "/departments", icon: Building2 },
+            { label: "Services", href: "/services", icon: Layers },
+            { label: "Client Profiles", href: "/profiles", icon: Monitor },
             { label: "Targets", href: "/targets", icon: Target },
           ],
         },

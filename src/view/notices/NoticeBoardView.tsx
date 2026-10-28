@@ -352,7 +352,7 @@ export const NoticeBoardView: React.FC = () => {
           open={!!selectedNoticeId}
           onOpenChange={(open) => !open && setSelectedNoticeId(null)}
         >
-          <DialogContent maxWidth="xl" className="max-h-[88vh] overflow-y-auto space-y-5 p-6">
+          <DialogContent maxWidth="3xl" className="max-h-[88vh] overflow-y-auto space-y-4 p-5 sm:p-6">
             <DialogHeader>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
@@ -367,11 +367,11 @@ export const NoticeBoardView: React.FC = () => {
                 </div>
               </div>
 
-              <DialogTitle className="text-lg md:text-xl font-black text-zinc-950 dark:text-white leading-tight">
+              <DialogTitle className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white leading-snug">
                 {selectedNotice.title}
               </DialogTitle>
 
-              <div className="flex items-center space-x-2.5 pt-2">
+              <div className="flex items-center space-x-2.5 pt-1.5">
                 <Avatar name={selectedNotice.author?.name} size="sm" />
                 <div>
                   <div className="text-xs font-bold text-zinc-900 dark:text-white">
@@ -396,7 +396,7 @@ export const NoticeBoardView: React.FC = () => {
             )}
 
             {/* Full Notice Description */}
-            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-100 dark:border-zinc-800 text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed whitespace-pre-line select-text">
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/80 dark:border-white/[0.06] text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line select-text">
               {selectedNotice.content}
             </div>
 
@@ -424,7 +424,7 @@ export const NoticeBoardView: React.FC = () => {
               </button>
 
               <div className="text-xs font-semibold text-zinc-400 font-mono flex items-center gap-1.5">
-                <MessageSquare className="w-4 h-4 text-orange-500" />
+                <MessageSquare className="w-4 h-4 text-violet-500" />
                 <span>{comments.length} Comments</span>
               </div>
             </div>
@@ -442,14 +442,14 @@ export const NoticeBoardView: React.FC = () => {
                   placeholder="Write a comment or response..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-orange-500"
+                  className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-violet-500"
                 />
                 <Button
                   type="submit"
                   variant="primary"
                   size="sm"
                   disabled={!commentText.trim() || addCommentMutation.isPending}
-                  className="px-3.5 flex items-center gap-1"
+                  className="px-3.5 flex items-center gap-1 bg-violet-600 hover:bg-violet-700 text-white"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Send</span>
@@ -474,7 +474,7 @@ export const NoticeBoardView: React.FC = () => {
                     return (
                       <div
                         key={c.id}
-                        className="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 space-y-2"
+                        className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 space-y-2"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
@@ -502,7 +502,7 @@ export const NoticeBoardView: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleStartEditComment(c)}
-                              className="text-[11px] font-semibold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-[11px] font-semibold text-violet-600 dark:text-violet-400 hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <Edit3 className="w-3 h-3" />
                               <span>Edit</span>
@@ -517,7 +517,7 @@ export const NoticeBoardView: React.FC = () => {
                               value={editingCommentText}
                               onChange={(e) => setEditingCommentText(e.target.value)}
                               rows={2}
-                              className="w-full text-xs p-2.5 rounded-xl border border-orange-300 dark:border-orange-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white outline-none"
+                              className="w-full text-xs p-2.5 rounded-xl border border-violet-300 dark:border-violet-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white outline-none focus:border-violet-500"
                             />
                             <div className="flex items-center justify-end space-x-2">
                               <Button
@@ -533,7 +533,7 @@ export const NoticeBoardView: React.FC = () => {
                                 variant="primary"
                                 onClick={() => handleSaveEditComment(c.id)}
                                 disabled={editCommentMutation.isPending}
-                                className="text-xs h-7 px-3 bg-orange-500 hover:bg-orange-600 text-white"
+                                className="text-xs h-7 px-3 bg-violet-600 hover:bg-violet-700 text-white"
                               >
                                 Save
                               </Button>
@@ -556,10 +556,12 @@ export const NoticeBoardView: React.FC = () => {
 
       {/* Publish Notice Modal */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent maxWidth="md" className="space-y-4 p-6">
+        <DialogContent maxWidth="2xl" className="space-y-4 p-5 sm:p-6">
           <DialogHeader>
-            <DialogTitle>Publish Official Notice</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              Publish Official Notice
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
               Broadcast an official announcement, memo, or update to everyone in your workspace.
             </DialogDescription>
           </DialogHeader>
@@ -575,7 +577,7 @@ export const NoticeBoardView: React.FC = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:border-orange-500"
+                className="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:border-violet-500"
               />
             </div>
 
@@ -587,7 +589,7 @@ export const NoticeBoardView: React.FC = () => {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as any)}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none cursor-pointer"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:border-violet-500 cursor-pointer"
                 >
                   <option value="GENERAL">General Notice</option>
                   <option value="IMPORTANT">Important</option>
@@ -599,8 +601,8 @@ export const NoticeBoardView: React.FC = () => {
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Banner Image (Optional)
                 </label>
-                <label className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-orange-500 text-zinc-600 dark:text-zinc-300 text-xs cursor-pointer transition-colors">
-                  <Upload className="w-3.5 h-3.5 text-orange-500" />
+                <label className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-violet-500 text-zinc-600 dark:text-zinc-300 text-xs cursor-pointer transition-colors">
+                  <Upload className="w-3.5 h-3.5 text-violet-500" />
                   <span>{isUploadingImage ? "Uploading..." : imageUrl ? "Replace Image" : "Upload Image"}</span>
                   <input
                     type="file"
@@ -639,7 +641,7 @@ export const NoticeBoardView: React.FC = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:border-orange-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:border-violet-500 leading-relaxed font-sans"
               />
             </div>
 
@@ -658,7 +660,7 @@ export const NoticeBoardView: React.FC = () => {
                 variant="primary"
                 size="sm"
                 isLoading={createNoticeMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-violet-600 hover:bg-violet-700 text-white"
               >
                 Publish Notice
               </Button>

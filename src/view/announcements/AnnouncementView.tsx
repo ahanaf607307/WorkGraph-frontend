@@ -42,8 +42,7 @@ export const AnnouncementView: React.FC = () => {
 
   const isSystemOwner =
     user?.role === "SYSTEM_OWNER" ||
-    user?.role === "system_owner" ||
-    currentOrg?.myRole === "OWNER";
+    user?.role === "system_owner";
 
   const { data: announcements = [], isLoading } = useQuery({
     queryKey: ["announcements"],
@@ -273,7 +272,7 @@ export const AnnouncementView: React.FC = () => {
 
       {/* CREATE ANNOUNCEMENT MODAL */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+        <DialogContent className="w-full sm:max-w-xl md:max-w-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
           <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
             <DialogTitle className="text-sm font-bold">Publish System Update</DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
