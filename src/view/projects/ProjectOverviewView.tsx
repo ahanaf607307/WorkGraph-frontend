@@ -51,6 +51,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
 }) => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [showProjectGuide, setShowProjectGuide] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editContractModalOpen, setEditContractModalOpen] = useState(false);
   const [addPhaseModalOpen, setAddPhaseModalOpen] = useState(false);
@@ -225,10 +226,19 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
               </a>
             )}
 
+            <button
+              type="button"
+              onClick={() => setShowProjectGuide(!showProjectGuide)}
+              className="px-3 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 dark:text-violet-400 border border-violet-500/20 font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span>{showProjectGuide ? "Hide Guide" : "💡 Project Guide"}</span>
+            </button>
+
             <Button
               variant="primary"
               size="sm"
               onClick={() => setCreateModalOpen(true)}
+              className="bg-violet-600 hover:bg-violet-700 text-white text-xs"
             >
               <Plus className="w-4 h-4 mr-1.5" /> New Task
             </Button>
@@ -236,7 +246,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
         </div>
 
         {/* Project Metrics Summary Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 pt-4 border-t border-zinc-100 dark:border-white/[0.04] text-xs">
           <div>
             <span className="text-zinc-400 block mb-0.5">Task Progress</span>
             <div className="flex items-center space-x-2">
@@ -260,7 +270,7 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
           <div>
             <span className="text-zinc-400 block mb-0.5">Target Deadline</span>
             <div className="flex items-center space-x-1.5 font-semibold text-zinc-800 dark:text-zinc-200">
-              <Calendar className="w-4 h-4 text-indigo-500" />
+              <Calendar className="w-4 h-4 text-violet-500" />
               <span>{formatDate(project.dueDate)}</span>
             </div>
           </div>
@@ -282,6 +292,116 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
           </div>
         </div>
       </div>
+
+      {/* Interactive Project Lifecycle Guide */}
+      {showProjectGuide && (
+        <div className="p-4 rounded-2xl bg-violet-50/70 dark:bg-violet-950/20 border border-violet-200/80 dark:border-violet-800/40 space-y-3 text-xs text-zinc-700 dark:text-zinc-300 transition-all">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-violet-900 dark:text-violet-200 text-sm flex items-center gap-2">
+              <span>Project Delivery Lifecycle & Tab Navigation</span>
+            </h3>
+            <span className="text-3xs font-mono font-semibold text-violet-600 dark:text-violet-400">
+              Click any step to jump
+            </span>
+          </div>
+          <p className="leading-relaxed">
+            Manage your project deliverables, squads, and milestones efficiently by following these steps:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+            <div
+              onClick={() => setActiveTab("client")}
+              className={`p-3 rounded-xl border transition-all cursor-pointer space-y-1 ${
+                activeTab === "client"
+                  ? "bg-violet-600/10 border-violet-500 shadow-xs"
+                  : "bg-white dark:bg-[#0f1118] border-violet-200/60 dark:border-white/[0.06] hover:border-violet-500/50"
+              }`}
+            >
+              <span className="text-3xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider block">
+                Step 1: Setup
+              </span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
+                Client & Contract Hub
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 block leading-normal">
+                Review client info, requirements PDF, and meeting recordings.
+              </span>
+            </div>
+
+            <div
+              onClick={() => setActiveTab("phases")}
+              className={`p-3 rounded-xl border transition-all cursor-pointer space-y-1 ${
+                activeTab === "phases"
+                  ? "bg-violet-600/10 border-violet-500 shadow-xs"
+                  : "bg-white dark:bg-[#0f1118] border-violet-200/60 dark:border-white/[0.06] hover:border-violet-500/50"
+              }`}
+            >
+              <span className="text-3xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider block">
+                Step 2: Milestones
+              </span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
+                Phases & Delivery
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 block leading-normal">
+                Divide project into milestones with dates and budgets.
+              </span>
+            </div>
+
+            <div
+              onClick={() => setCreateModalOpen(true)}
+              className="p-3 rounded-xl bg-white dark:bg-[#0f1118] border border-violet-200/60 dark:border-white/[0.06] hover:border-violet-500/50 transition-all cursor-pointer space-y-1"
+            >
+              <span className="text-3xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider block">
+                Step 3: Assign
+              </span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
+                + Create Tasks
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 block leading-normal">
+                Assign tasks to squad members with hour estimates and priorities.
+              </span>
+            </div>
+
+            <div
+              onClick={() => setActiveTab("board")}
+              className={`p-3 rounded-xl border transition-all cursor-pointer space-y-1 ${
+                activeTab === "board"
+                  ? "bg-violet-600/10 border-violet-500 shadow-xs"
+                  : "bg-white dark:bg-[#0f1118] border-violet-200/60 dark:border-white/[0.06] hover:border-violet-500/50"
+              }`}
+            >
+              <span className="text-3xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider block">
+                Step 4: Execute
+              </span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
+                Kanban & Task List
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 block leading-normal">
+                Drag tasks between TODO, In Progress, Review, and Done.
+              </span>
+            </div>
+
+            <div
+              onClick={() => setActiveTab("risks")}
+              className={`p-3 rounded-xl border transition-all cursor-pointer space-y-1 ${
+                activeTab === "risks"
+                  ? "bg-violet-600/10 border-violet-500 shadow-xs"
+                  : "bg-white dark:bg-[#0f1118] border-violet-200/60 dark:border-white/[0.06] hover:border-violet-500/50"
+              }`}
+            >
+              <span className="text-3xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider block">
+                Step 5: Govern
+              </span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
+                Risk Engine & Health
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 block leading-normal">
+                Detect delivery delays, bottlenecks, and client relationship health.
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs Navigation */}
       <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] w-fit shadow-xs overflow-x-auto text-xs">

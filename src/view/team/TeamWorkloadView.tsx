@@ -51,6 +51,8 @@ export const TeamWorkloadView: React.FC = () => {
     currentOrg?.designation === "PROJECT_MANAGER";
 
   const [selectedDeptFilter, setSelectedDeptFilter] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showGuide, setShowGuide] = useState<boolean>(false);
 
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -75,11 +77,12 @@ export const TeamWorkloadView: React.FC = () => {
     enabled: !!orgId && isSystemAdminOrAdmin,
   });
 
-  // Filter members: regular members only see their squad team members; admins see all with department filter
+  // Filter members: regular members only see their squad team members; admins see all with department & search filters
   const displayedMembers = useMemo(() => {
     if (!workload?.members) return [];
+    let list = workload.members;
     if (!isSystemAdminOrAdmin) {
-      return workload.members.filter(
+      list = list.filter(
         (m: any) =>
           m.user.id === user?.id ||
           (currentOrg?.teamId && m.teamId === currentOrg?.teamId) ||
@@ -87,10 +90,21 @@ export const TeamWorkloadView: React.FC = () => {
       );
     }
     if (selectedDeptFilter) {
-      return workload.members.filter((m: any) => m.departmentId === selectedDeptFilter);
+      list = list.filter((m: any) => m.departmentId === selectedDeptFilter);
     }
-    return workload.members;
-  }, [workload?.members, isSystemAdminOrAdmin, selectedDeptFilter, currentOrg, user?.id]);
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter(
+        (m: any) =>
+          m.user?.name?.toLowerCase().includes(q) ||
+          m.user?.email?.toLowerCase().includes(q) ||
+          m.department?.name?.toLowerCase().includes(q) ||
+          m.team?.name?.toLowerCase().includes(q) ||
+          m.role?.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [workload?.members, isSystemAdminOrAdmin, selectedDeptFilter, searchTerm, currentOrg, user?.id]);
 
   const inviteMemberMutation = useMutation({
     mutationFn: (data: { email: string; role?: string; weeklyCapacityHours?: number }) =>
@@ -140,7 +154,7 @@ export const TeamWorkloadView: React.FC = () => {
       case "OVERLOADED":
         return "bg-rose-500";
       case "HIGH":
-        return "bg-amber-500";
+        return "bg-violet-400";
       case "BALANCED":
         return "bg-emerald-500";
       default:
@@ -149,54 +163,75 @@ export const TeamWorkloadView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-text">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            {isSystemAdminOrAdmin
-              ? "Organization Members & Capacity Management"
-              : "My Squad Team Members"}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
+            <span>{isSystemAdminOrAdmin ? "Team & Workload Utilization" : "My Squad Team Members"}</span>
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">
-            {isSystemAdminOrAdmin
-              ? "Deterministic workload governance calculated from weekly capacities and department-wise members."
-              : "View your team members, active workload, and sprint capacities."}
+          <p className="text-xs text-zinc-500 mt-1">
+            Real-time team capacities, active task efforts, and automated workload governance.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {isSystemAdminOrAdmin && departments && departments.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-zinc-500 flex items-center gap-1">
-                <Filter className="w-3.5 h-3.5" /> Dept:
-              </span>
-              <select
-                value={selectedDeptFilter}
-                onChange={(e) => setSelectedDeptFilter(e.target.value)}
-                className="text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              >
-                <option value="">All Departments</option>
-                {departments.map((d: any) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowGuide(!showGuide)}
+            className="px-3 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 dark:text-violet-400 border border-violet-500/20 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            {showGuide ? "Hide Guide" : "💡 How Team Page Works"}
+          </button>
 
           {isSystemAdminOrAdmin && (
-            <Button variant="primary" size="md" onClick={() => setInviteModalOpen(true)}>
-              <UserPlus className="w-4 h-4 mr-1.5" /> Add Member
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setInviteModalOpen(true)}
+              className="bg-violet-600 hover:bg-violet-700 text-white text-xs"
+            >
+              <UserPlus className="w-3.5 h-3.5 mr-1.5" /> Add Member
             </Button>
           )}
         </div>
       </div>
 
+      {/* Collapsible Explainer Guide */}
+      {showGuide && (
+        <div className="p-4 rounded-2xl bg-violet-50/70 dark:bg-violet-950/20 border border-violet-200/80 dark:border-violet-800/40 space-y-2.5 text-xs text-zinc-700 dark:text-zinc-300 transition-all">
+          <h3 className="font-bold text-violet-900 dark:text-violet-200 text-sm flex items-center gap-2">
+            <span>Team & Workload Management Guide</span>
+          </h3>
+          <p className="leading-relaxed">
+            This page provides automatic capacity tracking for all squad and department members to prevent burnout and ensure fast task delivery:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+            <div className="p-3 rounded-xl bg-white dark:bg-[#0f1118] border border-violet-200/60 dark:border-white/[0.06]">
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block mb-0.5">1. Weekly Capacity (Hours)</span>
+              <span className="text-3xs text-zinc-500 leading-normal block">
+                Standard hours an employee is scheduled to work each week (default: 40 hrs/wk).
+              </span>
+            </div>
+            <div className="p-3 rounded-xl bg-white dark:bg-[#0f1118] border border-violet-200/60 dark:border-white/[0.06]">
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block mb-0.5">2. Utilization Calculation</span>
+              <span className="text-3xs text-zinc-500 leading-normal block">
+                (Assigned Open Task Hours / Weekly Capacity) × 100%. If &gt;125%, member is marked <strong>Overloaded</strong>.
+              </span>
+            </div>
+            <div className="p-3 rounded-xl bg-white dark:bg-[#0f1118] border border-violet-200/60 dark:border-white/[0.06]">
+              <span className="font-bold text-zinc-900 dark:text-zinc-100 block mb-0.5">3. Inspect & Reassign</span>
+              <span className="text-3xs text-zinc-500 leading-normal block">
+                Leaders can click "Inspect Tasks" to review any member's deliverables and reassign tasks to members with free capacity.
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08]">
           <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Total Team Members
           </div>
@@ -208,17 +243,17 @@ export const TeamWorkloadView: React.FC = () => {
           </span>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08]">
           <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Assigned Open Workload
           </div>
-          <div className="text-2xl font-bold text-amber-500">
+          <div className="text-2xl font-bold text-violet-600 dark:text-violet-400">
             {workload?.summary.totalOpenHours ?? 0}h
           </div>
           <span className="text-2xs text-zinc-400 font-mono">Estimated active task effort</span>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08]">
           <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Average Utilization
           </div>
@@ -228,7 +263,7 @@ export const TeamWorkloadView: React.FC = () => {
           <span className="text-2xs text-zinc-400 font-mono">Team-wide capacity balance</span>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08]">
           <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
             Overloaded Members
           </div>
@@ -237,6 +272,39 @@ export const TeamWorkloadView: React.FC = () => {
           </div>
           <span className="text-2xs text-zinc-400 font-mono">Require workload rebalancing</span>
         </Card>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search member name, email, squad, or role..."
+            className="w-full pl-3.5 pr-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#0f1118] text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+          />
+        </div>
+
+        {isSystemAdminOrAdmin && departments && departments.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-zinc-500 flex items-center gap-1">
+              <Filter className="w-3.5 h-3.5 text-violet-500" /> Dept:
+            </span>
+            <select
+              value={selectedDeptFilter}
+              onChange={(e) => setSelectedDeptFilter(e.target.value)}
+              className="text-xs rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#0f1118] px-3 py-2 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-violet-500 cursor-pointer"
+            >
+              <option value="">All Departments</option>
+              {departments.map((d: any) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Team Member Workload Cards */}
@@ -258,27 +326,27 @@ export const TeamWorkloadView: React.FC = () => {
             displayedMembers.map((m) => (
               <Card
                 key={m.memberId}
-                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-400/60 dark:hover:border-amber-400/40 transition-all shadow-2xs"
+                className="p-5 rounded-2xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f1118] hover:border-violet-500/40 transition-all shadow-2xs"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   {/* Member Info */}
                   <div className="flex items-center space-x-3.5">
                     <Avatar name={m.user.name} size="lg" />
                     <div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <span className="text-base font-bold text-zinc-950 dark:text-white">
                           {m.user.name}
                         </span>
-                        <span className="text-2xs font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                        <span className="text-3xs font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
                           {m.role}
                         </span>
                         {m.department?.name && (
-                          <span className="text-2xs font-medium px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                          <span className="text-3xs font-medium px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
                             {m.department.name}
                           </span>
                         )}
                         {m.team?.name && (
-                          <span className="text-2xs font-medium px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
+                          <span className="text-3xs font-medium px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                             {m.team.name}
                           </span>
                         )}
@@ -298,7 +366,7 @@ export const TeamWorkloadView: React.FC = () => {
 
                   <div>
                     <div className="text-zinc-400">Assigned Open</div>
-                    <div className="font-semibold text-amber-500">{m.assignedOpenHours} hrs</div>
+                    <div className="font-semibold text-violet-600 dark:text-violet-400">{m.assignedOpenHours} hrs</div>
                   </div>
 
                   <div>
