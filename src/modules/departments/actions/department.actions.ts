@@ -7,6 +7,7 @@ export interface DepartmentItem {
   code?: string | null;
   description?: string | null;
   managerId?: string | null;
+  isDefault?: boolean;
   manager?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
   teams: TeamItem[];
   _count?: { members: number; teams: number };

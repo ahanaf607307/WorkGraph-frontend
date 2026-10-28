@@ -53,7 +53,7 @@ export const CreateDepartmentModal: React.FC<CreateDepartmentModalProps> = ({
               placeholder="e.g. Product Engineering"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] text-xs text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none"
             />
           </div>
 
@@ -67,7 +67,7 @@ export const CreateDepartmentModal: React.FC<CreateDepartmentModalProps> = ({
                 placeholder="e.g. ENG"
                 value={form.code}
                 onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none font-mono"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] text-xs text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none font-mono"
               />
             </div>
 
@@ -78,7 +78,7 @@ export const CreateDepartmentModal: React.FC<CreateDepartmentModalProps> = ({
               <select
                 value={form.managerId}
                 onChange={(e) => setForm({ ...form, managerId: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] text-xs text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer"
               >
                 <option value="">Select Manager...</option>
                 {members.map((m) => (
@@ -98,7 +98,7 @@ export const CreateDepartmentModal: React.FC<CreateDepartmentModalProps> = ({
               placeholder="Role and deliverables for this department"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none resize-none h-20"
+              className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] text-xs text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none resize-none h-20"
             />
           </div>
 
@@ -106,7 +106,13 @@ export const CreateDepartmentModal: React.FC<CreateDepartmentModalProps> = ({
             <Button type="button" variant="outline" size="sm" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm" disabled={!form.name.trim()}>
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              disabled={!form.name.trim()}
+              className="bg-violet-600 hover:bg-violet-700 text-white"
+            >
               Create Department
             </Button>
           </DialogFooter>

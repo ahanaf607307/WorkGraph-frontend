@@ -26,6 +26,8 @@ import { DesignationManagerTab } from "./components/DesignationManagerTab";
 import { CompanyHierarchyTab } from "./components/CompanyHierarchyTab";
 import { MemberDirectoryTab } from "./components/MemberDirectoryTab";
 import { CreateDepartmentModal } from "./components/CreateDepartmentModal";
+import { EditDepartmentModal } from "./components/EditDepartmentModal";
+import { isProtectedDepartment } from "./components/DepartmentSquadTab";
 import { CreateSquadModal } from "./components/CreateSquadModal";
 import { AssignOperationManagerModal } from "./components/AssignOperationManagerModal";
 import { CreateDesignationModal } from "./components/CreateDesignationModal";
@@ -51,6 +53,8 @@ export const DepartmentManagementView: React.FC = () => {
 
   // Modals state
   const [showDeptModal, setShowDeptModal] = useState(false);
+  const [showEditDeptModal, setShowEditDeptModal] = useState(false);
+  const [editingDept, setEditingDept] = useState<DepartmentItem | null>(null);
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [targetDeptId, setTargetDeptId] = useState("");
   const [showDesignationModal, setShowDesignationModal] = useState(false);
@@ -99,6 +103,53 @@ export const DepartmentManagementView: React.FC = () => {
       await loadAllData();
     } catch (err: any) {
       toast.error(err.message || "Failed to create department");
+    }
+  };
+
+  // Edit / Update Department
+  const handleOpenEditDept = (dept: DepartmentItem) => {
+    if (isProtectedDepartment(dept)) {
+      toast.error("Protected system departments (Sales/Seals, Operation, BDT) cannot be modified.");
+      return;
+    }
+    setEditingDept(dept);
+    setShowEditDeptModal(true);
+  };
+
+  const handleUpdateDepartment = async (
+    deptId: string,
+    data: { name: string; code?: string; description?: string; managerId?: string | null }
+  ) => {
+    try {
+      await departmentActions.updateDepartment(deptId, data);
+      toast.success(`Department updated successfully!`);
+      setShowEditDeptModal(false);
+      setEditingDept(null);
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update department");
+    }
+  };
+
+  // Delete Department
+  const handleDeleteDepartment = async (dept: DepartmentItem) => {
+    if (isProtectedDepartment(dept)) {
+      toast.error("Protected system departments (Sales/Seals, Operation, BDT) cannot be deleted.");
+      return;
+    }
+    if (
+      !confirm(
+        `Are you sure you want to delete department "${dept.name}"? All squads under this department will also be removed.`
+      )
+    ) {
+      return;
+    }
+    try {
+      await departmentActions.deleteDepartment(dept.id);
+      toast.success(`Department "${dept.name}" deleted successfully`);
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete department");
     }
   };
 
@@ -328,6 +379,8 @@ export const DepartmentManagementView: React.FC = () => {
             isSystemAdmin={isSystemAdmin}
             loading={loading}
             onOpenCreateDept={() => setShowDeptModal(true)}
+            onOpenEditDept={handleOpenEditDept}
+            onDeleteDept={handleDeleteDepartment}
             onOpenCreateSquad={(deptId) => {
               setTargetDeptId(deptId);
               setShowTeamModal(true);
@@ -380,6 +433,17 @@ export const DepartmentManagementView: React.FC = () => {
         onClose={() => setShowDeptModal(false)}
         members={members}
         onSubmit={handleCreateDepartment}
+      />
+
+      <EditDepartmentModal
+        isOpen={showEditDeptModal}
+        onClose={() => {
+          setShowEditDeptModal(false);
+          setEditingDept(null);
+        }}
+        department={editingDept}
+        members={members}
+        onSubmit={handleUpdateDepartment}
       />
 
       <EditDesignationModal
