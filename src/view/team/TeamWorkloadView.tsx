@@ -39,8 +39,13 @@ export const TeamWorkloadView: React.FC = () => {
 
   const isSystemAdminOrAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
     currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN";
 
   const isPrivilegedLeader =
     isSystemAdminOrAdmin ||
@@ -583,6 +588,7 @@ export const TeamWorkloadView: React.FC = () => {
               <option value="CO_LEADER">Co-Leader</option>
               <option value="TEAM_LEADER">Team Leader</option>
               <option value="ADMIN">Admin</option>
+              <option value="WORKSPACE_ADMIN">Workspace Admin</option>
               <option value="SYSTEM_ADMIN">System Admin</option>
             </Select>
           </div>

@@ -79,7 +79,14 @@ export const WorkspaceSettingsView: React.FC = () => {
     },
   });
 
-  const isOwnerOrAdmin = currentOrg?.myRole === "OWNER" || currentOrg?.myRole === "ADMIN";
+  const isOwnerOrAdmin =
+    currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    currentOrg?.myRole === "ADMIN" ||
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    user?.role === "SYSTEM_ADMIN";
 
   return (
     <div className="space-y-6">
@@ -208,7 +215,14 @@ export const WorkspaceSettingsView: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        {(currentOrg?.myRole === "OWNER" || currentOrg?.myRole === "SYSTEM_ADMIN") && m.userId !== user?.id && m.role !== "OWNER" ? (
+                        {(currentOrg?.myRole === "OWNER" ||
+                          (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+                          (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+                          user?.role === "SYSTEM_OWNER" ||
+                          user?.role === "WORKSPACE_ADMIN" ||
+                          user?.role === "SYSTEM_ADMIN") &&
+                        m.userId !== user?.id &&
+                        m.role !== "OWNER" ? (
                           <select
                             value={m.role}
                             onChange={(e) =>
@@ -223,11 +237,12 @@ export const WorkspaceSettingsView: React.FC = () => {
                             <option value="CO_LEADER" className="cursor-pointer">Co-Leader</option>
                             <option value="TEAM_LEADER" className="cursor-pointer">Team Leader</option>
                             <option value="ADMIN" className="cursor-pointer">Admin</option>
+                            <option value="WORKSPACE_ADMIN" className="cursor-pointer">Workspace Admin</option>
                             <option value="SYSTEM_ADMIN" className="cursor-pointer">System Admin</option>
                           </select>
-                        ) : m.role === "OWNER" || m.role === "SYSTEM_ADMIN" ? (
+                        ) : m.role === "OWNER" || m.role === "SYSTEM_ADMIN" || (m.role as string) === "WORKSPACE_ADMIN" ? (
                           <Badge variant="default" className="border-violet-200/60 dark:border-violet-800/60 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 font-semibold">
-                            🏢 System Admin
+                            🏢 {m.role === "WORKSPACE_ADMIN" ? "Workspace Admin" : "System Admin"}
                           </Badge>
                         ) : (
                           <Badge variant="default">{m.role}</Badge>
@@ -317,6 +332,7 @@ export const WorkspaceSettingsView: React.FC = () => {
               <option value="CO_LEADER">Co-Leader</option>
               <option value="TEAM_LEADER">Team Leader</option>
               <option value="ADMIN">Admin</option>
+              <option value="WORKSPACE_ADMIN">Workspace Admin</option>
               <option value="SYSTEM_ADMIN">System Admin</option>
             </Select>
           </div>

@@ -18,7 +18,7 @@ interface EditMemberPlacementModalProps {
   services?: any[];
   isSystemAdmin: boolean;
   onSubmit: (data: {
-    role: "OWNER" | "SYSTEM_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
+    role: "OWNER" | "SYSTEM_ADMIN" | "WORKSPACE_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
     designationId: string;
     departmentId: string;
     teamId: string;
@@ -181,6 +181,7 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                   <option value="CO_LEADER">Co-Leader</option>
                   <option value="TEAM_LEADER">Team Leader</option>
                   <option value="ADMIN">Admin</option>
+                  <option value="WORKSPACE_ADMIN">Workspace Admin</option>
                   <option value="SYSTEM_ADMIN">System Admin</option>
                 </select>
               )}
