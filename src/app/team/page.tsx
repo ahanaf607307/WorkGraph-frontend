@@ -1,10 +1,10 @@
 import { AppLayout } from "../../components/shared/AppLayout";
-import { TeamWorkloadView } from "../../view/team/TeamWorkloadView";
+import { TeamView } from "../../view/team/TeamView";
 
 export default function TeamPage() {
   return (
     <AppLayout>
-      <TeamWorkloadView />
+      <TeamView />
     </AppLayout>
   );
 }

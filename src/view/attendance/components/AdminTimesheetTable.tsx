@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Users, Search, CheckCircle2, Clock } from "lucide-react";
 import { DepartmentItem } from "../../../modules/departments/actions/department.actions";
+import { useFeaturePermission } from "../../../components/shared/PermissionModal";
 
 interface AdminTimesheetTableProps {
   adminRecords: AttendanceRecord[];
@@ -44,6 +45,8 @@ export const AdminTimesheetTable: React.FC<AdminTimesheetTableProps> = ({
   onOpenAdjustModal,
   onSelectEmployee,
 }) => {
+  const { hasPermission: canOverride } = useFeaturePermission("attendance");
+
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-xs space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">
@@ -225,14 +228,18 @@ export const AdminTimesheetTable: React.FC<AdminTimesheetTableProps> = ({
                         e.stopPropagation(); // prevent modal trigger
                       }}
                     >
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onOpenAdjustModal(r)}
-                        className="text-3xs px-2.5 py-1 rounded-lg cursor-pointer"
-                      >
-                        Adjust Override
-                      </Button>
+                      {canOverride ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onOpenAdjustModal(r)}
+                          className="text-3xs px-2.5 py-1 rounded-lg cursor-pointer"
+                        >
+                          Adjust Override
+                        </Button>
+                      ) : (
+                        <span className="text-3xs text-zinc-400 font-mono">View Only</span>
+                      )}
                     </td>
                   </tr>
                 );

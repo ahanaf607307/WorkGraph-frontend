@@ -62,6 +62,15 @@ export const StationView: React.FC = () => {
     }
   };
 
+  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
+  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
+  const isSalesMember =
+    deptName.includes("sale") ||
+    deptName.includes("seal") ||
+    deptCode === "SALES" ||
+    (currentOrg as any)?.designation === "SALES" ||
+    user?.email?.toLowerCase().includes("sales");
+
   useEffect(() => {
     loadData();
   }, []);
@@ -131,6 +140,10 @@ export const StationView: React.FC = () => {
 
   const handleJoinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSalesMember) {
+      toast.error("Only Sales members can join operational stations.");
+      return;
+    }
     if (selectedProfileIds.length === 0) {
       toast.error("Please select at least one profile to log into the station.");
       return;
@@ -165,16 +178,23 @@ export const StationView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
+    <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-text">
       {/* Sleek, Uncluttered Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
-          <h1 className="text-xl font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
-            <span>Operational Stations</span>
-            <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
-              {stations.length} Desks
-            </span>
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
+              <span>Operational Stations</span>
+              <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40">
+                {stations.length} Desks
+              </span>
+            </h1>
+            {!isSalesMember && (
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                View Only
+              </span>
+            )}
+          </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             Dynamic station units supporting single or multiple concurrent client profile operations
           </p>
@@ -393,14 +413,20 @@ export const StationView: React.FC = () => {
                       <span>Leave</span>
                     </button>
                   ) : !isOccupied ? (
-                    <button
-                      type="button"
-                      onClick={() => handleOpenJoin(st.stationNumber)}
-                      className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-2xs font-semibold transition-all cursor-pointer flex items-center gap-1"
-                    >
-                      <LogIn className="w-3 h-3" />
-                      <span>Join Desk</span>
-                    </button>
+                    isSalesMember ? (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenJoin(st.stationNumber)}
+                        className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-2xs font-semibold transition-all cursor-pointer flex items-center gap-1"
+                      >
+                        <LogIn className="w-3 h-3" />
+                        <span>Join Desk</span>
+                      </button>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 text-3xs font-medium border border-zinc-200/50 dark:border-white/[0.06]">
+                        View Only
+                      </span>
+                    )
                   ) : null}
                 </div>
               </div>

@@ -36,6 +36,7 @@ import {
   DialogDescription,
 } from "../../components/ui/dialog";
 import { toast } from "sonner";
+import { SalesStationGate } from "../../components/shared/SalesStationGate";
 
 export const IssueSheetView: React.FC = () => {
   const { currentOrg, user } = useAuth();
@@ -43,6 +44,28 @@ export const IssueSheetView: React.FC = () => {
   const [profiles, setProfiles] = useState<ProfileItem[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Role & Sales Member detection
+  const orgRole = (currentOrg?.myRole || "").toUpperCase();
+  const userRole = (user?.role || "").toUpperCase();
+  const isPrivileged =
+    userRole === "SYSTEM_OWNER" ||
+    userRole === "SYSTEM_ADMIN" ||
+    orgRole === "SYSTEM_ADMIN" ||
+    orgRole === "WORKSPACE_ADMIN" ||
+    orgRole === "ADMIN" ||
+    orgRole === "OWNER";
+
+  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
+  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
+  const isSalesMember =
+    !isPrivileged &&
+    (deptName.includes("sale") ||
+      deptName.includes("seal") ||
+      deptCode === "SALES" ||
+      user?.email?.toLowerCase().includes("sales"));
+
+  const canCreateIssue = isSalesMember || isPrivileged;
 
   // Filters
   const [serviceFilter, setServiceFilter] = useState<string>("");
@@ -92,6 +115,10 @@ export const IssueSheetView: React.FC = () => {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canCreateIssue) {
+      toast.error("Only Sales members can raise new issues and queries");
+      return;
+    }
     if (!profileId || !title.trim() || !description.trim()) {
       toast.error("Profile, title, and query description are required");
       return;
@@ -151,7 +178,8 @@ export const IssueSheetView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
+    <SalesStationGate>
+      <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-text">
       {/* Sleek Open Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
@@ -163,17 +191,19 @@ export const IssueSheetView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setProfileId(profiles[0]?.id || "");
-            setShowModal(true);
-          }}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Raise New Query</span>
-        </button>
+        {canCreateIssue && (
+          <button
+            type="button"
+            onClick={() => {
+              setProfileId(profiles[0]?.id || "");
+              setShowModal(true);
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Raise New Query</span>
+          </button>
+        )}
       </div>
 
       {/* Controls: Search, Service Filter, Status Filter */}
@@ -369,7 +399,7 @@ export const IssueSheetView: React.FC = () => {
 
       {/* RAISE QUERY MODAL */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
           <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
             <DialogTitle className="text-sm font-bold">Raise Technical Query</DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
@@ -494,7 +524,7 @@ export const IssueSheetView: React.FC = () => {
         open={!!selectedQueryForAction}
         onOpenChange={(open) => !open && setSelectedQueryForAction(null)}
       >
-        <DialogContent className="max-w-md bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl">
           <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
             <DialogTitle className="text-sm font-bold">Answer & Update Status</DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
@@ -552,5 +582,6 @@ export const IssueSheetView: React.FC = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </SalesStationGate>
   );
 };

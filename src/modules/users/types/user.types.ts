@@ -4,7 +4,7 @@ export interface OrganizationMember {
   id: string;
   organizationId: string;
   userId: string;
-  role: "OWNER" | "ADMIN" | "MEMBER";
+  role: "OWNER" | "SYSTEM_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
   designation?: string;
   customDesignation?: string | null;
   designationId?: string | null;

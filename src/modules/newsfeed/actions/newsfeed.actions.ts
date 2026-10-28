@@ -60,6 +60,16 @@ export const newsfeedActions = {
     });
   },
 
+  updatePost: async (
+    postId: string,
+    data: { content?: string; imageUrl?: string }
+  ): Promise<NewsfeedPostItem> => {
+    return apiClient<NewsfeedPostItem>(`/newsfeed/posts/${postId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
   toggleLikePost: async (postId: string): Promise<{ liked: boolean }> => {
     return apiClient<{ liked: boolean }>(`/newsfeed/posts/${postId}/like`, {
       method: "POST",

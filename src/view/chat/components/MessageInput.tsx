@@ -123,7 +123,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || isUploading}
           title="Upload image or document"
-          className="p-2.5 rounded-xl bg-zinc-100 hover:bg-violet-50 hover:text-violet-600 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-zinc-600 dark:text-zinc-300 transition-colors cursor-pointer shrink-0 disabled:opacity-40"
+          className="p-2.5 rounded-xl bg-zinc-100 hover:bg-violet-50 hover:text-violet-600 dark:bg-[#141722] dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-transparent dark:border-white/[0.08] transition-colors cursor-pointer shrink-0 disabled:opacity-40"
         >
           {isUploading ? (
             <Loader2 className="w-4 h-4 animate-spin text-violet-500" />
@@ -138,7 +138,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           value={messageText}
           onChange={(e) => onTextChange(e.target.value)}
           disabled={disabled}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-850/70 border border-transparent focus:border-violet-500/40 text-xs text-zinc-900 dark:text-white focus:outline-none transition-all placeholder:text-zinc-400"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-[#141722] border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500/60 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
         />
 
         <button

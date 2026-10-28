@@ -30,7 +30,9 @@ import {
   AlertTriangle,
   ArrowRight,
   User as UserIcon,
+  Pencil,
 } from "lucide-react";
+import { Modal } from "../../components/ui/modal";
 import { toast } from "sonner";
 import { cn } from "../../lib/utils";
 
@@ -46,6 +48,12 @@ export const NewsfeedView: React.FC = () => {
   // Comments drawer / active post
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
+
+  // Edit Post State
+  const [editingPost, setEditingPost] = useState<NewsfeedPostItem | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [editImage, setEditImage] = useState("");
+  const [isUploadingEditImage, setIsUploadingEditImage] = useState(false);
 
   const isPrivileged =
     user?.role === "SYSTEM_OWNER" ||
@@ -87,6 +95,20 @@ export const NewsfeedView: React.FC = () => {
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to publish post");
+    },
+  });
+
+  // Edit post mutation
+  const updatePostMutation = useMutation({
+    mutationFn: ({ id, content, imageUrl }: { id: string; content: string; imageUrl?: string }) =>
+      newsfeedActions.updatePost(id, { content, imageUrl }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["newsfeed"] });
+      setEditingPost(null);
+      toast.success("Post updated successfully!");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to update post");
     },
   });
 
@@ -173,6 +195,47 @@ export const NewsfeedView: React.FC = () => {
     }
   };
 
+  const handleEditImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file");
+      return;
+    }
+
+    try {
+      setIsUploadingEditImage(true);
+      const res = await uploadActions.uploadFile(file);
+      setEditImage(res.url);
+      toast.success("Photo attached to post!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload photo");
+    } finally {
+      setIsUploadingEditImage(false);
+    }
+  };
+
+  const handleOpenEditModal = (post: NewsfeedPostItem) => {
+    setEditingPost(post);
+    setEditContent(post.content);
+    setEditImage(post.imageUrl || "");
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPost) return;
+    if (!editContent.trim() && !editImage) {
+      toast.error("Please enter some content or attach an image");
+      return;
+    }
+    updatePostMutation.mutate({
+      id: editingPost.id,
+      content: editContent.trim(),
+      imageUrl: editImage || undefined,
+    });
+  };
+
   const handlePostSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!postContent.trim() && !postImage) {
@@ -240,7 +303,7 @@ export const NewsfeedView: React.FC = () => {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 w-full max-w-6xl mx-auto space-y-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/80 dark:border-white/[0.06]">
         <div>
@@ -524,6 +587,17 @@ export const NewsfeedView: React.FC = () => {
                     {canDeletePost && (
                       <button
                         type="button"
+                        onClick={() => handleOpenEditModal(post)}
+                        title="Edit post"
+                        className="p-1.5 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-950/40 text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    {canDeletePost && (
+                      <button
+                        type="button"
                         onClick={() => {
                           if (confirm("Are you sure you want to delete this post?")) {
                             deletePostMutation.mutate(post.id);
@@ -703,6 +777,92 @@ export const NewsfeedView: React.FC = () => {
             );
           })}
         </div>
+      )}
+
+      {/* Edit Post Modal */}
+      {editingPost && (
+        <Modal
+          isOpen={!!editingPost}
+          onClose={() => setEditingPost(null)}
+          title="Edit Newsfeed Post"
+          description="Update your post message or image for the whole organization"
+          maxWidth="lg"
+        >
+          <form onSubmit={handleEditSubmit} className="space-y-4 pt-2">
+            <div>
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                Post Content
+              </label>
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                rows={4}
+                placeholder="Edit your post message..."
+                className="w-full p-3.5 rounded-2xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 leading-relaxed resize-none text-zinc-900 dark:text-white"
+              />
+            </div>
+
+            {/* Attached Photo Preview in Edit Modal */}
+            {editImage && (
+              <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-white/[0.1] max-h-56 bg-black/10">
+                <img
+                  src={uploadActions.getFileUrl(editImage)}
+                  alt="Edit preview"
+                  className="w-full h-56 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditImage("")}
+                  className="absolute top-2.5 right-2.5 p-1.5 rounded-xl bg-black/70 hover:bg-black/90 text-white transition-colors cursor-pointer shadow-md"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between pt-2">
+              <label className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-violet-50 hover:text-violet-600 dark:bg-white/[0.05] dark:hover:bg-violet-950/40 text-zinc-700 dark:text-zinc-300 text-xs font-semibold transition-all cursor-pointer border border-zinc-200/50 dark:border-white/[0.06]">
+                {isUploadingEditImage ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-violet-500" />
+                ) : (
+                  <ImageIcon className="w-4 h-4 text-violet-500" />
+                )}
+                <span>{isUploadingEditImage ? "Uploading..." : editImage ? "Change Photo" : "Attach Photo"}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleEditImageUpload}
+                  disabled={isUploadingEditImage}
+                  className="hidden"
+                />
+              </label>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingPost(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatePostMutation.isPending || (!editContent.trim() && !editImage)}
+                  className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white text-xs font-bold shadow-md shadow-violet-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  {updatePostMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <span>Save Changes</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

@@ -1,18 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   serviceActions,
   ServiceItem,
 } from "../../modules/services/actions/service.actions";
+import { useAuth } from "../../hooks/useAuth";
 import {
-  Layers,
+  Sparkles,
   Plus,
+  Search,
+  ExternalLink,
+  Layers,
   Edit2,
   Trash2,
-  Sparkles,
-  Search,
+  Shield,
+  Briefcase,
 } from "lucide-react";
 import {
   Dialog,
@@ -22,40 +26,47 @@ import {
   DialogDescription,
 } from "../../components/ui/dialog";
 import { toast } from "sonner";
+import {
+  PermissionButton,
+  PermissionModal,
+  useFeaturePermission,
+} from "../../components/shared/PermissionModal";
 
 export const ServiceLineView: React.FC = () => {
+  const queryClient = useQueryClient();
   const { currentOrg, user } = useAuth();
+  const orgId = currentOrg?.id;
+
   const isSystemAdmin =
     currentOrg?.myRole === "OWNER" ||
-    currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_owner" ||
+    (user?.role as string) === "system_admin";
 
-  const [services, setServices] = useState<ServiceItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { hasPermission: hasServicePermission } = useFeaturePermission("services");
+  const canManageServices = isSystemAdmin || hasServicePermission;
+
   const [searchTerm, setSearchTerm] = useState("");
-
   const [showModal, setShowModal] = useState(false);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
+
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const loadServices = async () => {
-    try {
-      setLoading(true);
-      const data = await serviceActions.getServices();
-      setServices(data);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load services");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadServices();
-  }, []);
+  // TanStack Query for dynamic reactive data
+  const {
+    data: services = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ["services", orgId],
+    queryFn: () => serviceActions.getServices(),
+    enabled: !!orgId || isSystemAdmin,
+  });
 
   const openCreateModal = () => {
     setEditingService(null);
@@ -98,7 +109,7 @@ export const ServiceLineView: React.FC = () => {
         toast.success(`Service line "${name}" created!`);
       }
       setShowModal(false);
-      loadServices();
+      queryClient.invalidateQueries({ queryKey: ["services"] });
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     } finally {
@@ -113,7 +124,7 @@ export const ServiceLineView: React.FC = () => {
     try {
       await serviceActions.deleteService(id);
       toast.success(`Service line "${serviceName}" deleted`);
-      loadServices();
+      queryClient.invalidateQueries({ queryKey: ["services"] });
     } catch (err: any) {
       toast.error(err.message || "Failed to delete service line");
     }
@@ -126,7 +137,7 @@ export const ServiceLineView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
+    <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-text">
       {/* Sleek Open Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
@@ -138,16 +149,19 @@ export const ServiceLineView: React.FC = () => {
           </p>
         </div>
 
-        {isSystemAdmin && (
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>New Service Line</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2.5">
+          <PermissionButton onClick={() => setShowPermissionModal(true)} />
+          {canManageServices && (
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-sm shadow-violet-600/20 transition-all cursor-pointer w-fit"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Service Line</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Search & Filter */}
@@ -159,7 +173,7 @@ export const ServiceLineView: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search service lines..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white dark:bg-[#141722] border border-zinc-200/80 dark:border-white/[0.08] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
           />
         </div>
       </div>
@@ -172,59 +186,60 @@ export const ServiceLineView: React.FC = () => {
       ) : filteredServices.length === 0 ? (
         <div className="p-12 text-center space-y-2 bg-white dark:bg-[#0f1118] rounded-2xl border border-zinc-200/70 dark:border-white/[0.06]">
           <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/30 text-violet-500 flex items-center justify-center mx-auto">
-            <Sparkles className="w-5 h-5" />
+            <Briefcase className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            No Service Lines Configured
+          <h3 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+            No service lines configured
           </h3>
           <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
-            Create service lines to link sales profiles and target allocations accurately.
+            Define your agency service offerings so departments and client profiles can be mapped accurately.
           </p>
+          {canManageServices && (
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create First Service Line</span>
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredServices.map((service) => (
             <div
               key={service.id}
-              className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-all flex flex-col justify-between space-y-3"
+              className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-all flex flex-col justify-between space-y-4"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold text-xs">
-                      {service.name.charAt(0)}
-                    </span>
-                    <div>
-                      <h3 className="text-sm font-bold text-zinc-950 dark:text-white">
-                        {service.name}
-                      </h3>
-                      {service.code && (
-                        <span className="text-3xs font-mono px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-500">
-                          {service.code}
-                        </span>
-                      )}
-                    </div>
+                  <div className="w-8 h-8 rounded-xl bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold text-xs">
+                    {service.code ? service.code.slice(0, 3) : service.name.slice(0, 2).toUpperCase()}
                   </div>
-
-                  <span className="px-2 py-0.5 rounded-full text-3xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                    Active
-                  </span>
+                  {service.code && (
+                    <span className="px-2 py-0.5 rounded-md text-3xs font-mono font-medium bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400">
+                      {service.code}
+                    </span>
+                  )}
                 </div>
 
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed min-h-[32px]">
-                  {service.description || "Client delivery service line."}
-                </p>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-950 dark:text-white">
+                    {service.name}
+                  </h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
+                    {service.description || "No description provided for this service line."}
+                  </p>
+                </div>
               </div>
 
-              <div className="pt-2.5 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between text-3xs">
-                <div className="text-zinc-400 font-mono">
-                  <span>Linked Profiles: </span>
-                  <strong className="text-zinc-700 dark:text-zinc-300">
-                    {service._count?.profiles ?? 0}
-                  </strong>
-                </div>
+              <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between">
+                <span className="text-3xs text-zinc-400 font-mono">
+                  {new Date(service.createdAt).toLocaleDateString()}
+                </span>
 
-                {isSystemAdmin && (
+                {canManageServices && (
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
@@ -273,7 +288,7 @@ export const ServiceLineView: React.FC = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. AI & Machine Learning Services"
                 required
-                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-[#141722] border border-zinc-200 dark:border-white/[0.08] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
               />
             </div>
 
@@ -286,7 +301,7 @@ export const ServiceLineView: React.FC = () => {
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder="e.g. AI-ML"
-                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 font-mono"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-[#141722] border border-zinc-200 dark:border-white/[0.08] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 font-mono"
               />
             </div>
 
@@ -299,7 +314,7 @@ export const ServiceLineView: React.FC = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="Brief description of deliverables and tools in this service..."
-                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 font-sans"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-50 dark:bg-[#141722] border border-zinc-200 dark:border-white/[0.08] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 font-sans"
               />
             </div>
 
@@ -322,6 +337,14 @@ export const ServiceLineView: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <PermissionModal
+        isOpen={showPermissionModal}
+        onClose={() => setShowPermissionModal(false)}
+        featureKey="services"
+        title="Service Line Permissions"
+        description="Authorize selected admins to create and manage service offerings."
+      />
     </div>
   );
 };

@@ -70,10 +70,11 @@ export const EmployeeAttendanceHistoryModal: React.FC<EmployeeAttendanceHistoryM
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      maxWidth="4xl"
       title={`${employee.name}'s Attendance & Daily Task History`}
-      description={`Review date-wise timesheet, check-in/out records, and logged execution tasks.`}
+      description={`Review date-wise timesheet, check-in/out records, task execution status, update messages, and supervisor comments.`}
     >
-      <div className="space-y-5 pt-2 max-h-[75vh] overflow-y-auto pr-1">
+      <div className="space-y-5 pt-2 max-h-[80vh] overflow-y-auto pr-1.5">
         {/* Employee Info Card */}
         <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center space-x-3">

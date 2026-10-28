@@ -76,4 +76,31 @@ export const projectActions = {
       method: "DELETE",
     });
   },
+
+  addProjectMember: async (
+    projectId: string,
+    data: { userId: string; role?: "LEADER" | "CO_LEADER" | "MEMBER" }
+  ): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/members`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateProjectMemberRole: async (
+    projectId: string,
+    memberId: string,
+    role: "LEADER" | "CO_LEADER" | "MEMBER"
+  ): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/members/${memberId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+  },
+
+  removeProjectMember: async (projectId: string, memberId: string): Promise<any> => {
+    return apiClient<any>(`/projects/${projectId}/members/${memberId}`, {
+      method: "DELETE",
+    });
+  },
 };

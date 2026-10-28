@@ -101,7 +101,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-8.5 pr-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-850/70 border border-transparent focus:border-violet-500/40 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none transition-all placeholder:text-zinc-400"
+            className="w-full pl-8.5 pr-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-[#141722] border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500/60 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
           />
         </div>
       </div>

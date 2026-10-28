@@ -39,6 +39,7 @@ export const AnnouncementView: React.FC = () => {
   // Comment input per announcement
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [submittingCommentId, setSubmittingCommentId] = useState<string | null>(null);
+  const [inspectAnnouncementId, setInspectAnnouncementId] = useState<string | null>(null);
 
   const isSystemOwner =
     user?.role === "SYSTEM_OWNER" ||
@@ -48,6 +49,9 @@ export const AnnouncementView: React.FC = () => {
     queryKey: ["announcements"],
     queryFn: () => announcementActions.getAnnouncements(),
   });
+
+  const inspectAnnouncement =
+    announcements.find((a) => a.id === inspectAnnouncementId) || null;
 
   const createAnnouncementMutation = useMutation({
     mutationFn: (data: {
@@ -101,7 +105,7 @@ export const AnnouncementView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12 select-text">
+    <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-text">
       {/* Sleek Open Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
@@ -141,22 +145,23 @@ export const AnnouncementView: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {announcements.map((item) => (
             <div
               key={item.id}
-              className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/30 transition-colors space-y-3.5"
+              onClick={() => setInspectAnnouncementId(item.id)}
+              className="p-5 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] shadow-xs hover:border-violet-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between space-y-3.5"
             >
               {/* Top metadata */}
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-3xs font-medium bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" />
+                  <span className="px-2.5 py-0.5 rounded-full text-3xs font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-violet-500" />
                     <span>{item.tag || "System Update"}</span>
                   </span>
 
                   {item.version && (
-                    <span className="px-2 py-0.2 rounded-md text-3xs font-mono bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-300">
+                    <span className="px-2 py-0.5 rounded-md text-3xs font-mono font-bold bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300 border border-zinc-200/50 dark:border-white/[0.06]">
                       {item.version}
                     </span>
                   )}
@@ -168,17 +173,14 @@ export const AnnouncementView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Title & Content */}
-              <div>
-                <h2 className="text-sm font-bold text-zinc-950 dark:text-white mb-1.5">
+              {/* Title only (Initial description hidden as per requirements) */}
+              <div className="py-1">
+                <h2 className="text-sm md:text-base font-bold text-zinc-950 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors leading-snug">
                   {item.title}
                 </h2>
-                <div className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line font-sans">
-                  {item.content}
-                </div>
               </div>
 
-              {/* Author footer */}
+              {/* Author footer & Call-to-action */}
               <div className="flex items-center justify-between pt-2.5 border-t border-zinc-100 dark:border-white/[0.04] text-3xs">
                 <div className="flex items-center gap-2">
                   <Avatar name={item.author?.name} size="sm" />
@@ -187,88 +189,169 @@ export const AnnouncementView: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                  <CheckCircle2 className="w-3 h-3" />
-                  <span>Official Announcement</span>
-                </div>
-              </div>
-
-              {/* Comments Section */}
-              <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.04] space-y-2.5">
-                <div className="flex items-center gap-1.5 text-2xs font-semibold text-zinc-600 dark:text-zinc-400">
-                  <MessageSquare className="w-3.5 h-3.5 text-violet-500" />
-                  <span>Discussion ({item.comments?.length || 0})</span>
-                </div>
-
-                {/* Comment list */}
-                {item.comments && item.comments.length > 0 && (
-                  <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
-                    {item.comments.map((comment) => (
-                      <div
-                        key={comment.id}
-                        className="p-2.5 rounded-xl bg-zinc-50/70 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.04] space-y-1"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <Avatar name={comment.user?.name} size="sm" />
-                            <span className="text-xs font-medium text-zinc-900 dark:text-white">
-                              {comment.user?.name}
-                            </span>
-                            <span className="text-3xs font-mono px-1 py-0.2 rounded bg-zinc-200/70 dark:bg-white/[0.05] text-zinc-500">
-                              {comment.user?.role || "MEMBER"}
-                            </span>
-                          </div>
-                          <span className="text-3xs text-zinc-400 font-mono">
-                            {new Date(comment.createdAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <p className="text-xs text-zinc-600 dark:text-zinc-300 pl-6 leading-relaxed">
-                          {comment.content}
-                        </p>
-                      </div>
-                    ))}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400 font-medium">
+                    <MessageSquare className="w-3.5 h-3.5 text-violet-500" />
+                    <span>{item.comments?.length || 0}</span>
                   </div>
-                )}
-
-                {/* Comment input form */}
-                <div className="flex items-center gap-2 pt-0.5">
-                  <input
-                    type="text"
-                    value={commentInputs[item.id] || ""}
-                    onChange={(e) =>
-                      setCommentInputs((prev) => ({ ...prev, [item.id]: e.target.value }))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddComment(item.id);
-                      }
-                    }}
-                    placeholder="Write a response or question..."
-                    className="flex-1 px-3 py-1.5 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500"
-                  />
-                  <button
-                    type="button"
-                    disabled={submittingCommentId === item.id || !commentInputs[item.id]?.trim()}
-                    onClick={() => handleAddComment(item.id)}
-                    className="px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
-                  >
-                    {submittingCommentId === item.id ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Send className="w-3.5 h-3.5" />
-                    )}
-                    <span>Send</span>
-                  </button>
+                  <span className="font-semibold text-violet-600 dark:text-violet-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    View Details →
+                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* INSPECT UPDATE DETAILS & DISCUSSION DIALOG */}
+      <Dialog
+        open={!!inspectAnnouncement}
+        onOpenChange={(open) => {
+          if (!open) setInspectAnnouncementId(null);
+        }}
+      >
+        <DialogContent className="w-full sm:max-w-2xl md:max-w-3xl bg-white dark:bg-[#0f1118] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden shadow-2xl rounded-2xl max-h-[90vh] flex flex-col">
+          {inspectAnnouncement && (
+            <>
+              {/* Header */}
+              <div className="p-6 border-b border-zinc-200/60 dark:border-white/[0.06] space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-3xs font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/40 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-violet-500" />
+                      <span>{inspectAnnouncement.tag || "System Update"}</span>
+                    </span>
+                    {inspectAnnouncement.version && (
+                      <span className="px-2 py-0.5 rounded-md text-3xs font-mono font-bold bg-zinc-100 dark:bg-white/[0.06] text-zinc-700 dark:text-zinc-300 border border-zinc-200/50 dark:border-white/[0.06]">
+                        {inspectAnnouncement.version}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 text-3xs text-zinc-400 font-mono">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{new Date(inspectAnnouncement.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                <DialogTitle className="text-base md:text-lg font-bold text-zinc-950 dark:text-white leading-tight">
+                  {inspectAnnouncement.title}
+                </DialogTitle>
+
+                <div className="flex items-center gap-2 text-3xs text-zinc-500 dark:text-zinc-400">
+                  <Avatar name={inspectAnnouncement.author?.name} size="sm" />
+                  <span>
+                    Published by{" "}
+                    <strong className="text-zinc-800 dark:text-zinc-200">
+                      {inspectAnnouncement.author?.name || "System Admin"}
+                    </strong>
+                  </span>
+                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium ml-2">
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>Official Update</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Body: Changelog & Discussions */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-1">
+                {/* Description Content */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                    Release Notes & Details
+                  </h4>
+                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/60 dark:border-white/[0.05] text-xs md:text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed whitespace-pre-line font-sans">
+                    {inspectAnnouncement.content}
+                  </div>
+                </div>
+
+                {/* Discussions */}
+                <div className="space-y-3 pt-3 border-t border-zinc-100 dark:border-white/[0.04]">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    <MessageSquare className="w-4 h-4 text-violet-500" />
+                    <span>Discussion & Inquiries ({inspectAnnouncement.comments?.length || 0})</span>
+                  </div>
+
+                  {/* Comment list */}
+                  {inspectAnnouncement.comments && inspectAnnouncement.comments.length > 0 ? (
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                      {inspectAnnouncement.comments.map((comment) => (
+                        <div
+                          key={comment.id}
+                          className="p-3 rounded-xl bg-zinc-50/70 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.04] space-y-1.5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Avatar name={comment.user?.name} size="sm" />
+                              <span className="text-xs font-semibold text-zinc-900 dark:text-white">
+                                {comment.user?.name}
+                              </span>
+                              <span className="text-3xs font-mono px-1.5 py-0.2 rounded bg-zinc-200/70 dark:bg-white/[0.05] text-zinc-500">
+                                {comment.user?.role || "MEMBER"}
+                              </span>
+                            </div>
+                            <span className="text-3xs text-zinc-400 font-mono">
+                              {new Date(comment.createdAt).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-600 dark:text-zinc-300 pl-7 leading-relaxed">
+                            {comment.content}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-zinc-400 italic py-2">
+                      No responses yet. Feel free to leave a question or feedback below.
+                    </p>
+                  )}
+
+                  {/* Comment input */}
+                  <div className="flex items-center gap-2 pt-2">
+                    <input
+                      type="text"
+                      value={commentInputs[inspectAnnouncement.id] || ""}
+                      onChange={(e) =>
+                        setCommentInputs((prev) => ({
+                          ...prev,
+                          [inspectAnnouncement.id]: e.target.value,
+                        }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddComment(inspectAnnouncement.id);
+                        }
+                      }}
+                      placeholder="Write your feedback, question, or comment..."
+                      className="flex-1 px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 text-zinc-900 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      disabled={
+                        submittingCommentId === inspectAnnouncement.id ||
+                        !commentInputs[inspectAnnouncement.id]?.trim()
+                      }
+                      onClick={() => handleAddComment(inspectAnnouncement.id)}
+                      className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {submittingCommentId === inspectAnnouncement.id ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5" />
+                      )}
+                      <span>Post</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* CREATE ANNOUNCEMENT MODAL */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>

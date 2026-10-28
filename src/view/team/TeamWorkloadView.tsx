@@ -580,7 +580,10 @@ export const TeamWorkloadView: React.FC = () => {
               onChange={(e) => setInviteRole(e.target.value)}
             >
               <option value="MEMBER">Member</option>
+              <option value="CO_LEADER">Co-Leader</option>
+              <option value="TEAM_LEADER">Team Leader</option>
               <option value="ADMIN">Admin</option>
+              <option value="SYSTEM_ADMIN">System Admin</option>
             </Select>
           </div>
 

@@ -74,7 +74,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               placeholder="e.g. backend-squad, marketing-sync"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none"
             />
           </div>
 
@@ -87,7 +87,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               placeholder="Brief description of the squad or project"
               value={groupDesc}
               onChange={(e) => setGroupDesc(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none"
             />
           </div>
 
@@ -133,7 +133,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                 placeholder="Search team members..."
                 value={memberSearch}
                 onChange={(e) => setMemberSearch(e.target.value)}
-                className="w-full pl-8.5 pr-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-amber-400 focus:outline-none"
+                className="w-full pl-8.5 pr-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
 

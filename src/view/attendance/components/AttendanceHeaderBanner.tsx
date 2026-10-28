@@ -2,8 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { Clock, Timer } from "lucide-react";
+import { PermissionButton } from "../../../components/shared/PermissionModal";
 
-export const AttendanceHeaderBanner: React.FC = () => {
+interface AttendanceHeaderBannerProps {
+  onOpenPermissions?: () => void;
+}
+
+export const AttendanceHeaderBanner: React.FC<AttendanceHeaderBannerProps> = ({
+  onOpenPermissions,
+}) => {
   const [currentTimeStr, setCurrentTimeStr] = useState<string>("");
 
   useEffect(() => {
@@ -29,17 +36,22 @@ export const AttendanceHeaderBanner: React.FC = () => {
         </p>
       </div>
 
-      <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] shrink-0">
-        <div className="text-right">
-          <div className="text-sm font-bold font-mono text-zinc-900 dark:text-white">
-            {currentTimeStr || "--:--:--"}
+      <div className="flex items-center gap-2.5">
+        {onOpenPermissions && (
+          <PermissionButton onClick={onOpenPermissions} />
+        )}
+        <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] shrink-0">
+          <div className="text-right">
+            <div className="text-sm font-bold font-mono text-zinc-900 dark:text-white">
+              {currentTimeStr || "--:--:--"}
+            </div>
+            <div className="text-3xs text-zinc-400 font-mono">
+              {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+            </div>
           </div>
-          <div className="text-3xs text-zinc-400 font-mono">
-            {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+          <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+            <Timer className="w-3.5 h-3.5" />
           </div>
-        </div>
-        <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
-          <Timer className="w-3.5 h-3.5" />
         </div>
       </div>
     </div>

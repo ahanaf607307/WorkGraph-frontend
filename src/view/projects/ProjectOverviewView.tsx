@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { projectActions } from "../../modules/projects/actions/project.actions";
+import { userActions } from "../../modules/users/actions/user.actions";
+import { useAuth } from "../../hooks/useAuth";
 import { StatusBadge } from "../../components/shared/StatusBadge";
 import { RiskBadge } from "../../components/shared/RiskBadge";
 import { Progress } from "../../components/ui/progress";
@@ -43,6 +45,7 @@ import {
   Activity,
   Milestone,
   Edit3,
+  Search,
 } from "lucide-react";
 
 export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: string }> = ({
@@ -59,6 +62,13 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
   const [newPhaseDeadline, setNewPhaseDeadline] = useState("");
   const [newPhaseBudget, setNewPhaseBudget] = useState<number | "">("");
 
+  // Squad Members Modal State
+  const { user, currentOrg } = useAuth();
+  const [squadMembersModalOpen, setSquadMembersModalOpen] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [selectedAddUserId, setSelectedAddUserId] = useState("");
+  const [selectedAddRole, setSelectedAddRole] = useState<"LEADER" | "CO_LEADER" | "MEMBER">("MEMBER");
+
   const { data: project, isLoading } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => projectActions.fetchProjectById(projectId),
@@ -70,6 +80,177 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
     queryFn: () => projectActions.fetchProjectRisks(projectId),
     enabled: !!projectId,
   });
+
+  const { data: orgMembers = [] } = useQuery({
+    queryKey: ["org-members", currentOrg?.id],
+    queryFn: () => (currentOrg?.id ? userActions.getMembers(currentOrg.id) : Promise.resolve([])),
+    enabled: !!currentOrg?.id && squadMembersModalOpen,
+  });
+
+  const isSystemAdminOrAdmin =
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "system_owner" ||
+    currentOrg?.myRole === "OWNER" ||
+    currentOrg?.myRole === "ADMIN";
+
+  const isLeaderOrCoLeader =
+    user?.role === "TEAM_LEADER" ||
+    user?.role === "CO_LEADER" ||
+    currentOrg?.myRole === "TEAM_LEADER" ||
+    currentOrg?.myRole === "CO_LEADER" ||
+    (project?.team as any)?.leader?.id === user?.id ||
+    (project?.team as any)?.coLeader?.id === user?.id ||
+    (project?.members as any[])?.some(
+      (m: any) => (m.userId === user?.id || m.user?.id === user?.id) && (m.role === "LEADER" || m.role === "CO_LEADER")
+    );
+
+  const canManageMembers = isSystemAdminOrAdmin || isLeaderOrCoLeader;
+
+  const addMemberMutation = useMutation({
+    mutationFn: (data: { userId: string; role: "LEADER" | "CO_LEADER" | "MEMBER" }) =>
+      projectActions.addProjectMember(projectId, data),
+    onSuccess: () => {
+      toast.success("Project member assigned successfully");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      setSelectedAddUserId("");
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to add member"),
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ memberId, role }: { memberId: string; role: "LEADER" | "CO_LEADER" | "MEMBER" }) =>
+      projectActions.updateProjectMemberRole(projectId, memberId, role),
+    onSuccess: () => {
+      toast.success("Member role updated");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to update role"),
+  });
+
+  const removeMemberMutation = useMutation({
+    mutationFn: (memberId: string) => projectActions.removeProjectMember(projectId, memberId),
+    onSuccess: () => {
+      toast.success("Member removed from project");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to remove member"),
+  });
+
+  // Extract all unique squad and project members with their employeeId and designation
+  const allSquadMembers = React.useMemo(() => {
+    if (!project) return [];
+    const memberMap = new Map<string, any>();
+
+    // 1. Team Leader
+    const leader = project.team?.leader as any;
+    if (leader) {
+      memberMap.set(leader.id, {
+        id: leader.id,
+        name: leader.name,
+        email: leader.email,
+        avatarUrl: leader.avatarUrl,
+        employeeId: leader.employeeId || "EMP-" + leader.id.slice(0, 6).toUpperCase(),
+        role: "Team Leader",
+        rawRole: "LEADER",
+        badgeColor: "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800",
+        isDirectMember: false,
+      });
+    }
+
+    // 2. Team Co-Leader
+    const coLeader = project.team?.coLeader as any;
+    if (coLeader) {
+      memberMap.set(coLeader.id, {
+        id: coLeader.id,
+        name: coLeader.name,
+        email: coLeader.email,
+        avatarUrl: coLeader.avatarUrl,
+        employeeId: coLeader.employeeId || "EMP-" + coLeader.id.slice(0, 6).toUpperCase(),
+        role: "Co-Leader",
+        rawRole: "CO_LEADER",
+        badgeColor: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800",
+        isDirectMember: false,
+      });
+    }
+
+    // 3. Team Members
+    if (project.team?.members && Array.isArray(project.team.members)) {
+      for (const m of project.team.members) {
+        const u = (m as any).user || m;
+        if (u?.id && !memberMap.has(u.id)) {
+          memberMap.set(u.id, {
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            avatarUrl: u.avatarUrl,
+            employeeId: (u as any).employeeId || "EMP-" + u.id.slice(0, 6).toUpperCase(),
+            role: (m as any).designationRel?.name || (u as any).role || "Squad Member",
+            rawRole: "MEMBER",
+            badgeColor: "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+            isDirectMember: false,
+          });
+        }
+      }
+    }
+
+    // 4. Project Members
+    if (project.members && Array.isArray(project.members)) {
+      for (const m of project.members) {
+        const u = (m as any).user || m;
+        if (u?.id) {
+          const rawRole = (m as any).role || (u as any).role || "MEMBER";
+          let displayRole = "Project Member";
+          let badgeColor = "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+          if (rawRole === "LEADER") {
+            displayRole = "Project Leader";
+            badgeColor = "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800";
+          } else if (rawRole === "CO_LEADER") {
+            displayRole = "Project Co-Leader";
+            badgeColor = "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800";
+          }
+
+          // If member is already in map from team, elevate role if direct project leader/co-leader
+          if (memberMap.has(u.id)) {
+            const existing = memberMap.get(u.id);
+            if (rawRole === "LEADER" || rawRole === "CO_LEADER") {
+              existing.role = displayRole;
+              existing.rawRole = rawRole;
+              existing.badgeColor = badgeColor;
+            }
+            if ((m as any).id) {
+              existing.isDirectMember = true;
+              existing.projectMemberId = (m as any).id;
+            }
+          } else {
+            memberMap.set(u.id, {
+              id: u.id,
+              projectMemberId: (m as any).id,
+              name: u.name,
+              email: u.email,
+              avatarUrl: u.avatarUrl,
+              employeeId: (u as any).employeeId || "EMP-" + u.id.slice(0, 6).toUpperCase(),
+              role: displayRole,
+              rawRole: rawRole,
+              badgeColor: badgeColor,
+              isDirectMember: Boolean((m as any).id),
+            });
+          }
+        }
+      }
+    }
+
+    return Array.from(memberMap.values());
+  }, [project]);
+
+  const filteredSquadMembers = allSquadMembers.filter((m) =>
+    m.name?.toLowerCase().includes(memberSearch.toLowerCase()) ||
+    m.email?.toLowerCase().includes(memberSearch.toLowerCase()) ||
+    m.employeeId?.toLowerCase().includes(memberSearch.toLowerCase()) ||
+    m.role?.toLowerCase().includes(memberSearch.toLowerCase())
+  );
 
   // Health mutation
   const updateHealthMutation = useMutation({
@@ -282,12 +463,28 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
             </div>
           </div>
 
-          <div>
-            <span className="text-zinc-400 block mb-0.5">Squad Members</span>
+          <div
+            onClick={() => setSquadMembersModalOpen(true)}
+            className="cursor-pointer group p-2 -m-2 rounded-xl hover:bg-violet-500/10 transition-all border border-transparent hover:border-violet-500/20"
+            title="Click to view squad members with Name and ID"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-400 block mb-0.5 group-hover:text-violet-600 dark:group-hover:text-violet-400 font-semibold transition-colors">
+                Squad Members ({allSquadMembers.length})
+              </span>
+              <span className="text-3xs text-violet-600 dark:text-violet-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                View &rarr;
+              </span>
+            </div>
             <div className="flex -space-x-1.5 overflow-hidden mt-0.5">
-              {(project.members || []).slice(0, 5).map((m) => (
+              {(allSquadMembers.length > 0 ? allSquadMembers : project.members || []).slice(0, 5).map((m: any) => (
                 <Avatar key={m.id} name={m.name} size="sm" />
               ))}
+              {allSquadMembers.length > 5 && (
+                <div className="w-6 h-6 rounded-full bg-violet-600 text-white text-3xs font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0f1118]">
+                  +{allSquadMembers.length - 5}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -998,6 +1195,164 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
         project={project}
         onSaved={() => queryClient.invalidateQueries({ queryKey: ["project", projectId] })}
       />
+
+      {/* Squad Members Inspection Modal (Name & ID) */}
+      <Modal
+        isOpen={squadMembersModalOpen}
+        onClose={() => setSquadMembersModalOpen(false)}
+        title={`Squad Members (${allSquadMembers.length})`}
+        description={`Assigned personnel and operational members for "${project.name}"`}
+        maxWidth="lg"
+      >
+        <div className="space-y-4 pt-2">
+          {/* Search bar */}
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search by name, employee ID, role, or email..."
+              value={memberSearch}
+              onChange={(e) => setMemberSearch(e.target.value)}
+              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-white/[0.04] border border-zinc-200/80 dark:border-white/[0.08] text-xs focus:outline-none focus:border-violet-500 text-zinc-900 dark:text-white"
+            />
+          </div>
+
+          {/* Add Member Bar (Leaders & Admins only) */}
+          {canManageMembers && (
+            <div className="p-3.5 rounded-2xl bg-violet-50/60 dark:bg-violet-950/20 border border-violet-200/60 dark:border-violet-800/40 space-y-2.5">
+              <div className="text-xs font-bold text-violet-900 dark:text-violet-300 flex items-center justify-between">
+                <span>Assign Project Personnel & Leadership</span>
+                <span className="text-3xs font-medium text-violet-600 dark:text-violet-400">
+                  Roles: Leader, Co-Leader, Member
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <select
+                  value={selectedAddUserId}
+                  onChange={(e) => setSelectedAddUserId(e.target.value)}
+                  className="w-full sm:flex-1 px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:border-violet-500 cursor-pointer"
+                >
+                  <option value="">Select team member to assign...</option>
+                  {orgMembers
+                    .filter((om) => !allSquadMembers.some((sm) => sm.id === om.userId))
+                    .map((om) => (
+                      <option key={om.id} value={om.userId}>
+                        {om.user?.name || om.user?.email} ({om.designationRel?.name || om.role})
+                      </option>
+                    ))}
+                </select>
+
+                <select
+                  value={selectedAddRole}
+                  onChange={(e) => setSelectedAddRole(e.target.value as any)}
+                  className="w-full sm:w-44 px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:border-violet-500 cursor-pointer"
+                >
+                  <option value="LEADER">👑 Project Leader</option>
+                  <option value="CO_LEADER">⭐ Project Co-Leader</option>
+                  <option value="MEMBER">👤 Project Member</option>
+                </select>
+
+                <Button
+                  size="sm"
+                  variant="primary"
+                  disabled={!selectedAddUserId || addMemberMutation.isPending}
+                  onClick={() =>
+                    addMemberMutation.mutate({
+                      userId: selectedAddUserId,
+                      role: selectedAddRole,
+                    })
+                  }
+                  className="w-full sm:w-auto"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Assign
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Members list */}
+          <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+            {filteredSquadMembers.length === 0 ? (
+              <div className="p-8 text-center text-xs text-zinc-400 bg-zinc-50 dark:bg-white/[0.02] rounded-2xl">
+                No squad members found matching your search.
+              </div>
+            ) : (
+              filteredSquadMembers.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-zinc-50/80 dark:bg-white/[0.03] border border-zinc-200/60 dark:border-white/[0.06] hover:border-violet-500/30 transition-all"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar name={member.name} size="md" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold text-zinc-950 dark:text-white truncate">
+                          {member.name}
+                        </span>
+                        {/* Employee ID Badge */}
+                        <span className="px-2 py-0.5 rounded-md font-mono text-3xs font-bold bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                          ID: {member.employeeId}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate block">
+                        {member.email}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Role Badge or Role Selector */}
+                  <div className="flex items-center gap-2">
+                    {member.isDirectMember && canManageMembers ? (
+                      <div className="flex items-center gap-1.5">
+                        <select
+                          value={member.rawRole || "MEMBER"}
+                          onChange={(e) =>
+                            updateRoleMutation.mutate({
+                              memberId: member.projectMemberId,
+                              role: e.target.value as any,
+                            })
+                          }
+                          className="px-2 py-1 rounded-lg text-3xs font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 cursor-pointer"
+                        >
+                          <option value="LEADER">👑 Project Leader</option>
+                          <option value="CO_LEADER">⭐ Project Co-Leader</option>
+                          <option value="MEMBER">👤 Project Member</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => removeMemberMutation.mutate(member.projectMemberId)}
+                          title="Remove from project"
+                          className="p-1 rounded-lg hover:bg-rose-500/10 text-zinc-400 hover:text-rose-500 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-3xs font-semibold whitespace-nowrap border ${member.badgeColor}`}
+                      >
+                        {member.role}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs text-zinc-500">
+            <span>Assigned Squad: <strong className="text-zinc-800 dark:text-zinc-200">{project.team?.name || project.department?.name || "Cross-Department"}</strong></span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSquadMembersModalOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

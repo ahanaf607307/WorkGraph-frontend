@@ -34,6 +34,11 @@ import { CreateDesignationModal } from "./components/CreateDesignationModal";
 import { EditDesignationModal } from "./components/EditDesignationModal";
 import { EditMemberPlacementModal } from "./components/EditMemberPlacementModal";
 import { AddSquadMemberModal } from "./components/AddSquadMemberModal";
+import {
+  PermissionButton,
+  PermissionModal,
+  useFeaturePermission,
+} from "../../components/shared/PermissionModal";
 
 export const DepartmentManagementView: React.FC = () => {
   const { currentOrg, user } = useAuth();
@@ -66,6 +71,9 @@ export const DepartmentManagementView: React.FC = () => {
   const [targetTeamForMember, setTargetTeamForMember] = useState<TeamItem | null>(null);
   const [showEditMemberModal, setShowEditMemberModal] = useState(false);
   const [editingMember, setEditingMember] = useState<OrganizationMember | null>(null);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+
+  const { hasPermission: hasDeptPermission } = useFeaturePermission("departments");
 
   // Load all data with smooth background auto-fetch (No screen black/white flicker)
   const loadAllData = async (isInitial = false) => {
@@ -266,7 +274,7 @@ export const DepartmentManagementView: React.FC = () => {
 
   // Save Member Placement
   const handleSaveMemberPlacement = async (form: {
-    role: "OWNER" | "ADMIN" | "MEMBER";
+    role: "OWNER" | "SYSTEM_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
     designationId: string;
     departmentId: string;
     teamId: string;
@@ -314,31 +322,34 @@ export const DepartmentManagementView: React.FC = () => {
           </p>
         </div>
 
-        {isSystemAdmin ? (
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setShowDeptModal(true)}
-              className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Department</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowDesignationModal(true)}
-              className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white border border-zinc-200/70 dark:border-zinc-700 font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
-            >
-              <Award className="w-4 h-4 text-violet-500" />
-              <span>New Designation</span>
-            </button>
-          </div>
-        ) : isAdmin ? (
-          <div className="px-3.5 py-2 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-3xs font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
-            <span>🛡️</span>
-            <span>Admin Workspace (Departments & Designations managed by System Admin)</span>
-          </div>
-        ) : null}
+        <div className="flex items-center gap-2.5">
+          <PermissionButton onClick={() => setShowPermissionModal(true)} />
+
+          {hasDeptPermission ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowDeptModal(true)}
+                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Department</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDesignationModal(true)}
+                className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white border border-zinc-200/70 dark:border-zinc-700 font-medium text-xs rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              >
+                <Award className="w-4 h-4 text-violet-500" />
+                <span>New Designation</span>
+              </button>
+            </>
+          ) : (
+            <div className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 rounded-xl text-3xs font-semibold text-zinc-500 flex items-center gap-1.5">
+              <span>View Only Access</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Enterprise Stats Cards */}
@@ -375,8 +386,8 @@ export const DepartmentManagementView: React.FC = () => {
         <TabsContent value="departments">
           <DepartmentSquadTab
             departments={departments}
-            isAdminOrOwner={isAdminOrOwner}
-            isSystemAdmin={isSystemAdmin}
+            isAdminOrOwner={hasDeptPermission}
+            isSystemAdmin={hasDeptPermission}
             loading={loading}
             onOpenCreateDept={() => setShowDeptModal(true)}
             onOpenEditDept={handleOpenEditDept}
@@ -497,6 +508,14 @@ export const DepartmentManagementView: React.FC = () => {
         services={services}
         isSystemAdmin={isSystemAdmin}
         onSubmit={handleSaveMemberPlacement}
+      />
+
+      <PermissionModal
+        isOpen={showPermissionModal}
+        onClose={() => setShowPermissionModal(false)}
+        featureKey="departments"
+        title="Department & Squad Creation Permissions"
+        description="Authorize selected workspace admins to add departments, create squads, and define designations."
       />
     </div>
   );

@@ -93,6 +93,27 @@ export const stationActions = {
     });
   },
 
+  updateProfile: async (
+    profileId: string,
+    data: {
+      name?: string;
+      username?: string;
+      serviceId?: string | null;
+      platform?: string;
+    }
+  ): Promise<ProfileItem> => {
+    return apiClient<ProfileItem>(`/stations/profiles/${profileId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  deleteProfile: async (profileId: string): Promise<{ success: boolean }> => {
+    return apiClient<{ success: boolean }>(`/stations/profiles/${profileId}`, {
+      method: "DELETE",
+    });
+  },
+
   checkUsername: async (
     username: string
   ): Promise<{ available: boolean; username: string; message: string }> => {
@@ -109,5 +130,29 @@ export const stationActions = {
       method: "PATCH",
       body: JSON.stringify({ serviceId }),
     });
+  },
+
+  getMyActiveStation: async (): Promise<StationItem | null> => {
+    return apiClient<StationItem | null>("/stations/my-active");
+  },
+
+  validateProfileUsername: async (
+    username: string
+  ): Promise<{
+    valid: boolean;
+    username?: string;
+    profile?: {
+      id: string;
+      name: string;
+      username: string;
+      serviceId?: string | null;
+      serviceName?: string | null;
+      stationedUser?: { id: string; name: string; email: string } | null;
+    };
+    message: string;
+  }> => {
+    return apiClient(
+      `/stations/validate-profile?username=${encodeURIComponent(username)}`
+    );
   },
 };

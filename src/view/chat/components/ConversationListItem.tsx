@@ -59,7 +59,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
             <img
               src={avatarUrl}
               alt={title}
-              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-zinc-200 dark:border-zinc-750 shadow-2xs"
+              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-zinc-200 dark:border-white/[0.08] shadow-2xs"
             />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold text-sm shadow-2xs">

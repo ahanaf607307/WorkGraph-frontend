@@ -189,8 +189,15 @@ export const TargetsView: React.FC = () => {
     { month: "long", year: "numeric" }
   );
 
+  const isLeaderOrCoLeader =
+    (currentOrg as any)?.designation === "TEAM_LEADER" ||
+    (currentOrg as any)?.designation === "CO_LEADER" ||
+    allTeams.some((t: any) => t.leaderId === user?.id || t.coLeaderId === user?.id);
+
+  const canSetTarget = isSystemAdminOrAdmin || isLeaderOrCoLeader;
+
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 select-text">
+    <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-text">
       {/* Sleek Open Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
@@ -220,7 +227,7 @@ export const TargetsView: React.FC = () => {
             </button>
           </div>
 
-          {isSystemAdminOrAdmin && (
+          {canSetTarget && (
             <Button
               onClick={() => {
                 setTargetForm((prev) => ({

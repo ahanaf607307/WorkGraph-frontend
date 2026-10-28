@@ -19,6 +19,7 @@ import { AttendanceTaskModal } from "./components/AttendanceTaskModal";
 import { AdminTimesheetTable } from "./components/AdminTimesheetTable";
 import { AdminAdjustModal } from "./components/AdminAdjustModal";
 import { EmployeeAttendanceHistoryModal } from "./components/EmployeeAttendanceHistoryModal";
+import { PermissionModal } from "../../components/shared/PermissionModal";
 
 export const AttendanceView: React.FC = () => {
   const { currentOrg, user } = useAuth();
@@ -97,6 +98,7 @@ export const AttendanceView: React.FC = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [adjustingRecord, setAdjustingRecord] = useState<AttendanceRecord | null>(null);
   const [historyEmployee, setHistoryEmployee] = useState<any | null>(null);
+  const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
 
   // Check-in mutation
   const checkInMutation = useMutation({
@@ -204,7 +206,9 @@ export const AttendanceView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner & Header */}
-      <AttendanceHeaderBanner />
+      <AttendanceHeaderBanner
+        onOpenPermissions={() => setIsPermissionModalOpen(true)}
+      />
 
       {/* Tabs: Personal vs Admin Oversight */}
       <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-white/[0.06] pb-2">
@@ -329,6 +333,15 @@ export const AttendanceView: React.FC = () => {
         onClose={() => setHistoryEmployee(null)}
         orgId={orgId!}
         employee={historyEmployee}
+      />
+
+      {/* Permissions Modal */}
+      <PermissionModal
+        isOpen={isPermissionModalOpen}
+        onClose={() => setIsPermissionModalOpen(false)}
+        featureKey="attendance"
+        title="Attendance Override Permissions"
+        description="Authorize specific admins to adjust and override employee timesheet records."
       />
     </div>
   );

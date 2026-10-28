@@ -1,19 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
+import { useAuth } from "../../../hooks/useAuth";
+import { departmentActions } from "../../../modules/departments/actions/department.actions";
+import { designationActions } from "../../../modules/designations/actions/designation.actions";
+import { serviceActions } from "../../../modules/services/actions/service.actions";
 
 interface EditMemberPlacementModalProps {
   isOpen: boolean;
   onClose: () => void;
   member: any;
-  departments: any[];
-  designations: any[];
+  departments?: any[];
+  designations?: any[];
   services?: any[];
   isSystemAdmin: boolean;
   onSubmit: (data: {
-    role: "OWNER" | "ADMIN" | "MEMBER";
+    role: "OWNER" | "SYSTEM_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
     designationId: string;
     departmentId: string;
     teamId: string;
@@ -27,12 +32,38 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
   isOpen,
   onClose,
   member,
-  departments,
-  designations,
-  services = [],
+  departments: propDepartments = [],
+  designations: propDesignations = [],
+  services: propServices = [],
   isSystemAdmin,
   onSubmit,
 }) => {
+  const { currentOrg } = useAuth();
+  const orgId = currentOrg?.id;
+
+  // Fallback dynamic queries to ensure 100% database-driven selects
+  const { data: dynamicDepts = [] } = useQuery({
+    queryKey: ["departments", orgId],
+    queryFn: () => departmentActions.getDepartments(orgId),
+    enabled: isOpen && (!propDepartments || propDepartments.length === 0) && !!orgId,
+  });
+
+  const { data: dynamicDesignations = [] } = useQuery({
+    queryKey: ["designations", orgId],
+    queryFn: () => designationActions.getDesignations(orgId),
+    enabled: isOpen && (!propDesignations || propDesignations.length === 0) && !!orgId,
+  });
+
+  const { data: dynamicServices = [] } = useQuery({
+    queryKey: ["services", orgId],
+    queryFn: () => serviceActions.getServices(),
+    enabled: isOpen && (!propServices || propServices.length === 0) && !!orgId,
+  });
+
+  const departments = propDepartments.length > 0 ? propDepartments : dynamicDepts;
+  const designations = propDesignations.length > 0 ? propDesignations : dynamicDesignations;
+  const services = propServices.length > 0 ? propServices : dynamicServices;
+
   const [form, setForm] = useState<{
     role: "OWNER" | "ADMIN" | "MEMBER";
     designationId: string;
@@ -53,19 +84,33 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
 
   useEffect(() => {
     if (member) {
+      let deptId = member.departmentId || "";
+      let teamId = member.teamId || "";
+
+      // Auto-detect department if member has a teamId but no departmentId
+      if (!deptId && teamId && departments.length > 0) {
+        const matchingDept = departments.find((d: any) =>
+          d.teams?.some((t: any) => t.id === teamId)
+        );
+        if (matchingDept) {
+          deptId = matchingDept.id;
+        }
+      }
+
       setForm({
         role: member.role || "MEMBER",
         designationId: member.designationId || "",
-        departmentId: member.departmentId || "",
-        teamId: member.teamId || "",
+        departmentId: deptId,
+        teamId: teamId,
         serviceId: member.serviceId || "",
         isApproved: member.isApproved !== false,
         weeklyCapacityHours: member.weeklyCapacityHours || 40,
       });
     }
-  }, [member]);
+  }, [member, departments]);
 
-  const teamsForSelectedDept = departments.find((d) => d.id === form.departmentId)?.teams || [];
+  const teamsForSelectedDept =
+    departments.find((d: any) => d.id === form.departmentId)?.teams || [];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,7 +167,7 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
 
               {member?.role === "OWNER" ? (
                 <div className="w-full px-3 py-2 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-300 dark:border-violet-800 text-xs font-bold text-violet-700 dark:text-violet-300 flex items-center justify-between">
-                  <span>🏢 System Admin</span>
+                  <span>🏢 System Admin (Owner)</span>
                   <span className="text-3xs font-mono font-normal text-violet-600 dark:text-violet-400">Cannot be modified</span>
                 </div>
               ) : (
@@ -130,10 +175,13 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                   disabled={!isSystemAdmin}
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value as any })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="MEMBER">Member</option>
+                  <option value="CO_LEADER">Co-Leader</option>
+                  <option value="TEAM_LEADER">Team Leader</option>
                   <option value="ADMIN">Admin</option>
+                  <option value="SYSTEM_ADMIN">System Admin</option>
                 </select>
               )}
             </div>
@@ -145,12 +193,12 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
               <select
                 value={form.designationId}
                 onChange={(e) => setForm({ ...form, designationId: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer"
               >
                 <option value="">Select Designation...</option>
-                {designations.map((d) => (
+                {designations.map((d: any) => (
                   <option key={d.id} value={d.id}>
-                    {d.name} (Lvl {d.hierarchyLevel})
+                    {d.name} {d.hierarchyLevel ? `(Lvl ${d.hierarchyLevel})` : ""}
                   </option>
                 ))}
               </select>
@@ -164,11 +212,20 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
               </label>
               <select
                 value={form.departmentId}
-                onChange={(e) => setForm({ ...form, departmentId: e.target.value, teamId: "" })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none cursor-pointer"
+                onChange={(e) => {
+                  const newDeptId = e.target.value;
+                  const newDeptTeams = departments.find((d: any) => d.id === newDeptId)?.teams || [];
+                  const teamStillValid = newDeptTeams.some((t: any) => t.id === form.teamId);
+                  setForm({
+                    ...form,
+                    departmentId: newDeptId,
+                    teamId: teamStillValid ? form.teamId : "",
+                  });
+                }}
+                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer"
               >
                 <option value="">Unassigned</option>
-                {departments.map((d) => (
+                {departments.map((d: any) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
                   </option>
@@ -184,7 +241,7 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                 value={form.teamId}
                 onChange={(e) => setForm({ ...form, teamId: e.target.value })}
                 disabled={!form.departmentId}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none disabled:opacity-50 cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none disabled:opacity-50 cursor-pointer"
               >
                 <option value="">Unassigned</option>
                 {teamsForSelectedDept.map((t: any) => (
@@ -204,10 +261,10 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
               <select
                 value={form.serviceId}
                 onChange={(e) => setForm({ ...form, serviceId: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer"
               >
                 <option value="">No restriction (All lines)</option>
-                {services.map((s) => (
+                {services.map((s: any) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
                   </option>
@@ -225,7 +282,7 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                 max={168}
                 value={form.weeklyCapacityHours}
                 onChange={(e) => setForm({ ...form, weeklyCapacityHours: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-900 dark:text-white border border-transparent focus:border-violet-500 focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none"
               />
             </div>
           </div>

@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema, ProjectFormData } from "../../modules/projects/schemas/project.schema";
 import { projectActions } from "../../modules/projects/actions/project.actions";
 import { departmentActions, DepartmentItem } from "../../modules/departments/actions/department.actions";
+import { userActions } from "../../modules/users/actions/user.actions";
+import { OrganizationMember } from "../../modules/users/types/user.types";
 import { useAuth } from "../../hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "../../components/ui/modal";
@@ -46,6 +48,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [departments, setDepartments] = useState<DepartmentItem[]>([]);
+  const [orgMembers, setOrgMembers] = useState<OrganizationMember[]>([]);
   const [selectedDeptId, setSelectedDeptId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"contract" | "client" | "execution" | "phases" | "media">("contract");
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
@@ -76,7 +79,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     name: "phases",
   });
 
-  // Load departments
+  // Load departments and organization members
   useEffect(() => {
     if (currentOrg?.id && isOpen) {
       departmentActions
@@ -87,6 +90,13 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             setSelectedDeptId(depts[0].id);
             setValue("departmentId", depts[0].id);
           }
+        })
+        .catch(() => null);
+
+      userActions
+        .getMembers(currentOrg.id)
+        .then((members) => {
+          setOrgMembers(members || []);
         })
         .catch(() => null);
     }
@@ -478,6 +488,42 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   label="Target Deadline"
                   {...register("dueDate")}
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Project Leader (Role: Leader)
+                </label>
+                <select
+                  {...register("leaderId")}
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:border-amber-400 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Default (You / Creator)</option>
+                  {orgMembers.map((m) => (
+                    <option key={m.id} value={m.userId}>
+                      {m.user?.name || m.user?.email} ({m.designationRel?.name || m.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Project Co-Leader (Role: Co-Leader)
+                </label>
+                <select
+                  {...register("coLeaderId")}
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:border-amber-400 focus:outline-none cursor-pointer"
+                >
+                  <option value="">None / Optional Co-Leader</option>
+                  {orgMembers.map((m) => (
+                    <option key={m.id} value={m.userId}>
+                      {m.user?.name || m.user?.email} ({m.designationRel?.name || m.role})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

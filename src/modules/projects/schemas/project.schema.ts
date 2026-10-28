@@ -29,6 +29,8 @@ export const projectSchema = z.object({
   status: z.enum(["PLANNING", "ACTIVE", "ON_HOLD", "COMPLETED", "CANCELLED"]).optional(),
   startDate: z.string().optional().nullable(),
   dueDate: z.string().optional().nullable(),
+  leaderId: z.string().optional(),
+  coLeaderId: z.string().optional(),
   phases: z.array(projectPhaseSchema).optional(),
 });
 
