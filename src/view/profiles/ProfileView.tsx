@@ -50,8 +50,13 @@ export const ProfileView: React.FC = () => {
 
   const isSystemAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
     (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
     user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
     user?.role === "SYSTEM_ADMIN" ||
     (user?.role as string) === "system_owner" ||
     (user?.role as string) === "system_admin";

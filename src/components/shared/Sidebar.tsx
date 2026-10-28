@@ -51,15 +51,27 @@ export const Sidebar: React.FC = () => {
   const isSystemOwner = user?.role === "SYSTEM_OWNER";
   const isSystemAdminOrAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
     currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN";
 
   const isPrivileged =
     user?.role === "SYSTEM_OWNER" ||
     user?.role === "system_owner" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
     user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_admin" ||
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
     (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
     currentOrg?.myRole === "ADMIN";
 
   const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";

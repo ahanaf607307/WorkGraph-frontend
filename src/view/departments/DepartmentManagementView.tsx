@@ -42,8 +42,17 @@ import {
 
 export const DepartmentManagementView: React.FC = () => {
   const { currentOrg, user } = useAuth();
-  const isSystemOwner = user?.role === "SYSTEM_OWNER";
-  const isCompanyHead = currentOrg?.myRole === "OWNER";
+  const isSystemOwner = user?.role === "SYSTEM_OWNER" || (user?.role as string) === "system_owner";
+  const isCompanyHead =
+    currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_admin";
   const isSystemAdmin = isCompanyHead || isSystemOwner;
   const isAdmin = currentOrg?.myRole === "ADMIN";
   const isAdminOrOwner = isSystemAdmin || isAdmin;
@@ -274,7 +283,7 @@ export const DepartmentManagementView: React.FC = () => {
 
   // Save Member Placement
   const handleSaveMemberPlacement = async (form: {
-    role: "OWNER" | "SYSTEM_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
+    role: "OWNER" | "SYSTEM_ADMIN" | "WORKSPACE_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
     designationId: string;
     departmentId: string;
     teamId: string;

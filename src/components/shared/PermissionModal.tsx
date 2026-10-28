@@ -21,10 +21,16 @@ export function useFeaturePermission(featureKey: string) {
 
   const isSystemAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
     (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
     user?.role === "SYSTEM_OWNER" ||
     (user?.role as string) === "system_owner" ||
-    user?.role === "SYSTEM_ADMIN";
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_admin";
 
   const { data: permCheck } = useQuery({
     queryKey: ["feature-perm-check", orgId, user?.id, featureKey],
@@ -53,10 +59,16 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
   const { currentOrg, user } = useAuth();
   const isSystemAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
     (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
     user?.role === "SYSTEM_OWNER" ||
     (user?.role as string) === "system_owner" ||
-    user?.role === "SYSTEM_ADMIN";
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_admin";
 
   // Only System Admin can grant/manage module permissions
   if (!isSystemAdmin) return null;
@@ -122,7 +134,7 @@ export const PermissionModal: React.FC<PermissionModalProps> = ({
 
   const handleToggle = (user: PermissionUser) => {
     if (user.isOwner) {
-      toast.info("System Admin always maintains master permissions");
+      toast.info("Workspace Admin always maintains master permissions");
       return;
     }
 
@@ -146,7 +158,7 @@ export const PermissionModal: React.FC<PermissionModalProps> = ({
         <div className="p-3 rounded-xl bg-violet-50/60 dark:bg-violet-950/20 border border-violet-200/50 dark:border-violet-900/40 text-violet-900 dark:text-violet-200 text-2xs leading-relaxed flex items-start gap-2.5">
           <ShieldCheck className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0 mt-0.5" />
           <span>
-            <strong>System Admin Notice:</strong> You hold master privileges. Members granted permission below are stored in the database and will be authorized to create, edit, or adjust records in this section.
+            <strong>Admin Notice:</strong> You hold master privileges. Members granted permission below are stored in the database and will be authorized to create, edit, or adjust records in this section.
           </span>
         </div>
 
