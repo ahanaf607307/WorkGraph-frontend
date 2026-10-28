@@ -30,6 +30,7 @@ export interface StationItem {
   currentProfileId?: string | null;
   joinedAt?: string | null;
   currentProfile?: ProfileItem | null;
+  activeProfiles?: ProfileItem[];
   currentUser?: {
     id: string;
     name: string;
@@ -44,10 +45,24 @@ export const stationActions = {
     return apiClient<StationItem[]>("/stations");
   },
 
+  createStation: async (data?: { name?: string; stationNumber?: number }): Promise<StationItem> => {
+    return apiClient<StationItem>("/stations", {
+      method: "POST",
+      body: JSON.stringify(data || {}),
+    });
+  },
+
+  deleteStation: async (stationId: string): Promise<void> => {
+    return apiClient<void>(`/stations/${stationId}`, {
+      method: "DELETE",
+    });
+  },
+
   joinStation: async (data: {
     stationId?: string;
     stationNumber?: number;
-    profileId: string;
+    profileId?: string;
+    profileIds?: string[];
   }): Promise<StationItem> => {
     return apiClient<StationItem>("/stations/join", {
       method: "POST",
