@@ -224,7 +224,7 @@ export const WorkspaceSettingsView: React.FC = () => {
                         m.userId !== user?.id &&
                         m.role !== "OWNER" ? (
                           <select
-                            value={m.role}
+                            value={m.role === "SYSTEM_ADMIN" ? "WORKSPACE_ADMIN" : m.role}
                             onChange={(e) =>
                               updateMemberMutation.mutate({
                                  userId: m.userId,
@@ -238,11 +238,10 @@ export const WorkspaceSettingsView: React.FC = () => {
                             <option value="TEAM_LEADER" className="cursor-pointer">Team Leader</option>
                             <option value="ADMIN" className="cursor-pointer">Admin</option>
                             <option value="WORKSPACE_ADMIN" className="cursor-pointer">Workspace Admin</option>
-                            <option value="SYSTEM_ADMIN" className="cursor-pointer">System Admin</option>
                           </select>
                         ) : m.role === "OWNER" || m.role === "SYSTEM_ADMIN" || (m.role as string) === "WORKSPACE_ADMIN" ? (
                           <Badge variant="default" className="border-violet-200/60 dark:border-violet-800/60 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 font-semibold">
-                            🏢 {m.role === "WORKSPACE_ADMIN" ? "Workspace Admin" : "System Admin"}
+                            🏢 Workspace Admin
                           </Badge>
                         ) : (
                           <Badge variant="default">{m.role}</Badge>
@@ -333,7 +332,6 @@ export const WorkspaceSettingsView: React.FC = () => {
               <option value="TEAM_LEADER">Team Leader</option>
               <option value="ADMIN">Admin</option>
               <option value="WORKSPACE_ADMIN">Workspace Admin</option>
-              <option value="SYSTEM_ADMIN">System Admin</option>
             </Select>
           </div>
 

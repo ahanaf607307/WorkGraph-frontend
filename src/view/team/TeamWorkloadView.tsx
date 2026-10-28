@@ -589,7 +589,6 @@ export const TeamWorkloadView: React.FC = () => {
               <option value="TEAM_LEADER">Team Leader</option>
               <option value="ADMIN">Admin</option>
               <option value="WORKSPACE_ADMIN">Workspace Admin</option>
-              <option value="SYSTEM_ADMIN">System Admin</option>
             </Select>
           </div>
 

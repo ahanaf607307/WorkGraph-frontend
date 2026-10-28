@@ -65,7 +65,7 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
   const services = propServices.length > 0 ? propServices : dynamicServices;
 
   const [form, setForm] = useState<{
-    role: "OWNER" | "ADMIN" | "MEMBER";
+    role: "OWNER" | "SYSTEM_ADMIN" | "WORKSPACE_ADMIN" | "ADMIN" | "TEAM_LEADER" | "CO_LEADER" | "MEMBER";
     designationId: string;
     departmentId: string;
     teamId: string;
@@ -167,13 +167,13 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
 
               {member?.role === "OWNER" ? (
                 <div className="w-full px-3 py-2 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-300 dark:border-violet-800 text-xs font-bold text-violet-700 dark:text-violet-300 flex items-center justify-between">
-                  <span>🏢 System Admin (Owner)</span>
+                  <span>🏢 Workspace Admin (Owner)</span>
                   <span className="text-3xs font-mono font-normal text-violet-600 dark:text-violet-400">Cannot be modified</span>
                 </div>
               ) : (
                 <select
                   disabled={!isSystemAdmin}
-                  value={form.role}
+                  value={form.role === "SYSTEM_ADMIN" ? "WORKSPACE_ADMIN" : form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
@@ -182,7 +182,6 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                   <option value="TEAM_LEADER">Team Leader</option>
                   <option value="ADMIN">Admin</option>
                   <option value="WORKSPACE_ADMIN">Workspace Admin</option>
-                  <option value="SYSTEM_ADMIN">System Admin</option>
                 </select>
               )}
             </div>

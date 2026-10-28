@@ -168,21 +168,6 @@ export const LoginView: React.FC = () => {
                 <div className="text-3xs text-amber-600 dark:text-amber-400 font-mono mt-0.5 font-semibold">system@test.com</div>
               </button>
 
-              {/* System Admin */}
-              <button
-                type="button"
-                onClick={() => setDemoAccount("systemadmin@test.com", "System Admin")}
-                className="p-2.5 text-xs font-medium text-left rounded-xl border border-indigo-300/80 dark:border-indigo-700/60 bg-indigo-50/50 dark:bg-indigo-950/20 hover:border-indigo-500 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30 transition-all cursor-pointer shadow-2xs group"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
-                    ⚙️ System Admin
-                  </span>
-                  <span className="text-3xs font-mono font-bold bg-indigo-500 text-white px-1.5 py-0.2 rounded">Sys Lead</span>
-                </div>
-                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">System-level administration</div>
-                <div className="text-3xs text-indigo-600 dark:text-indigo-400 font-mono mt-0.5 font-semibold">systemadmin@test.com</div>
-              </button>
 
               {/* Workspace Admin */}
               <button
