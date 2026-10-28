@@ -26,7 +26,7 @@ export const LoginView: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "systemadmin@test.com",
+      email: "workspaceadmin@test.com",
       password: "123456",
     },
   });
@@ -152,43 +152,29 @@ export const LoginView: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {/* System Owner */}
-              <button
-                type="button"
-                onClick={() => setDemoAccount("system@test.com", "System Owner")}
-                className="p-3 text-xs font-medium text-left rounded-xl border border-purple-300/80 dark:border-purple-700/60 bg-purple-50/50 dark:bg-purple-950/20 hover:border-purple-500 hover:bg-purple-100/60 dark:hover:bg-purple-900/30 transition-all cursor-pointer shadow-2xs group"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
-                    👑 System Owner
-                  </span>
-                  <span className="text-3xs font-mono font-bold bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-1.5 py-0.2 rounded">Platform Head</span>
-                </div>
-                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Platform overview & company approvals</div>
-                <div className="text-3xs text-purple-600 dark:text-purple-400 font-mono mt-1 font-semibold">system@test.com</div>
-              </button>
 
-              {/* System Admin */}
+
+              {/* Workspace Admin */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("systemadmin@test.com", "System Admin")}
-                className="p-3 text-xs font-medium text-left rounded-xl border border-amber-300/80 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/20 hover:border-amber-500 hover:bg-amber-100/60 dark:hover:bg-amber-900/30 transition-all cursor-pointer shadow-2xs group"
+                onClick={() => setDemoAccount("workspaceadmin@test.com", "Workspace Admin")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-violet-300/80 dark:border-violet-700/60 bg-violet-50/50 dark:bg-violet-950/20 hover:border-violet-500 hover:bg-violet-100/60 dark:hover:bg-violet-900/30 transition-all cursor-pointer shadow-2xs group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                    🏢 System Admin
+                  <span className="font-extrabold text-violet-700 dark:text-violet-400 flex items-center gap-1.5">
+                    🏛️ Workspace Admin
                   </span>
-                  <span className="text-3xs font-mono font-bold bg-amber-400 text-black px-1.5 py-0.2 rounded">Company Head</span>
+                  <span className="text-3xs font-mono font-bold bg-violet-500 text-white px-1.5 py-0.2 rounded">Org Head</span>
                 </div>
-                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Manages Depts, Designations & Titles</div>
-                <div className="text-3xs text-amber-600 dark:text-amber-400 font-mono mt-1 font-semibold">systemadmin@test.com</div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Workspace leader & configurations</div>
+                <div className="text-3xs text-violet-600 dark:text-violet-400 font-mono mt-0.5 font-semibold">workspaceadmin@test.com</div>
               </button>
 
               {/* Admin */}
               <button
                 type="button"
                 onClick={() => setDemoAccount("admin@test.com", "Admin")}
-                className="p-3 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-orange-400 dark:hover:border-orange-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-orange-400 dark:hover:border-orange-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
@@ -196,39 +182,97 @@ export const LoginView: React.FC = () => {
                   </span>
                   <span className="text-3xs font-mono bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.2 rounded">Ops Admin</span>
                 </div>
-                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Squads, Projects, Operations Manager</div>
-                <div className="text-3xs text-zinc-400 font-mono mt-1">admin@test.com</div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Operations, projects & department manager</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-0.5">admin@test.com</div>
+              </button>
+
+              {/* Team Leader */}
+              <button
+                type="button"
+                onClick={() => setDemoAccount("teamleader@test.com", "Team Leader")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                    🎖️ Team Leader
+                  </span>
+                  <span className="text-3xs font-mono bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-1.5 py-0.2 rounded">Leader</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Squad lead, task review & team direction</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-0.5">teamleader@test.com</div>
+              </button>
+
+              {/* Co Leader */}
+              <button
+                type="button"
+                onClick={() => setDemoAccount("coleader@test.com", "Co Leader")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                    ⚡ Co Leader
+                  </span>
+                  <span className="text-3xs font-mono bg-cyan-100 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded">Co-Lead</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Technical execution & squad coordination</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-0.5">coleader@test.com</div>
+              </button>
+
+              {/* Sales Member */}
+              <button
+                type="button"
+                onClick={() => setDemoAccount("sales@test.com", "Sales Member")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-emerald-300/80 dark:border-emerald-700/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/30 transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                    💼 Sales Member
+                  </span>
+                  <span className="text-3xs font-mono font-bold bg-emerald-500 text-white px-1.5 py-0.2 rounded">Sales Desk</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Client calls, profile stations & queues</div>
+                <div className="text-3xs text-emerald-600 dark:text-emerald-400 font-mono mt-0.5 font-semibold">sales@test.com</div>
               </button>
 
               {/* Member */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("user2@test.com", "Member")}
-                className="p-3 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-orange-400 dark:hover:border-orange-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
+                onClick={() => setDemoAccount("member@test.com", "Member")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-neutral-400 dark:hover:border-neutral-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer shadow-2xs group"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
                     👥 Member
                   </span>
-                  <span className="text-3xs font-mono bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.2 rounded">Team Lead</span>
+                  <span className="text-3xs font-mono bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.2 rounded">Engineer</span>
                 </div>
-                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-1">Team deliverables, squad chat & tasks</div>
-                <div className="text-3xs text-zinc-400 font-mono mt-1">user2@test.com</div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Tasks, project delivery & communication</div>
+                <div className="text-3xs text-zinc-400 font-mono mt-0.5">member@test.com</div>
+              </button>
+
+              {/* System Owner */}
+              <button
+                type="button"
+                onClick={() => setDemoAccount("system@test.com", "System Owner")}
+                className="p-2.5 text-xs font-medium text-left rounded-xl border border-purple-300/80 dark:border-purple-700/60 bg-purple-50/50 dark:bg-purple-950/20 hover:border-purple-500 hover:bg-purple-100/60 dark:hover:bg-purple-900/30 transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                    👑 System Owner
+                  </span>
+                  <span className="text-3xs font-mono font-bold bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-1.5 py-0.2 rounded">Platform</span>
+                </div>
+                <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Platform superadmin & workspace approvals</div>
+                <div className="text-3xs text-purple-600 dark:text-purple-400 font-mono mt-0.5 font-semibold">system@test.com</div>
               </button>
             </div>
           </div>
 
-          <div className="text-center text-sm text-zinc-500 space-y-2">
+          <div className="text-center text-sm text-zinc-500">
             <div>
               Are you an employee or team member?{" "}
               <Link href="/register/member" className="font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer">
                 Sign up with Employee ID →
-              </Link>
-            </div>
-            <div>
-              Registering a new company?{" "}
-              <Link href="/register" className="font-bold text-zinc-900 dark:text-white hover:underline cursor-pointer">
-                Create company workspace
               </Link>
             </div>
           </div>

@@ -28,6 +28,7 @@ import {
   KeyRound,
   RotateCcw,
   Edit2,
+  Copy,
 } from "lucide-react";
 import { cn, formatDate } from "../../lib/utils";
 
@@ -113,7 +114,7 @@ export const WorkspaceRegistryView: React.FC = () => {
       }
       if (variables.status === "APPROVED") {
         toast.success(`Company "${updated.name}" approved and activated!`, {
-          description: "An official approval email has been dispatched to the System Admin.",
+          description: "An official approval email has been dispatched to the Workspace Admin.",
         });
       } else {
         toast.info(`Company status updated to ${variables.status}`);
@@ -190,13 +191,30 @@ export const WorkspaceRegistryView: React.FC = () => {
           </p>
         </div>
 
-        <Button
-          onClick={() => setIsProvisionModalOpen(true)}
-          className="bg-amber-400 hover:bg-amber-500 text-black font-extrabold shadow-md shadow-amber-400/20 text-xs px-4 py-2.5 rounded-xl cursor-pointer shrink-0"
-        >
-          <PlusCircle className="w-4 h-4 mr-1.5" />
-          Provision System Admin
-        </Button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            onClick={() => {
+              const url = `${window.location.origin}/register`;
+              navigator.clipboard.writeText(url);
+              toast.success("Workspace Registration link copied to clipboard!", {
+                description: url,
+              });
+            }}
+            variant="outline"
+            className="border-zinc-700 bg-zinc-800/80 hover:bg-zinc-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl cursor-pointer flex items-center gap-1.5"
+          >
+            <Copy className="w-4 h-4 text-amber-400" />
+            <span>Copy Registration Link</span>
+          </Button>
+
+          <Button
+            onClick={() => setIsProvisionModalOpen(true)}
+            className="bg-amber-400 hover:bg-amber-500 text-black font-extrabold shadow-md shadow-amber-400/20 text-xs px-4 py-2.5 rounded-xl cursor-pointer shrink-0"
+          >
+            <PlusCircle className="w-4 h-4 mr-1.5" />
+            Provision Workspace Admin
+          </Button>
+        </div>
       </div>
 
       {/* Metrics Row */}
@@ -624,7 +642,7 @@ export const WorkspaceRegistryView: React.FC = () => {
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
                   <Edit2 className="w-5 h-5 text-violet-500" />
-                  Edit Workspace & System Admin Info
+                  Edit Workspace & Workspace Admin Info
                 </h3>
                 <p className="text-2xs text-zinc-400">
                   Update corporate parameters, workspace code, and administrative credentials for &quot;{editingCompany.name}&quot;
@@ -769,7 +787,7 @@ export const WorkspaceRegistryView: React.FC = () => {
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
                   <KeyRound className="w-5 h-5 text-amber-500" />
-                  Provision System Admin & Workspace
+                  Provision Workspace Admin & Workspace
                 </h3>
                 <p className="text-2xs text-zinc-400">
                   Creates an enterprise workspace and automatically emails login credentials to the admin.
