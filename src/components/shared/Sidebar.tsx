@@ -22,6 +22,7 @@ import {
   Activity,
   AlertCircle,
   Table,
+  Newspaper,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { cn } from "../../lib/utils";
@@ -55,6 +56,7 @@ export const Sidebar: React.FC = () => {
         {
           items: [
             { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
+            { label: "News Feed", href: "/newsfeed", icon: Newspaper },
             { label: "Approval Queue", href: "/workspaces", icon: Layers },
             { label: "Announcements", href: "/announcements", icon: Megaphone },
           ],
@@ -65,6 +67,7 @@ export const Sidebar: React.FC = () => {
           title: "Main",
           items: [
             { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
+            { label: "News Feed", href: "/newsfeed", icon: Newspaper },
             { label: "Projects", href: "/projects", icon: FolderKanban },
             { label: "Team", href: "/team", icon: Users },
           ],

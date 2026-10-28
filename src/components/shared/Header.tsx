@@ -58,6 +58,7 @@ export const Header: React.FC = () => {
   };
 
   const getBreadcrumbTitle = () => {
+    if (pathname.startsWith("/newsfeed")) return "Global News Feed";
     if (pathname.startsWith("/workspaces")) return "Company Workspace Registry & Approval Queue";
     if (pathname.startsWith("/chat")) return "Direct & Team Messages";
     if (pathname.startsWith("/attendance")) return "Daily Attendance & Work Log Tracker";

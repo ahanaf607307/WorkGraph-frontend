@@ -11,6 +11,11 @@ export interface NewsfeedPostItem {
     avatarUrl?: string | null;
     role?: string;
   };
+  organization?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
   content: string;
   imageUrl?: string | null;
   createdAt: string;
@@ -36,6 +41,7 @@ export interface NewsfeedCommentItem {
 
 export interface NewsfeedFeedResponse {
   enabled: boolean;
+  isPrivileged?: boolean;
   posts: NewsfeedPostItem[];
 }
 
@@ -68,6 +74,18 @@ export const newsfeedActions = {
     return apiClient<NewsfeedCommentItem>(`/newsfeed/posts/${postId}/comments`, {
       method: "POST",
       body: JSON.stringify({ content }),
+    });
+  },
+
+  deletePost: async (postId: string): Promise<{ id: string }> => {
+    return apiClient<{ id: string }>(`/newsfeed/posts/${postId}`, {
+      method: "DELETE",
+    });
+  },
+
+  deleteComment: async (commentId: string): Promise<{ id: string }> => {
+    return apiClient<{ id: string }>(`/newsfeed/comments/${commentId}`, {
+      method: "DELETE",
     });
   },
 
