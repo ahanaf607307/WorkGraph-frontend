@@ -42,8 +42,13 @@ export const TargetsView: React.FC = () => {
 
   const isSystemAdminOrAdmin =
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
     currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN";
 
   // Query targets for selected month & year
   const { data: targets = [], isLoading } = useQuery({

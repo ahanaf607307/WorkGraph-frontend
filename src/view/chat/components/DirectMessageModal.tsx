@@ -77,7 +77,10 @@ export const DirectMessageModal: React.FC<DirectMessageModalProps> = ({
                 const email = m.email || m.user?.email || "";
                 const targetId = m.userId || m.user?.id || m.id;
                 const isSystemOwner = m.role === "SYSTEM_OWNER";
-                const isSystemAdmin = m.role === "SYSTEM_ADMIN" || m.role === "OWNER";
+                const isSystemAdmin =
+                  m.role === "SYSTEM_ADMIN" ||
+                  m.role === "WORKSPACE_ADMIN" ||
+                  m.role === "OWNER";
 
                 return (
                   <button

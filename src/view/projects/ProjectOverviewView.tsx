@@ -90,7 +90,14 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
   const isSystemAdminOrAdmin =
     user?.role === "SYSTEM_OWNER" ||
     user?.role === "system_owner" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    (user?.role as string) === "system_admin" ||
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
     currentOrg?.myRole === "ADMIN";
 
   const isLeaderOrCoLeader =

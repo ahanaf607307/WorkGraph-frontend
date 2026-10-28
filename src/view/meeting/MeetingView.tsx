@@ -51,8 +51,14 @@ export const MeetingView: React.FC = () => {
   const isSystemAdmin =
     myAccess?.isSystemAdmin ||
     currentOrg?.myRole === "OWNER" ||
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
+    (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
     user?.role === "SYSTEM_OWNER" ||
-    (user?.role as string) === "system_owner";
+    (user?.role as string) === "system_owner" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin" ||
+    user?.role === "SYSTEM_ADMIN";
 
   const canAccess = isSystemAdmin || (myAccess?.canAccess ?? false);
   const canCreate = isSystemAdmin || (myAccess?.canCreate ?? false);

@@ -62,7 +62,9 @@ export const ClientMeetingView: React.FC = () => {
   const isPrivileged =
     userRole === "SYSTEM_OWNER" ||
     userRole === "SYSTEM_ADMIN" ||
+    userRole === "WORKSPACE_ADMIN" ||
     orgRole === "SYSTEM_ADMIN" ||
+    orgRole === "WORKSPACE_ADMIN" ||
     orgRole === "ADMIN" ||
     orgRole === "OWNER";
 
