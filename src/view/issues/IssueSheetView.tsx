@@ -45,28 +45,16 @@ export const IssueSheetView: React.FC = () => {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Role & Sales Member detection
+  // Role & Seals Member detection
   const orgRole = (currentOrg?.myRole || "").toUpperCase();
   const userRole = (user?.role || "").toUpperCase();
-  const isPrivileged =
-    userRole === "SYSTEM_OWNER" ||
-    userRole === "SYSTEM_ADMIN" ||
-    userRole === "WORKSPACE_ADMIN" ||
-    orgRole === "SYSTEM_ADMIN" ||
-    orgRole === "WORKSPACE_ADMIN" ||
-    orgRole === "ADMIN" ||
-    orgRole === "OWNER";
+  const isSealsMember =
+    userRole === "SEALS" ||
+    userRole === "SALES" ||
+    orgRole === "SEALS" ||
+    orgRole === "SALES";
 
-  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
-  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
-  const isSalesMember =
-    !isPrivileged &&
-    (deptName.includes("sale") ||
-      deptName.includes("seal") ||
-      deptCode === "SALES" ||
-      user?.email?.toLowerCase().includes("sales"));
-
-  const canCreateIssue = isSalesMember || isPrivileged;
+  const canCreateIssue = isSealsMember;
 
   // Filters
   const [serviceFilter, setServiceFilter] = useState<string>("");

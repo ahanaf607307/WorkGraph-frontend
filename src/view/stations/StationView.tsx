@@ -62,14 +62,13 @@ export const StationView: React.FC = () => {
     }
   };
 
-  const deptName = (currentOrg as any)?.department?.name?.toLowerCase() || "";
-  const deptCode = (currentOrg as any)?.department?.code?.toUpperCase() || "";
+  const userRole = (user?.role || "").toUpperCase();
+  const orgRole = ((currentOrg as any)?.myRole || (currentOrg as any)?.role || "").toUpperCase();
   const isSalesMember =
-    deptName.includes("sale") ||
-    deptName.includes("seal") ||
-    deptCode === "SALES" ||
-    (currentOrg as any)?.designation === "SALES" ||
-    user?.email?.toLowerCase().includes("sales");
+    userRole === "SEALS" ||
+    userRole === "SALES" ||
+    orgRole === "SEALS" ||
+    orgRole === "SALES";
 
   useEffect(() => {
     loadData();
@@ -228,7 +227,7 @@ export const StationView: React.FC = () => {
                 <span>Leave</span>
               </button>
             </div>
-          ) : (
+          ) : isSalesMember ? (
             <button
               type="button"
               onClick={() => handleOpenJoin()}
@@ -237,7 +236,7 @@ export const StationView: React.FC = () => {
               <LogIn className="w-3.5 h-3.5" />
               <span>Join Station</span>
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
