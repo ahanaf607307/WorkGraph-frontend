@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memberRegisterSchema, MemberRegisterFormData } from "../../modules/auth/schemas/auth.schema";
 import { authActions } from "../../modules/auth/actions/auth.actions";
+import { departmentActions } from "../../modules/departments/actions/department.actions";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { toast } from "sonner";
@@ -26,6 +27,8 @@ export const MemberRegisterView: React.FC = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<MemberRegisterFormData>({
     resolver: zodResolver(memberRegisterSchema),
@@ -33,6 +36,29 @@ export const MemberRegisterView: React.FC = () => {
       departmentName: "Sales",
     },
   });
+
+  const workspaceCode = watch("companyCode");
+  const [availableDepartments, setAvailableDepartments] = useState<any[]>([]);
+  const [fetchingDepts, setFetchingDepts] = useState(false);
+
+  useEffect(() => {
+    if (!workspaceCode || workspaceCode.trim().length < 3) return;
+    const timer = setTimeout(async () => {
+      try {
+        setFetchingDepts(true);
+        const list = await departmentActions.getDepartmentsByCode(workspaceCode.trim());
+        if (list && list.length > 0) {
+          setAvailableDepartments(list);
+          setValue("departmentName", list[0].name);
+        }
+      } catch {
+        // Ignore while user is typing
+      } finally {
+        setFetchingDepts(false);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [workspaceCode, setValue]);
 
   const onSubmit = async (data: MemberRegisterFormData) => {
     setIsLoading(true);
@@ -205,9 +231,19 @@ export const MemberRegisterView: React.FC = () => {
                 {...register("departmentName")}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:border-violet-500 focus:outline-none cursor-pointer"
               >
-                <option value="Sales">Sales (Client Outreach, Station Profiles & Pipelines)</option>
-                <option value="Operation">Operation (Systems, Technical Delivery & Operations)</option>
-                <option value="Bdt">Bdt (Business Development & Financial Strategy)</option>
+                {availableDepartments && availableDepartments.length > 0 ? (
+                  availableDepartments.map((dept) => (
+                    <option key={dept.id} value={dept.name}>
+                      {dept.name} {dept.description ? `(${dept.description})` : ""}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="Sales">Sales (Client Outreach, Station Profiles & Pipelines)</option>
+                    <option value="Operation">Operation (Systems, Technical Delivery & Operations)</option>
+                    <option value="Bdt">Bdt (Business Development & Financial Strategy)</option>
+                  </>
+                )}
               </select>
               {errors.departmentName?.message && (
                 <p className="text-3xs text-rose-500 mt-1">{errors.departmentName.message}</p>

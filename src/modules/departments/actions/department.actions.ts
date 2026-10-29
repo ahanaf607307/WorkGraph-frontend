@@ -51,6 +51,10 @@ export interface HierarchyData {
 }
 
 export const departmentActions = {
+  getDepartmentsByCode: async (workspaceCode: string): Promise<DepartmentItem[]> => {
+    return apiClient<DepartmentItem[]>(`/departments/public/by-code/${encodeURIComponent(workspaceCode.trim())}`);
+  },
+
   getDepartments: async (organizationId?: string): Promise<DepartmentItem[]> => {
     const query = organizationId ? `?organizationId=${organizationId}` : "";
     return apiClient<DepartmentItem[]>(`/departments${query}`);
