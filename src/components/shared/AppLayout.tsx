@@ -248,8 +248,8 @@ export const AppLayout: React.FC<{
       </div>
 
       {/* Floating Action Controls (Bottom Right) */}
-      <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
-        {!isChat && (
+      {!isChat && (
+        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
           <Link
             href="/chat"
             title="Open Messages & Chat"
@@ -259,20 +259,20 @@ export const AppLayout: React.FC<{
             <span className="sr-only">Open Messages & Chat</span>
             <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#141722] rounded-full" />
           </Link>
-        )}
 
-        {pathname !== "/newsfeed" && (
-          <Link
-            href="/newsfeed"
-            title="Global News Feed"
-            className="px-4 py-2.5 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/30 flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 group cursor-pointer border border-white/20 backdrop-blur-md"
-          >
-            <Newspaper className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span className="text-xs font-bold tracking-tight">News Feed</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          </Link>
-        )}
-      </div>
+          {pathname !== "/newsfeed" && (
+            <Link
+              href="/newsfeed"
+              title="Global News Feed"
+              className="px-4 py-2.5 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/30 flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 group cursor-pointer border border-white/20 backdrop-blur-md"
+            >
+              <Newspaper className="w-4 h-4 transition-transform group-hover:scale-110" />
+              <span className="text-xs font-bold tracking-tight">News Feed</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   )
 };
