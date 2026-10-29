@@ -177,8 +177,9 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
                   onChange={(e) => setForm({ ...form, role: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <option value="MEMBER">Member</option>
-                  <option value="SEALS">Seals</option>
+                  <option value="OPERATION_MEMBER">Operation Member</option>
+                  <option value="SEALS_MEMBER">Seals Member</option>
+                  <option value="BDT_MEMBER">BDT Member</option>
                   <option value="CO_LEADER">Co-Leader</option>
                   <option value="TEAM_LEADER">Team Leader</option>
                   <option value="ADMIN">Admin</option>

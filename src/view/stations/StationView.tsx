@@ -67,8 +67,16 @@ export const StationView: React.FC = () => {
   const isSalesMember =
     userRole === "SEALS" ||
     userRole === "SALES" ||
+    userRole === "SALES_MEMBER" ||
     orgRole === "SEALS" ||
-    orgRole === "SALES";
+    orgRole === "SALES" ||
+    orgRole === "SEALS_MEMBER";
+
+  const isBdtMember =
+    userRole === "BDT_MEMBER" ||
+    userRole === "BDT" ||
+    orgRole === "BDT_MEMBER" ||
+    orgRole === "BDT";
 
   useEffect(() => {
     loadData();
@@ -114,6 +122,10 @@ export const StationView: React.FC = () => {
   };
 
   const handleCreateStation = async () => {
+    if (isBdtMember) {
+      toast.error("BDT Members cannot add stations. You have view-only access.");
+      return;
+    }
     try {
       setCreatingStation(true);
       const newSt = await stationActions.createStation();
@@ -126,15 +138,30 @@ export const StationView: React.FC = () => {
     }
   };
 
-  const handleDeleteStation = async (stationId: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
-    try {
-      await stationActions.deleteStation(stationId);
-      toast.success(`${name} deleted successfully`);
-      await loadData();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete station");
+  const handleDeleteStation = (stationId: string, name: string) => {
+    if (isBdtMember) {
+      toast.error("BDT Members cannot delete stations.");
+      return;
     }
+    toast(`Delete ${name}?`, {
+      description: "Are you sure you want to remove this station desk?",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await stationActions.deleteStation(stationId);
+            toast.success(`${name} deleted successfully`);
+            await loadData();
+          } catch (err: any) {
+            toast.error(err.message || "Failed to delete station");
+          }
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    });
   };
 
   const handleJoinSubmit = async (e: React.FormEvent) => {
@@ -188,7 +215,11 @@ export const StationView: React.FC = () => {
                 {stations.length} Desks
               </span>
             </h1>
-            {!isSalesMember && (
+            {isBdtMember ? (
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                BDT Member (View Only)
+              </span>
+            ) : !isSalesMember && (
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                 View Only
               </span>
@@ -200,16 +231,18 @@ export const StationView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Add New Station button */}
-          <button
-            type="button"
-            onClick={handleCreateStation}
-            disabled={creatingStation}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold border border-zinc-200/80 dark:border-white/[0.08] transition-all cursor-pointer active:scale-95"
-          >
-            <Plus className="w-3.5 h-3.5 text-violet-500" />
-            <span>{creatingStation ? "Adding..." : "Add Station"}</span>
-          </button>
+          {/* Add New Station button (Hidden for BDT Member) */}
+          {!isBdtMember && (
+            <button
+              type="button"
+              onClick={handleCreateStation}
+              disabled={creatingStation}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold border border-zinc-200/80 dark:border-white/[0.08] transition-all cursor-pointer active:scale-95"
+            >
+              <Plus className="w-3.5 h-3.5 text-violet-500" />
+              <span>{creatingStation ? "Adding..." : "Add Station"}</span>
+            </button>
+          )}
 
           {myOccupiedStation ? (
             <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs">
@@ -314,7 +347,7 @@ export const StationView: React.FC = () => {
                         <span>{isOccupied ? "Occupied" : "Available"}</span>
                       </span>
 
-                      {!isOccupied && stations.length > 1 && (
+                      {!isOccupied && stations.length > 1 && !isBdtMember && (
                         <button
                           type="button"
                           onClick={() => handleDeleteStation(st.id, st.name || `Station ${st.stationNumber}`)}

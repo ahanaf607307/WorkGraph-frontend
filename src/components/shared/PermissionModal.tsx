@@ -152,17 +152,17 @@ export const PermissionModal: React.FC<PermissionModalProps> = ({
       onClose={onClose}
       title={title}
       description={description}
-      maxWidth="md"
+      maxWidth="2xl"
     >
       <div className="space-y-4 pt-2 text-xs">
-        <div className="p-3 rounded-xl bg-violet-50/60 dark:bg-violet-950/20 border border-violet-200/50 dark:border-violet-900/40 text-violet-900 dark:text-violet-200 text-2xs leading-relaxed flex items-start gap-2.5">
+        <div className="p-3.5 rounded-xl bg-violet-50/60 dark:bg-violet-950/20 border border-violet-200/50 dark:border-violet-900/40 text-violet-900 dark:text-violet-200 text-xs leading-relaxed flex items-start gap-2.5">
           <ShieldCheck className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0 mt-0.5" />
           <span>
             <strong>Admin Notice:</strong> You hold master privileges. Members granted permission below are stored in the database and will be authorized to create, edit, or adjust records in this section.
           </span>
         </div>
 
-        <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+        <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
           {isLoading ? (
             <div className="p-8 text-center text-xs text-zinc-400">Loading members...</div>
           ) : users.length === 0 ? (
@@ -175,27 +175,27 @@ export const PermissionModal: React.FC<PermissionModalProps> = ({
               return (
                 <div
                   key={u.userId}
-                  className="p-3 rounded-2xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/60 dark:border-white/[0.06] flex items-center justify-between gap-3"
+                  className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/60 dark:border-white/[0.06] flex items-center justify-between gap-4"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
                     <Avatar name={u.name} size="sm" />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-zinc-900 dark:text-white truncate">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-zinc-900 dark:text-white text-xs">
                           {u.name}
                         </span>
-                        <span className="text-3xs px-2 py-0.5 rounded uppercase font-mono font-bold bg-zinc-200/60 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                        <span className="text-3xs px-2 py-0.5 rounded uppercase font-mono font-bold bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 shrink-0">
                           {u.designation || u.roleInOrg}
                         </span>
                       </div>
-                      <span className="text-3xs text-zinc-400 block truncate">
+                      <span className="text-3xs text-zinc-400 block truncate font-mono mt-0.5">
                         {u.email}
                       </span>
                     </div>
                   </div>
 
                   {isOwner ? (
-                    <span className="text-3xs font-semibold px-2.5 py-1 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                    <span className="text-3xs font-semibold px-3 py-1.5 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20 shrink-0">
                       Master Owner
                     </span>
                   ) : (
@@ -203,7 +203,7 @@ export const PermissionModal: React.FC<PermissionModalProps> = ({
                       type="button"
                       disabled={updatePermMutation.isPending}
                       onClick={() => handleToggle(u)}
-                      className={`px-3 py-1.5 rounded-xl text-3xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3.5 py-1.5 rounded-xl text-3xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                         isGranted
                           ? "bg-emerald-600 text-white shadow-xs hover:bg-emerald-700"
                           : "bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-violet-600 hover:text-white"

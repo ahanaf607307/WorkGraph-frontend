@@ -44,8 +44,7 @@ export const isProtectedDepartment = (dept: DepartmentItem) => {
     name === "bdt" ||
     name === "seals" ||
     name === "sales" ||
-    name === "operation" ||
-    name === "operations"
+    name === "operation"
   );
 };
 

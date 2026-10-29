@@ -28,6 +28,11 @@ export interface MeetingPermissionUser {
   avatarUrl?: string | null;
   roleInOrg: string;
   designation: string;
+  departmentId?: string | null;
+  departmentName?: string | null;
+  serviceId?: string | null;
+  serviceName?: string | null;
+  teamName?: string | null;
   canAccess: boolean;
   canCreate: boolean;
   isOwner: boolean;
@@ -95,6 +100,24 @@ export const meetingActions = {
       method: "PATCH",
       body: JSON.stringify(data),
     });
+  },
+
+  bulkUpdatePermissions: async (data: {
+    organizationId?: string;
+    scope: "ALL" | "DEPARTMENT" | "SERVICE" | "USERS";
+    departmentId?: string;
+    serviceId?: string;
+    userIds?: string[];
+    canAccess?: boolean;
+    canCreate?: boolean;
+  }): Promise<{ success: boolean; updatedCount: number; scope: string }> => {
+    return apiClient<{ success: boolean; updatedCount: number; scope: string }>(
+      "/meetings/permissions/bulk",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
   },
 
   getMyAccess: async (orgId?: string): Promise<UserMeetingAccess> => {

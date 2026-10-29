@@ -149,25 +149,27 @@ export const DepartmentManagementView: React.FC = () => {
   };
 
   // Delete Department
-  const handleDeleteDepartment = async (dept: DepartmentItem) => {
+  const handleDeleteDepartment = (dept: DepartmentItem) => {
     if (isProtectedDepartment(dept)) {
       toast.error("Protected system departments (Sales/Seals, Operation, BDT) cannot be deleted.");
       return;
     }
-    if (
-      !confirm(
-        `Are you sure you want to delete department "${dept.name}"? All squads under this department will also be removed.`
-      )
-    ) {
-      return;
-    }
-    try {
-      await departmentActions.deleteDepartment(dept.id);
-      toast.success(`Department "${dept.name}" deleted successfully`);
-      await loadAllData();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete department");
-    }
+    toast(`Delete department "${dept.name}"?`, {
+      description: "All squads and configurations under this department will also be removed.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await departmentActions.deleteDepartment(dept.id);
+            toast.success(`Department "${dept.name}" deleted successfully`);
+            await loadAllData();
+          } catch (err: any) {
+            toast.error(err.message || "Failed to delete department");
+          }
+        },
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   };
 
   // Create Team inside Department
@@ -216,15 +218,23 @@ export const DepartmentManagementView: React.FC = () => {
   };
 
   // Remove Member from Squad
-  const handleRemoveMemberFromSquad = async (teamId: string, userId: string) => {
-    if (!confirm("Are you sure you want to remove this member from the squad?")) return;
-    try {
-      await departmentActions.removeMemberFromTeam(teamId, userId);
-      toast.success("Member removed from squad");
-      await loadAllData();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to remove member from squad");
-    }
+  const handleRemoveMemberFromSquad = (teamId: string, userId: string) => {
+    toast("Remove member from squad?", {
+      description: "Are you sure you want to remove this member from the squad?",
+      action: {
+        label: "Remove",
+        onClick: async () => {
+          try {
+            await departmentActions.removeMemberFromTeam(teamId, userId);
+            toast.success("Member removed from squad");
+            await loadAllData();
+          } catch (err: any) {
+            toast.error(err.message || "Failed to remove member from squad");
+          }
+        },
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   };
 
   // Create Dynamic Designation
@@ -270,15 +280,23 @@ export const DepartmentManagementView: React.FC = () => {
   };
 
   // Delete Designation
-  const handleDeleteDesignation = async (id: string, name: string) => {
-    if (!confirm(`Delete designation "${name}"? Members assigned will default to Member.`)) return;
-    try {
-      await designationActions.deleteDesignation(id);
-      toast.success(`Designation "${name}" deleted`);
-      await loadAllData();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete designation");
-    }
+  const handleDeleteDesignation = (id: string, name: string) => {
+    toast(`Delete designation "${name}"?`, {
+      description: "Members assigned to this designation will default to standard Member.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await designationActions.deleteDesignation(id);
+            toast.success(`Designation "${name}" deleted`);
+            await loadAllData();
+          } catch (err: any) {
+            toast.error(err.message || "Failed to delete designation");
+          }
+        },
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   };
 
   // Save Member Placement

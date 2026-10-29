@@ -447,9 +447,14 @@ export const MeetingView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        if (confirm(`Are you sure you want to delete meeting "${meeting.title}"?`)) {
-                          deleteMeetingMutation.mutate(meeting.id);
-                        }
+                        toast(`Delete meeting "${meeting.title}"?`, {
+                          description: "Are you sure you want to delete this scheduled meeting?",
+                          action: {
+                            label: "Delete",
+                            onClick: () => deleteMeetingMutation.mutate(meeting.id),
+                          },
+                          cancel: { label: "Cancel", onClick: () => {} },
+                        });
                       }}
                       title="Delete meeting"
                       className="p-2 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
