@@ -39,7 +39,32 @@ export const TargetsView: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
 
   const [periodTab, setPeriodTab] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
-  const [activeTab, setActiveTab] = useState<"DEPARTMENT" | "TEAM">("DEPARTMENT");
+
+  const deptName = ((currentOrg as any)?.department?.name || "").toLowerCase();
+  const deptCode = ((currentOrg as any)?.department?.code || "").toUpperCase();
+  const isSalesMember =
+    deptName.includes("sale") ||
+    deptName.includes("seal") ||
+    deptCode === "SALES" ||
+    user?.role === "SALES_MEMBER" ||
+    (user?.role as string) === "SEALS" ||
+    (currentOrg as any)?.role === "SEALS_MEMBER" ||
+    (currentOrg as any)?.role === "SEALS" ||
+    (currentOrg as any)?.myRole === "SEALS_MEMBER" ||
+    (currentOrg as any)?.myRole === "SEALS" ||
+    (currentOrg as any)?.myRole === "SALES";
+
+  const [activeTab, setActiveTab] = useState<"DEPARTMENT" | "TEAM" | "SALES">(() =>
+    isSalesMember ? "SALES" : "DEPARTMENT"
+  );
+
+  React.useEffect(() => {
+    if (isSalesMember) {
+      setActiveTab("SALES");
+    } else if (activeTab === "SALES") {
+      setActiveTab("DEPARTMENT");
+    }
+  }, [isSalesMember]);
 
   const isSystemAdminOrAdmin =
     currentOrg?.myRole === "OWNER" ||
@@ -102,7 +127,7 @@ export const TargetsView: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [targetForm, setTargetForm] = useState<{
     periodType: "MONTHLY" | "YEARLY";
-    targetType: "DEPARTMENT" | "TEAM";
+    targetType: "DEPARTMENT" | "TEAM" | "SALES_GLOBAL" | "SALES_SERVICE";
     departmentId: string;
     teamId: string;
     serviceId: string;
@@ -133,7 +158,7 @@ export const TargetsView: React.FC = () => {
       setIsCreateModalOpen(false);
       setTargetForm({
         periodType: periodTab,
-        targetType: "DEPARTMENT",
+        targetType: activeTab === "SALES" ? "SALES_GLOBAL" : (activeTab === "TEAM" ? "TEAM" : "DEPARTMENT"),
         departmentId: "",
         teamId: "",
         serviceId: "",
@@ -141,7 +166,7 @@ export const TargetsView: React.FC = () => {
         year: selectedYear,
         title: "",
         description: "",
-        targetMetric: "Story Points",
+        targetMetric: activeTab === "SALES" ? "USD ($)" : "Story Points",
         targetValue: 100,
       });
       toast.success(
@@ -179,7 +204,19 @@ export const TargetsView: React.FC = () => {
   });
 
   // Filter targets for active tab
-  const filteredTargets = targets.filter((t) => t.targetType === activeTab);
+  const filteredTargets = targets.filter((t) => {
+    if (activeTab === "DEPARTMENT") return t.targetType === "DEPARTMENT";
+    if (activeTab === "TEAM") return t.targetType === "TEAM";
+    if (activeTab === "SALES") {
+      return (
+        t.targetType === "SALES_GLOBAL" ||
+        t.targetType === "SALES_SERVICE" ||
+        t.targetType === "SALES" ||
+        t.department?.code === "SALES"
+      );
+    }
+    return false;
+  });
 
   // Year navigation
   const prevYear = () => setSelectedYear((y) => y - 1);
@@ -301,13 +338,17 @@ export const TargetsView: React.FC = () => {
           {canSetTarget && (
             <Button
               onClick={() => {
+                const defaultTargetType = activeTab === "SALES" ? "SALES_GLOBAL" : (activeTab === "TEAM" ? "TEAM" : "DEPARTMENT");
                 setTargetForm((prev) => ({
                   ...prev,
                   periodType: periodTab,
+                  targetType: defaultTargetType,
                   month: periodTab === "MONTHLY" ? selectedMonth : 0,
                   year: selectedYear,
                   departmentId: departments[0]?.id || "",
                   teamId: allTeams[0]?.id || "",
+                  serviceId: services[0]?.id || "",
+                  targetMetric: activeTab === "SALES" ? "USD ($)" : "Story Points",
                 }));
                 setIsCreateModalOpen(true);
               }}
@@ -320,34 +361,55 @@ export const TargetsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs: Department Targets vs Team Targets */}
+      {/* Tabs: Department Targets vs Team Targets vs Seals Targets */}
       <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-white/[0.06] pb-2">
         <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setActiveTab("DEPARTMENT")}
-            className={cn(
-              "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
-              activeTab === "DEPARTMENT"
-                ? "bg-violet-600 text-white font-semibold"
-                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
-            )}
-          >
-            <Network className="w-3.5 h-3.5" />
-            <span>Department Targets ({targets.filter((t) => t.targetType === "DEPARTMENT").length})</span>
-          </button>
+          {!isSalesMember && (
+            <>
+              <button
+                onClick={() => setActiveTab("DEPARTMENT")}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
+                  activeTab === "DEPARTMENT"
+                    ? "bg-violet-600 text-white font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
+                )}
+              >
+                <Network className="w-3.5 h-3.5" />
+                <span>Department Targets ({targets.filter((t) => t.targetType === "DEPARTMENT").length})</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab("TEAM")}
-            className={cn(
-              "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
-              activeTab === "TEAM"
-                ? "bg-violet-600 text-white font-semibold"
-                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
-            )}
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Squad Targets ({targets.filter((t) => t.targetType === "TEAM").length})</span>
-          </button>
+              <button
+                onClick={() => setActiveTab("TEAM")}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
+                  activeTab === "TEAM"
+                    ? "bg-violet-600 text-white font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
+                )}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>Squad Targets ({targets.filter((t) => t.targetType === "TEAM").length})</span>
+              </button>
+            </>
+          )}
+
+          {(isSalesMember || isSystemAdminOrAdmin) && (
+            <button
+              onClick={() => setActiveTab("SALES")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5",
+                activeTab === "SALES"
+                  ? "bg-emerald-600 text-white font-semibold shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
+              )}
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>
+                🎯 Seals Targets ({targets.filter((t) => t.targetType === "SALES_GLOBAL" || t.targetType === "SALES_SERVICE" || t.targetType === "SALES" || t.department?.code === "SALES").length})
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -375,7 +437,12 @@ export const TargetsView: React.FC = () => {
                 currentOrg?.designation === "TEAM_LEADER" ||
                 currentOrg?.designation === "CO_LEADER");
 
-            const canUpdateThisTarget = isSystemAdminOrAdmin || isTeamLeadOrCoLead;
+            const isAssignedSalesMember =
+              (target.targetType === "SALES_SERVICE" || target.targetType === "SALES") &&
+              target.serviceId &&
+              ((currentOrg as any)?.serviceId === target.serviceId || (user as any)?.serviceId === target.serviceId);
+
+            const canUpdateThisTarget = isSystemAdminOrAdmin || isTeamLeadOrCoLead || isAssignedSalesMember;
 
             return (
               <div
@@ -386,9 +453,22 @@ export const TargetsView: React.FC = () => {
                   {/* Badge Row */}
                   <div className="flex flex-wrap items-center justify-between gap-1.5 text-2xs">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/60 px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-800">
+                      <span
+                        className={cn(
+                          "font-mono font-bold px-2.5 py-1 rounded-full border text-2xs",
+                          target.targetType === "SALES_GLOBAL"
+                            ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700"
+                            : target.targetType === "SALES_SERVICE"
+                            ? "text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-700"
+                            : "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/60 border-violet-200 dark:border-violet-800"
+                        )}
+                      >
                         {target.targetType === "DEPARTMENT"
                           ? `🏢 ${target.department?.name || "General Department"}`
+                          : target.targetType === "SALES_GLOBAL"
+                          ? `🌐 Global Seals Target`
+                          : target.targetType === "SALES_SERVICE"
+                          ? `💼 Seals: ${target.service?.name || "Service Target"}`
                           : `👥 Squad: ${target.team?.name || "Squad"}`}
                       </span>
 
@@ -396,9 +476,15 @@ export const TargetsView: React.FC = () => {
                         {target.month === 0 ? `📆 FY ${target.year} Annual` : `📅 ${new Date(target.year, target.month - 1, 1).toLocaleDateString(undefined, { month: "short", year: "numeric" })}`}
                       </span>
 
-                      {target.service && (
+                      {target.service && target.targetType !== "SALES_SERVICE" && (
                         <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 text-3xs">
                           ⚡ {target.service.name}
+                        </span>
+                      )}
+
+                      {target.serviceId && ((currentOrg as any)?.serviceId === target.serviceId || (user as any)?.serviceId === target.serviceId) && (
+                        <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/90 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700 text-3xs flex items-center gap-1">
+                          ⭐ Your Related Service Target
                         </span>
                       )}
                     </div>
@@ -641,75 +727,144 @@ export const TargetsView: React.FC = () => {
               </div>
 
               {/* Type Switch */}
-              <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
                 <button
                   type="button"
-                  onClick={() => setTargetForm({ ...targetForm, targetType: "DEPARTMENT" })}
+                  onClick={() => setTargetForm({ ...targetForm, targetType: "DEPARTMENT", targetMetric: "Story Points" })}
                   className={cn(
-                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer",
+                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-center",
                     targetForm.targetType === "DEPARTMENT"
                       ? "bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs"
                       : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
                   )}
                 >
-                  Department Target
+                  Department
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTargetForm({ ...targetForm, targetType: "TEAM" })}
+                  onClick={() => setTargetForm({ ...targetForm, targetType: "TEAM", targetMetric: "Story Points" })}
                   className={cn(
-                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer",
+                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-center",
                     targetForm.targetType === "TEAM"
                       ? "bg-white dark:bg-zinc-900 text-violet-600 dark:text-violet-400 shadow-xs"
                       : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
                   )}
                 >
-                  Team Squad Target
+                  Squad
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTargetForm({ ...targetForm, targetType: "SALES_GLOBAL", targetMetric: "USD ($)" })}
+                  className={cn(
+                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-center",
+                    targetForm.targetType === "SALES_GLOBAL"
+                      ? "bg-white dark:bg-zinc-900 text-emerald-600 dark:text-emerald-400 shadow-xs"
+                      : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                  )}
+                >
+                  🌐 Global Seals
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setTargetForm({
+                      ...targetForm,
+                      targetType: "SALES_SERVICE",
+                      targetMetric: "Deals Closed",
+                      serviceId: services[0]?.id || "",
+                    })
+                  }
+                  className={cn(
+                    "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-center",
+                    targetForm.targetType === "SALES_SERVICE"
+                      ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                      : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                  )}
+                >
+                  💼 Service Seals
                 </button>
               </div>
 
-              {/* Department Selector */}
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Target Department *
-                </label>
-                <select
-                  required
-                  value={targetForm.departmentId}
-                  onChange={(e) =>
-                    setTargetForm({ ...targetForm, departmentId: e.target.value })
-                  }
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
-                >
-                  <option value="">Select Department</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Informational banners */}
+              {targetForm.targetType === "SALES_GLOBAL" && (
+                <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-2xs text-emerald-800 dark:text-emerald-300">
+                  🌐 <strong>Global Seals Target:</strong> Organization-wide sales milestone visible to all seals members and workspace management.
+                </div>
+              )}
 
-              {/* Service Line Selector (Service-wise targets) */}
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Service Line (Service-wise Allocation)
-                </label>
-                <select
-                  value={targetForm.serviceId}
-                  onChange={(e) =>
-                    setTargetForm({ ...targetForm, serviceId: e.target.value })
-                  }
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
-                >
-                  <option value="">All Services (General)</option>
-                  {services.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.code || "Service"})
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {targetForm.targetType === "SALES_SERVICE" && (
+                <div className="p-3 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-2xs text-blue-800 dark:text-blue-300">
+                  💼 <strong>Service-Wise Seals Target:</strong> This target is specific to the selected service line and displayed to seals members assigned to this service.
+                </div>
+              )}
+
+              {/* Department Selector (Only for DEPARTMENT or TEAM) */}
+              {(targetForm.targetType === "DEPARTMENT" || targetForm.targetType === "TEAM") && (
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    Target Department *
+                  </label>
+                  <select
+                    required
+                    value={targetForm.departmentId}
+                    onChange={(e) =>
+                      setTargetForm({ ...targetForm, departmentId: e.target.value })
+                    }
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Service Selector (Required for SALES_SERVICE, Optional for DEPARTMENT) */}
+              {targetForm.targetType === "SALES_SERVICE" ? (
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    Target Service (Service-Wise Seals Target) *
+                  </label>
+                  <select
+                    required
+                    value={targetForm.serviceId}
+                    onChange={(e) =>
+                      setTargetForm({ ...targetForm, serviceId: e.target.value })
+                    }
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
+                  >
+                    <option value="">Select Service</option>
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.code || "Service"})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : targetForm.targetType === "DEPARTMENT" ? (
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    Service Line (Optional Allocation)
+                  </label>
+                  <select
+                    value={targetForm.serviceId}
+                    onChange={(e) =>
+                      setTargetForm({ ...targetForm, serviceId: e.target.value })
+                    }
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
+                  >
+                    <option value="">All Services (General)</option>
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.code || "Service"})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
 
               {/* Squad Selector if Team Target */}
               {targetForm.targetType === "TEAM" && (

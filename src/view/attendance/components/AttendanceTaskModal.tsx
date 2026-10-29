@@ -67,6 +67,7 @@ export const AttendanceTaskModal: React.FC<AttendanceTaskModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      maxWidth="lg"
       title="Log Daily Execution Task"
       description={`Record deliverables, sprint tickets, or time spent for ${selectedDateStr}.`}
     >

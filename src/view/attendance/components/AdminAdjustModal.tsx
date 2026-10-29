@@ -70,6 +70,7 @@ export const AdminAdjustModal: React.FC<AdminAdjustModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      maxWidth="lg"
       title="Admin Timesheet Manual Override"
       description={`Adjust attendance timing and status for ${record.user?.name || "employee"} on ${record.date}.`}
     >

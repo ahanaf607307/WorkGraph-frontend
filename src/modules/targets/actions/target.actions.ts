@@ -5,7 +5,7 @@ export interface MonthlyTargetItem {
   organizationId: string;
   departmentId?: string | null;
   teamId?: string | null;
-  targetType: "DEPARTMENT" | "TEAM";
+  targetType: "DEPARTMENT" | "TEAM" | "SALES_GLOBAL" | "SALES_SERVICE" | string;
   month: number;
   year: number;
   title: string;
@@ -63,7 +63,7 @@ export const targetActions = {
   createTarget: async (
     organizationId: string,
     data: {
-      targetType: "DEPARTMENT" | "TEAM";
+      targetType: "DEPARTMENT" | "TEAM" | "SALES_GLOBAL" | "SALES_SERVICE" | string;
       periodType?: "MONTHLY" | "YEARLY";
       departmentId?: string;
       teamId?: string;

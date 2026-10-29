@@ -19,17 +19,26 @@ import { AttendanceTaskModal } from "./components/AttendanceTaskModal";
 import { AdminTimesheetTable } from "./components/AdminTimesheetTable";
 import { AdminAdjustModal } from "./components/AdminAdjustModal";
 import { EmployeeAttendanceHistoryModal } from "./components/EmployeeAttendanceHistoryModal";
-import { PermissionModal } from "../../components/shared/PermissionModal";
+import { PermissionModal, useFeaturePermission } from "../../components/shared/PermissionModal";
 
 export const AttendanceView: React.FC = () => {
   const { currentOrg, user } = useAuth();
   const orgId = currentOrg?.id;
   const queryClient = useQueryClient();
 
-  const isSystemAdminOrAdmin =
+  const { isSystemAdmin, hasPermission } = useFeaturePermission("attendance");
+  const isAuthorized =
+    isSystemAdmin ||
+    hasPermission ||
     currentOrg?.myRole === "OWNER" ||
-    currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
+    (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
+    (currentOrg?.myRole as string) === "ADMIN" ||
+    user?.role === "SYSTEM_OWNER" ||
+    user?.role === "WORKSPACE_ADMIN" ||
+    (user?.role as string) === "workspace_admin";
+
+  const isSystemAdminOrAdmin = isAuthorized;
 
   const [activeTab, setActiveTab] = useState<"my" | "overview">("my");
 
