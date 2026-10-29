@@ -9,12 +9,14 @@ interface DashboardHeroBannerProps {
   userName?: string;
   workspaceName?: string;
   myRole?: string;
+  canCreateProject?: boolean;
 }
 
 export const DashboardHeroBanner: React.FC<DashboardHeroBannerProps> = ({
   userName,
   workspaceName,
   myRole,
+  canCreateProject = false,
 }) => {
   return (
     <div className="w-full p-6 md:p-7 rounded-2xl bg-white dark:bg-[#0f1118] text-zinc-900 dark:text-white shadow-xs relative overflow-hidden border border-zinc-200/70 dark:border-white/[0.06]">
@@ -44,11 +46,13 @@ export const DashboardHeroBanner: React.FC<DashboardHeroBannerProps> = ({
 
         {/* Quick Action Navigation Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 shrink-0 relative z-10">
-          <Link href="/projects/new">
-            <Button variant="primary" size="md">
-              <Plus className="w-4 h-4 mr-1.5" /> New Project
-            </Button>
-          </Link>
+          {canCreateProject && (
+            <Link href="/projects/new">
+              <Button variant="primary" size="md">
+                <Plus className="w-4 h-4 mr-1.5" /> New Project
+              </Button>
+            </Link>
+          )}
           <Link href="/chat">
             <Button
               variant="outline"

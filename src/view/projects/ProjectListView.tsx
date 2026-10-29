@@ -17,7 +17,7 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { EmptyState } from "../../components/shared/EmptyState";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { Plus, Search, FolderKanban, Calendar, CheckCircle2 } from "lucide-react";
-import { formatDate } from "../../lib/utils";
+import { formatDate, cn } from "../../lib/utils";
 
 export const ProjectListView: React.FC = () => {
   const router = useRouter();
@@ -174,6 +174,47 @@ export const ProjectListView: React.FC = () => {
                     <span className="font-semibold underline">{project.team?.name || project.department?.name}</span>
                   </div>
                 )}
+
+                {/* Running Phase, Project Condition & Profile Badges */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                  {/* Current Running Phase */}
+                  {(() => {
+                    const activePhase = (project.phases || []).find(
+                      (ph: any) => ph.status === "ACTIVE" || ph.status === "IN_PROGRESS"
+                    ) || (project.phases || []).find((ph: any) => ph.status === "PENDING") || project.phases?.[0];
+
+                    if (activePhase) {
+                      return (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-3xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                          <span>Phase: {activePhase.name}</span>
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
+
+                  {/* Project Condition / Client Health */}
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-3xs font-semibold border",
+                      project.clientHealth === "GOOD" || !project.clientHealth
+                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40"
+                        : project.clientHealth === "AT_RISK"
+                        ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40"
+                        : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border-rose-200/60 dark:border-rose-800/40"
+                    )}
+                  >
+                    <span>Condition: {project.clientHealth || project.status || "NORMAL"}</span>
+                  </span>
+
+                  {/* Profile Association */}
+                  {project.profileName && (
+                    <span className="text-3xs font-mono font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60 px-1.5 py-0.5 rounded">
+                      👤 {project.profileName}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.04] space-y-2.5">

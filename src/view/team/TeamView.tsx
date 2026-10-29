@@ -505,9 +505,14 @@ export const TeamView: React.FC = () => {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Are you sure you want to delete squad "${team.name}"?`)) {
-                            deleteTeamMutation.mutate(team.id);
-                          }
+                          toast(`Delete squad "${team.name}"?`, {
+                            description: "Are you sure you want to permanently delete this squad?",
+                            action: {
+                              label: "Delete",
+                              onClick: () => deleteTeamMutation.mutate(team.id),
+                            },
+                            cancel: { label: "Cancel", onClick: () => {} },
+                          });
                         }}
                         title="Delete squad"
                         className="p-1.5 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
@@ -1006,9 +1011,14 @@ export const TeamView: React.FC = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        if (confirm(`Are you sure you want to permanently delete squad "${currentInspectedTeam.name}"?`)) {
-                          deleteTeamMutation.mutate(currentInspectedTeam.id);
-                        }
+                        toast(`Delete squad "${currentInspectedTeam.name}"?`, {
+                          description: "Are you sure you want to permanently delete this squad?",
+                          action: {
+                            label: "Delete",
+                            onClick: () => deleteTeamMutation.mutate(currentInspectedTeam.id),
+                          },
+                          cancel: { label: "Cancel", onClick: () => {} },
+                        });
                       }}
                       className="text-rose-600 hover:text-white hover:bg-rose-600 border-rose-200 dark:border-rose-900/40 text-xs"
                     >

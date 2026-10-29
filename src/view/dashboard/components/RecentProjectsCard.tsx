@@ -33,7 +33,7 @@ export const RecentProjectsCard: React.FC<RecentProjectsCardProps> = ({ projects
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-8 text-xs text-zinc-400">
-            No active projects yet. Click "+ New Project" above to create your first roadmap.
+            No active projects yet.
           </div>
         ) : (
           projects.slice(0, 4).map((p) => (

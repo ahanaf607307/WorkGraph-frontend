@@ -599,9 +599,14 @@ export const NewsfeedView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          if (confirm("Are you sure you want to delete this post?")) {
-                            deletePostMutation.mutate(post.id);
-                          }
+                          toast("Delete this post?", {
+                            description: "Are you sure you want to permanently delete this post?",
+                            action: {
+                              label: "Delete",
+                              onClick: () => deletePostMutation.mutate(post.id),
+                            },
+                            cancel: { label: "Cancel", onClick: () => {} },
+                          });
                         }}
                         title="Delete post"
                         className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"

@@ -219,15 +219,23 @@ export const ProfileView: React.FC = () => {
     }
   };
 
-  const handleDeleteProfile = async (p: ProfileItem) => {
-    if (!confirm(`Are you sure you want to delete profile "${p.name}" (@${p.username})?`)) return;
-    try {
-      await stationActions.deleteProfile(p.id);
-      toast.success(`Profile "${p.name}" deleted successfully!`);
-      queryClient.invalidateQueries({ queryKey: ["profiles"] });
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete profile");
-    }
+  const handleDeleteProfile = (p: ProfileItem) => {
+    toast(`Delete profile "${p.name}"?`, {
+      description: `@${p.username} on ${p.platform || "Platform"} will be removed.`,
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await stationActions.deleteProfile(p.id);
+            toast.success(`Profile "${p.name}" deleted successfully!`);
+            queryClient.invalidateQueries({ queryKey: ["profiles"] });
+          } catch (err: any) {
+            toast.error(err.message || "Failed to delete profile");
+          }
+        },
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   };
 
   const filteredProfiles = profiles.filter(

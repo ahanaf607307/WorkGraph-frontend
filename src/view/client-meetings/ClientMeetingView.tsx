@@ -510,9 +510,14 @@ export const ClientMeetingView: React.FC = () => {
                       {(isPrivileged || meeting.createdById === user?.id) && (
                         <button
                           onClick={() => {
-                            if (confirm("Are you sure you want to delete this client meeting?")) {
-                              deleteMeetingMutation.mutate(meeting.id);
-                            }
+                            toast("Delete client meeting?", {
+                              description: "Are you sure you want to delete this client meeting record?",
+                              action: {
+                                label: "Delete",
+                                onClick: () => deleteMeetingMutation.mutate(meeting.id),
+                              },
+                              cancel: { label: "Cancel", onClick: () => {} },
+                            });
                           }}
                           className="p-1.5 text-neutral-400 hover:text-red-600 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
                           title="Delete meeting"

@@ -275,9 +275,14 @@ export const WorkspaceSettingsView: React.FC = () => {
                         {isOwnerOrAdmin && m.userId !== user?.id && m.role !== "OWNER" && (
                           <button
                             onClick={() => {
-                              if (confirm(`Remove ${m.user.name} from organization?`)) {
-                                removeMemberMutation.mutate(m.userId);
-                              }
+                              toast(`Remove ${m.user.name}?`, {
+                                description: "Are you sure you want to remove this member from the organization?",
+                                action: {
+                                  label: "Remove",
+                                  onClick: () => removeMemberMutation.mutate(m.userId),
+                                },
+                                cancel: { label: "Cancel", onClick: () => {} },
+                              });
                             }}
                             className="p-1 text-zinc-400 hover:text-rose-600 transition-colors cursor-pointer"
                             title="Remove Member"

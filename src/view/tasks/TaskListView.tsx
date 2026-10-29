@@ -173,9 +173,14 @@ export const TaskListView: React.FC<{ projectId?: string }> = ({ projectId }) =>
                     <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => {
-                          if (confirm(`Delete task "${task.title}"?`)) {
-                            deleteTaskMutation.mutate(task.id);
-                          }
+                          toast(`Delete task "${task.title}"?`, {
+                            description: "Are you sure you want to delete this task?",
+                            action: {
+                              label: "Delete",
+                              onClick: () => deleteTaskMutation.mutate(task.id),
+                            },
+                            cancel: { label: "Cancel", onClick: () => {} },
+                          });
                         }}
                         className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
                         title="Delete Task"

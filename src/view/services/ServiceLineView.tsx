@@ -122,17 +122,23 @@ export const ServiceLineView: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string, serviceName: string) => {
-    if (!confirm(`Delete service line "${serviceName}"? Associated profiles may be unlinked.`)) {
-      return;
-    }
-    try {
-      await serviceActions.deleteService(id);
-      toast.success(`Service line "${serviceName}" deleted`);
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete service line");
-    }
+  const handleDelete = (id: string, serviceName: string) => {
+    toast(`Delete service line "${serviceName}"?`, {
+      description: "Associated profiles and tasks may be unlinked.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await serviceActions.deleteService(id);
+            toast.success(`Service line "${serviceName}" deleted`);
+            queryClient.invalidateQueries({ queryKey: ["services"] });
+          } catch (err: any) {
+            toast.error(err.message || "Failed to delete service line");
+          }
+        },
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   };
 
   const filteredServices = services.filter(

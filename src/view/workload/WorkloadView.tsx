@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { workloadActions } from "../../modules/workload/actions/workload.actions";
 import { taskActions } from "../../modules/tasks/actions/task.actions";
 import { departmentActions } from "../../modules/departments/actions/department.actions";
+import { projectActions } from "../../modules/projects/actions/project.actions";
 import { useAuth } from "../../hooks/useAuth";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Avatar } from "../../components/ui/avatar";
@@ -73,6 +74,53 @@ export const WorkloadView: React.FC = () => {
     queryFn: () => departmentActions.getDepartments(orgId!),
     enabled: !!orgId,
   });
+
+  // Fetch projects to compute service line total project value for seals members
+  const { data: allProjects = [] } = useQuery({
+    queryKey: ["projects", orgId],
+    queryFn: () => projectActions.fetchProjects(orgId),
+    enabled: !!orgId,
+  });
+
+  const deptName = ((currentOrg as any)?.department?.name || "").toLowerCase();
+  const deptCode = ((currentOrg as any)?.department?.code || "").toUpperCase();
+  const isSalesMember =
+    deptName.includes("sale") ||
+    deptName.includes("seal") ||
+    deptCode === "SALES" ||
+    user?.role === "SALES_MEMBER" ||
+    (user?.role as string) === "SEALS" ||
+    (currentOrg as any)?.role === "SEALS_MEMBER" ||
+    (currentOrg as any)?.role === "SEALS" ||
+    (currentOrg as any)?.myRole === "SEALS_MEMBER" ||
+    (currentOrg as any)?.myRole === "SEALS" ||
+    (currentOrg as any)?.myRole === "SALES";
+
+  const memberServiceName =
+    (currentOrg as any)?.service?.name ||
+    (currentOrg as any)?.serviceName ||
+    "";
+
+  // Filter projects belonging to this member's service line
+  const serviceLineProjects = useMemo(() => {
+    if (!allProjects || allProjects.length === 0) return [];
+    if (!memberServiceName) return allProjects;
+    const sName = memberServiceName.toLowerCase();
+    return allProjects.filter(
+      (p: any) =>
+        (p.serviceType && p.serviceType.toLowerCase() === sName) ||
+        (p.team?.serviceType && p.team.serviceType.toLowerCase() === sName) ||
+        (p.team?.name && p.team.name.toLowerCase().includes(sName))
+    );
+  }, [allProjects, memberServiceName]);
+
+  const totalServiceLineValue = useMemo(() => {
+    return serviceLineProjects.reduce((sum: number, p: any) => sum + (Number(p.budget) || 0), 0);
+  }, [serviceLineProjects]);
+
+  const activeServiceLineProjectsCount = useMemo(() => {
+    return serviceLineProjects.filter((p: any) => p.status === "ACTIVE" || p.status === "PLANNING").length;
+  }, [serviceLineProjects]);
 
   // Flatten teams for the team dropdown
   const allTeams = useMemo(() => {
@@ -290,6 +338,45 @@ export const WorkloadView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Seals Member Service Line Total Project Value Card */}
+      {(isSalesMember || isSystemAdminOrAdmin) && (
+        <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-violet-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-md text-3xs font-mono font-bold uppercase bg-emerald-600 text-white shadow-xs">
+                💼 Seals Service Line Value
+              </span>
+              {memberServiceName && (
+                <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 font-mono">
+                  {memberServiceName}
+                </span>
+              )}
+            </div>
+            <div className="text-xl md:text-2xl font-black text-zinc-950 dark:text-white tracking-tight">
+              ${totalServiceLineValue.toLocaleString()} <span className="text-xs font-normal text-zinc-400">USD Pipeline Value</span>
+            </div>
+            <p className="text-2xs text-zinc-500 dark:text-zinc-400">
+              Aggregated project valuation across all client initiatives under your service line.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="px-4 py-2.5 rounded-xl bg-white/80 dark:bg-zinc-900/80 border border-emerald-500/20 text-center min-w-[100px]">
+              <div className="text-base font-bold text-zinc-950 dark:text-white font-mono">
+                {serviceLineProjects.length}
+              </div>
+              <div className="text-3xs text-zinc-400 font-medium">Total Projects</div>
+            </div>
+            <div className="px-4 py-2.5 rounded-xl bg-white/80 dark:bg-zinc-900/80 border border-emerald-500/20 text-center min-w-[100px]">
+              <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                {activeServiceLineProjectsCount}
+              </div>
+              <div className="text-3xs text-zinc-400 font-medium">Active Pipeline</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

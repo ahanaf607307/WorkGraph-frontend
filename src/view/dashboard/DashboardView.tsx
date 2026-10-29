@@ -111,6 +111,7 @@ export const DashboardView: React.FC = () => {
         userName={user?.name}
         workspaceName={currentOrg?.name}
         myRole={currentOrg?.myRole}
+        canCreateProject={isWorkspaceAdminOrAdmin}
       />
 
       {/* 2. Overview Content */}
