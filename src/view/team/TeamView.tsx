@@ -35,6 +35,56 @@ import {
   useFeaturePermission,
 } from "../../components/shared/PermissionModal";
 
+export const getSquadFullRoster = (team: any) => {
+  if (!team) return [];
+  const memberMap = new Map<string, any>();
+
+  // Add leader
+  if (team.leader) {
+    memberMap.set(team.leader.id, {
+      id: `leader-${team.leader.id}`,
+      userId: team.leader.id,
+      user: team.leader,
+      roleInSquad: "LEADER",
+      designationName: "Squad Leader",
+    });
+  }
+
+  // Add co-leader
+  if (team.coLeader) {
+    if (!memberMap.has(team.coLeader.id)) {
+      memberMap.set(team.coLeader.id, {
+        id: `coleader-${team.coLeader.id}`,
+        userId: team.coLeader.id,
+        user: team.coLeader,
+        roleInSquad: "CO_LEADER",
+        designationName: "Co-Leader",
+      });
+    }
+  }
+
+  // Add regular squad members
+  (team.members || []).forEach((m: any) => {
+    const uid = m.user?.id || m.userId;
+    if (uid && memberMap.has(uid)) {
+      const existing = memberMap.get(uid);
+      if (m.designationRel?.name) {
+        existing.designationName = `${existing.designationName} • ${m.designationRel.name}`;
+      }
+    } else if (uid) {
+      memberMap.set(uid, {
+        id: m.id || uid,
+        userId: uid,
+        user: m.user || { id: uid, name: m.name, email: m.email },
+        roleInSquad: "MEMBER",
+        designationName: m.designationRel?.name || "Member",
+      });
+    }
+  });
+
+  return Array.from(memberMap.values());
+};
+
 export const TeamView: React.FC = () => {
   const queryClient = useQueryClient();
   const { currentOrg, user } = useAuth();
@@ -302,7 +352,7 @@ export const TeamView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Permission Button (System Admin Only) */}
+          {/* Permission Button (Workspace Admin Only) */}
           <PermissionButton onClick={() => setShowPermissionModal(true)} />
 
           {/* Create Team Button */}
@@ -429,7 +479,8 @@ export const TeamView: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredTeams.map((team) => {
-            const memberCount = team.members?.length || 0;
+            const squadRoster = getSquadFullRoster(team);
+            const memberCount = squadRoster.length;
 
             return (
               <div
@@ -524,8 +575,8 @@ export const TeamView: React.FC = () => {
                 <div className="pt-3 border-t border-zinc-100 dark:border-white/[0.04] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="flex -space-x-1.5 overflow-hidden">
-                      {(team.members || []).slice(0, 4).map((m) => (
-                        <Avatar key={m.id} name={m.user?.name} size="sm" />
+                      {squadRoster.slice(0, 4).map((m: any) => (
+                        <Avatar key={m.userId} name={m.user?.name} size="sm" />
                       ))}
                     </div>
                     <span className="text-3xs font-semibold text-zinc-500">
@@ -669,6 +720,7 @@ export const TeamView: React.FC = () => {
       {inspectTeam && (() => {
         const currentInspectedTeam =
           allTeamsWithDept.find((t) => t.id === inspectTeam.id) || inspectTeam;
+        const fullRoster = getSquadFullRoster(currentInspectedTeam);
         const currentMembers = currentInspectedTeam.members || [];
 
         return (
@@ -676,7 +728,7 @@ export const TeamView: React.FC = () => {
             isOpen={!!inspectTeam}
             onClose={() => setInspectTeam(null)}
             title={`${currentInspectedTeam.name} — Squad Hub`}
-            description={`Manage squad details, leadership, and assigned members (${currentMembers.length} members)`}
+            description={`Manage squad details, leadership, and assigned members (${fullRoster.length} members)`}
             maxWidth="lg"
           >
             <div className="space-y-4 pt-2 text-xs">
@@ -693,7 +745,7 @@ export const TeamView: React.FC = () => {
                   )}
                 >
                   <Users className="w-3.5 h-3.5" />
-                  <span>Members ({currentMembers.length})</span>
+                  <span>Members ({fullRoster.length})</span>
                 </button>
 
                 {isSystemAdmin && (
@@ -726,7 +778,7 @@ export const TeamView: React.FC = () => {
                       >
                         <option value="">Select workspace member to add...</option>
                         {members
-                          ?.filter((m: any) => !currentMembers.some((tm: any) => tm.userId === m.user.id))
+                          ?.filter((m: any) => !fullRoster.some((r: any) => r.userId === m.user.id))
                           ?.map((m: any) => (
                             <option key={m.user.id} value={m.user.id}>
                               {m.user.name} ({m.user.email})
@@ -752,12 +804,12 @@ export const TeamView: React.FC = () => {
 
                   {/* Members List */}
                   <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
-                    {currentMembers.length === 0 ? (
+                    {fullRoster.length === 0 ? (
                       <div className="p-8 text-center text-xs text-zinc-400 bg-zinc-50 dark:bg-white/[0.02] rounded-2xl">
                         No members currently assigned to this squad.
                       </div>
                     ) : (
-                      currentMembers.map((m: any) => (
+                      fullRoster.map((m: any) => (
                         <div
                           key={m.id}
                           className="p-3 rounded-2xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200/60 dark:border-white/[0.06] flex items-center justify-between gap-3"
@@ -769,9 +821,19 @@ export const TeamView: React.FC = () => {
                                 <span className="font-bold text-zinc-900 dark:text-white truncate">
                                   {m.user?.name}
                                 </span>
-                                {m.designationRel && (
+                                {m.roleInSquad === "LEADER" && (
+                                  <span className="text-3xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20">
+                                    Leader
+                                  </span>
+                                )}
+                                {m.roleInSquad === "CO_LEADER" && (
+                                  <span className="text-3xs px-2 py-0.5 rounded bg-violet-500/10 text-violet-600 dark:text-violet-400 font-bold border border-violet-500/20">
+                                    Co-Leader
+                                  </span>
+                                )}
+                                {m.designationName && m.roleInSquad === "MEMBER" && (
                                   <span className="text-3xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium">
-                                    {m.designationRel.name}
+                                    {m.designationName}
                                   </span>
                                 )}
                               </div>
@@ -781,7 +843,7 @@ export const TeamView: React.FC = () => {
                             </div>
                           </div>
 
-                          {isSystemAdmin && (
+                          {m.roleInSquad === "MEMBER" && isSystemAdmin && (
                             <button
                               type="button"
                               onClick={() =>
@@ -795,6 +857,11 @@ export const TeamView: React.FC = () => {
                             >
                               <X className="w-4 h-4" />
                             </button>
+                          )}
+                          {m.roleInSquad !== "MEMBER" && (
+                            <span className="text-3xs text-zinc-400 font-mono">
+                              Leadership
+                            </span>
                           )}
                         </div>
                       ))

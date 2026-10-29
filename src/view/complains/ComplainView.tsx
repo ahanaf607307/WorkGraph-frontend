@@ -281,7 +281,7 @@ export const ComplainView: React.FC = () => {
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             {isSystemAdmin
               ? "Administrative review vault for grievances, harassment, and ethical workplace reports"
-              : "Secure grievance portal. Reports are visible only to you and the System Administrator."}
+              : "Secure grievance portal. Reports are visible only to you and the Workspace Administrator."}
           </p>
         </div>
 
@@ -461,7 +461,7 @@ export const ComplainView: React.FC = () => {
           <DialogHeader className="p-5 pb-3 border-b border-zinc-100 dark:border-white/[0.06]">
             <DialogTitle className="text-sm font-bold">Submit Confidential Grievance</DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
-              Encrypted grievance delivered directly to the System Administrator
+              Encrypted grievance delivered directly to the Workspace Administrator
             </DialogDescription>
           </DialogHeader>
 

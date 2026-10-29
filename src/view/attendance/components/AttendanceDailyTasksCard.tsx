@@ -240,7 +240,7 @@ export const AttendanceDailyTasksCard: React.FC<AttendanceDailyTasksCardProps> =
                 ) : t.adminComment ? (
                   <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 text-xs text-zinc-800 dark:text-zinc-200">
                     <div className="text-[9px] text-zinc-400 font-mono flex items-center justify-between mb-0.5">
-                      <span>By: {t.adminCommenterName || "System Admin"}</span>
+                      <span>By: {t.adminCommenterName || "Workspace Admin"}</span>
                       {t.adminCommentedAt && (
                         <span>
                           {new Date(t.adminCommentedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}

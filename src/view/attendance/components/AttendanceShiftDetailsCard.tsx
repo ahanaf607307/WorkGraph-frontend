@@ -160,7 +160,7 @@ export const AttendanceShiftDetailsCard: React.FC<AttendanceShiftDetailsCardProp
             Previous Date Locked
           </div>
           <div>
-            This date has passed. Check-in, checkout, and daily task modifications are locked. Contact your System Admin for attendance manual overrides.
+            This date has passed. Check-in, checkout, and daily task modifications are locked. Contact your Workspace Admin for attendance manual overrides.
           </div>
         </div>
       )}

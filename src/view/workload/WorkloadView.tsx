@@ -97,9 +97,28 @@ export const WorkloadView: React.FC = () => {
         for (const t of d.teams) {
           if (selectedTeamFilter !== "ALL" && t.id !== selectedTeamFilter) continue;
 
-          const squadMembers = (workload?.members || []).filter(
-            (m: any) => m.teamId === t.id || m.team?.id === t.id
-          );
+          const leaderId = t.leader?.id || t.leaderId;
+          const coLeaderId = t.coLeader?.id || t.coLeaderId;
+
+          // Deduplicated list of all members assigned to this squad including Leader and Co-Leader
+          const memberMap = new Map<string, any>();
+
+          (workload?.members || []).forEach((m: any) => {
+            const uid = m.user?.id || m.userId;
+            const isAssignedToTeam = m.teamId === t.id || m.team?.id === t.id;
+            const isSquadLeader = !!(leaderId && uid === leaderId);
+            const isSquadCoLeader = !!(coLeaderId && uid === coLeaderId);
+
+            if (isAssignedToTeam || isSquadLeader || isSquadCoLeader) {
+              memberMap.set(uid, {
+                ...m,
+                isSquadLeader,
+                isSquadCoLeader,
+              });
+            }
+          });
+
+          const squadMembers = Array.from(memberMap.values());
 
           if (searchTerm.trim()) {
             const q = searchTerm.toLowerCase();
@@ -118,7 +137,7 @@ export const WorkloadView: React.FC = () => {
             0
           );
           const totalAllocated = squadMembers.reduce(
-            (sum: number, m: any) => sum + (m.assignedHours || 0),
+            (sum: number, m: any) => sum + (m.assignedOpenHours ?? m.assignedHours ?? 0),
             0
           );
           const utilization =
@@ -490,8 +509,20 @@ export const WorkloadView: React.FC = () => {
                               <div className="flex items-center gap-2.5 min-w-0">
                                 <Avatar name={m.user?.name} size="sm" />
                                 <div className="min-w-0">
-                                  <div className="font-bold text-zinc-900 dark:text-white truncate">
-                                    {m.user?.name}
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-bold text-zinc-900 dark:text-white truncate">
+                                      {m.user?.name}
+                                    </span>
+                                    {m.isSquadLeader && (
+                                      <span className="text-3xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20">
+                                        Leader
+                                      </span>
+                                    )}
+                                    {m.isSquadCoLeader && (
+                                      <span className="text-3xs px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-600 dark:text-violet-400 font-bold border border-violet-500/20">
+                                        Co-Leader
+                                      </span>
+                                    )}
                                   </div>
                                   <div className="text-3xs text-zinc-400 truncate">
                                     {m.user?.email}
@@ -508,7 +539,7 @@ export const WorkloadView: React.FC = () => {
                                   {m.workloadStatus}
                                 </span>
                                 <div className="font-mono text-zinc-800 dark:text-zinc-200 text-xs">
-                                  {m.assignedHours || 0} / {m.weeklyCapacityHours || 40} hrs ({mUtil}%)
+                                  {m.assignedOpenHours ?? m.assignedHours ?? 0} / {m.weeklyCapacityHours || 40} hrs ({mUtil}%)
                                 </div>
                                 <Button
                                   variant="outline"

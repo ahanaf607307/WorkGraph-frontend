@@ -54,11 +54,11 @@ export const CreateDesignationModal: React.FC<CreateDesignationModalProps> = ({
         <DialogHeader>
           <div className="flex items-center space-x-2 text-amber-500 mb-1">
             <Award className="w-5 h-5" />
-            <span className="text-2xs font-bold uppercase tracking-wider font-mono">System Admin Privilege</span>
+            <span className="text-2xs font-bold uppercase tracking-wider font-mono">Workspace Admin Privilege</span>
           </div>
           <DialogTitle>Create Dynamic Designation & Title</DialogTitle>
           <DialogDescription>
-            System Admins can dynamically add department-wise or company-wide designations and official titles to the enterprise hierarchy.
+            Workspace Admins can dynamically add department-wise or company-wide designations and official titles to the enterprise hierarchy.
           </DialogDescription>
         </DialogHeader>
 

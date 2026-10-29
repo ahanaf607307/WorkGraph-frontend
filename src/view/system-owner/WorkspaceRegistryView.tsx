@@ -39,7 +39,7 @@ export const WorkspaceRegistryView: React.FC = () => {
   const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
   const [selectedCompanyDetails, setSelectedCompanyDetails] = useState<any | null>(null);
 
-  // Form state for provisioning new System Admin & Company
+  // Form state for provisioning new Workspace Admin & Company
   const [provisionForm, setProvisionForm] = useState({
     companyName: "",
     adminName: "",
@@ -58,7 +58,7 @@ export const WorkspaceRegistryView: React.FC = () => {
     queryFn: () => systemOwnerActions.getPlatformOverview(),
   });
 
-  // Edit Workspace & System Admin state
+  // Edit Workspace & Workspace Admin state
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -80,7 +80,7 @@ export const WorkspaceRegistryView: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["system-platform-overview"] });
       setEditingCompany(null);
       setSelectedCompanyDetails(null);
-      toast.success("Workspace and System Admin details updated successfully!");
+      toast.success("Workspace and Workspace Admin details updated successfully!");
     },
     onError: (err: any) => {
       toast.error("Failed to update registry info: " + (err.message || "Unknown error"));
@@ -125,7 +125,7 @@ export const WorkspaceRegistryView: React.FC = () => {
     },
   });
 
-  // Mutation to provision a new System Admin
+  // Mutation to provision a new Workspace Admin
   const provisionMutation = useMutation({
     mutationFn: (payload: typeof provisionForm) => systemOwnerActions.provisionSystemAdmin(payload),
     onSuccess: (res) => {
@@ -142,7 +142,7 @@ export const WorkspaceRegistryView: React.FC = () => {
         website: "",
         country: "Bangladesh",
       });
-      toast.success("System Admin & Workspace provisioned!", {
+      toast.success("Workspace Admin & Workspace provisioned!", {
         description: `Credentials sent to ${res.adminUser?.email} via email.`,
       });
     },
@@ -292,7 +292,7 @@ export const WorkspaceRegistryView: React.FC = () => {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 text-zinc-400 font-mono uppercase text-3xs">
                 <th className="py-3 px-4">Company Workspace</th>
-                <th className="py-3 px-4">System Admin (Head)</th>
+                <th className="py-3 px-4">Workspace Admin (Head)</th>
                 <th className="py-3 px-4">Contact & Website</th>
                 <th className="py-3 px-4">Registered Date</th>
                 <th className="py-3 px-4">Status</th>
@@ -345,13 +345,13 @@ export const WorkspaceRegistryView: React.FC = () => {
                         </div>
                       </td>
 
-                      {/* System Admin */}
+                      {/* Workspace Admin */}
                       <td className="py-3.5 px-4">
                         <div>
                           <div className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
                             {org.createdBy?.name || "Unassigned"}
-                            <span className="text-3xs font-mono font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-1 py-0.2 rounded">
-                              SYS ADMIN
+                            <span className="text-3xs font-mono font-bold bg-violet-100 dark:bg-violet-950 text-violet-800 dark:text-violet-300 px-1 py-0.2 rounded">
+                              WORKSPACE ADMIN
                             </span>
                           </div>
                           <div className="text-2xs text-zinc-400 font-mono mt-0.5 flex items-center gap-1">
@@ -557,8 +557,8 @@ export const WorkspaceRegistryView: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 space-y-2">
-                <div className="text-2xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 font-mono">
-                  👤 System Administrator Contact
+                <div className="text-2xs font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 font-mono">
+                  👤 Workspace Administrator Contact
                 </div>
                 <div className="space-y-1.5 text-zinc-600 dark:text-zinc-300">
                   <div className="flex items-center justify-between">
@@ -634,7 +634,7 @@ export const WorkspaceRegistryView: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Workspace & System Admin Modal */}
+      {/* Edit Workspace & Workspace Admin Modal */}
       {editingCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
           <div className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
@@ -712,7 +712,7 @@ export const WorkspaceRegistryView: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    System Admin Name
+                    Workspace Admin Name
                   </label>
                   <Input
                     value={editForm.adminName}
@@ -722,7 +722,7 @@ export const WorkspaceRegistryView: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    System Admin Email
+                    Workspace Admin Email
                   </label>
                   <Input
                     type="email"
@@ -818,7 +818,7 @@ export const WorkspaceRegistryView: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    System Admin Name *
+                    Workspace Admin Name *
                   </label>
                   <Input
                     required
@@ -830,7 +830,7 @@ export const WorkspaceRegistryView: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    System Admin Email *
+                    Workspace Admin Email *
                   </label>
                   <Input
                     required

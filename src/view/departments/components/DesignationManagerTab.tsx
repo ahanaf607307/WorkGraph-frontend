@@ -28,11 +28,11 @@ export const DesignationManagerTab: React.FC<DesignationManagerTabProps> = ({
             <h4 className="text-xs font-bold text-amber-950 dark:text-amber-200 flex items-center gap-2">
               <span>Dynamic Designation & Title Engine</span>
               <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-amber-400 text-black">
-                System Admin Managed
+                Workspace Admin Managed
               </span>
             </h4>
             <p className="text-2xs text-amber-800 dark:text-amber-400 mt-0.5">
-              The System Admin (Company Head) can dynamically provision department-wise and global designations, job titles, and hierarchy levels.
+              The Workspace Admin (Company Head) can dynamically provision department-wise and global designations, job titles, and hierarchy levels.
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export const DesignationManagerTab: React.FC<DesignationManagerTabProps> = ({
           </button>
         ) : (
           <div className="text-3xs font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-xl shrink-0">
-            🔒 Managed by System Admin
+            🔒 Managed by Workspace Admin
           </div>
         )}
       </div>

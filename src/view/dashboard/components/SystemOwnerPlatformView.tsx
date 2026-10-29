@@ -39,7 +39,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
   const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
   const [selectedCompanyDetails, setSelectedCompanyDetails] = useState<any | null>(null);
 
-  // Form state for provisioning new System Admin & Company
+  // Form state for provisioning new Workspace Admin & Company
   const [provisionForm, setProvisionForm] = useState({
     companyName: "",
     adminName: "",
@@ -66,7 +66,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["system-platform-overview"] });
       if (variables.status === "APPROVED") {
         toast.success(`Company "${updated.name}" approved!`, {
-          description: "An official approval email has been dispatched to the System Admin.",
+          description: "An official approval email has been dispatched to the Workspace Admin.",
         });
       } else {
         toast.info(`Company status updated to ${variables.status}`);
@@ -77,7 +77,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
     },
   });
 
-  // Mutation to provision a new System Admin
+  // Mutation to provision a new Workspace Admin
   const provisionMutation = useMutation({
     mutationFn: (payload: typeof provisionForm) => systemOwnerActions.provisionSystemAdmin(payload),
     onSuccess: (res) => {
@@ -94,7 +94,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
         website: "",
         country: "Bangladesh",
       });
-      toast.success("System Admin & Workspace provisioned!", {
+      toast.success("Workspace Admin & Workspace provisioned!", {
         description: `Credentials sent to ${res.adminUser?.email} via email.`,
       });
     },
@@ -139,7 +139,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
               Work Graph Platform Overview
             </h1>
             <p className="text-sm text-zinc-300 max-w-2xl leading-relaxed">
-              Review and approve tenant company registrations, supervise system administrator onboarding,
+              Review and approve tenant company registrations, supervise workspace administrator onboarding,
               and provision new enterprise workspaces with direct automated email credential dispatch.
             </p>
           </div>
@@ -150,7 +150,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
               className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-500 hover:to-orange-400 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-purple-500/20 border-0 cursor-pointer"
             >
               <PlusCircle className="w-4.5 h-4.5 mr-2" />
-              Provision System Admin
+              Provision Workspace Admin
             </Button>
           </div>
         </div>
@@ -223,7 +223,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
             <div className="text-3xl font-black text-zinc-950 dark:text-white">
               {metrics.totalUsers}
             </div>
-            <p className="text-xs text-zinc-400 mt-1">System admins & members</p>
+            <p className="text-xs text-zinc-400 mt-1">Workspace admins & members</p>
           </div>
         </div>
       </div>
@@ -426,7 +426,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 text-zinc-400 font-mono uppercase text-3xs">
                 <th className="py-3 px-4">Company Workspace</th>
-                <th className="py-3 px-4">System Admin (Company Head)</th>
+                <th className="py-3 px-4">Workspace Admin (Company Head)</th>
                 <th className="py-3 px-4">Contact & Website</th>
                 <th className="py-3 px-4">Registered Date</th>
                 <th className="py-3 px-4">Status</th>
@@ -476,13 +476,13 @@ export const SystemOwnerPlatformView: React.FC = () => {
                         </div>
                       </td>
 
-                      {/* System Admin */}
+                      {/* Workspace Admin */}
                       <td className="py-3.5 px-4">
                         <div>
                           <div className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
                             {org.createdBy?.name || "Unassigned"}
-                            <span className="text-3xs font-mono font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-1 py-0.2 rounded">
-                              SYS ADMIN
+                            <span className="text-3xs font-mono font-bold bg-violet-100 dark:bg-violet-950 text-violet-800 dark:text-violet-300 px-1 py-0.2 rounded">
+                              WORKSPACE ADMIN
                             </span>
                           </div>
                           <div className="text-2xs text-zinc-400 font-mono mt-0.5 flex items-center gap-1">
@@ -619,7 +619,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
         </div>
       </div>
 
-      {/* Provision System Admin & Workspace Modal */}
+      {/* Provision Workspace Admin & Workspace Modal */}
       {isProvisionModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
           <div className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
@@ -627,7 +627,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
               <div>
                 <h3 className="text-lg font-bold text-zinc-950 dark:text-white flex items-center gap-2">
                   <KeyRound className="w-5 h-5 text-purple-500" />
-                  Provision System Admin & Workspace
+                  Provision Workspace Admin & Workspace
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
                   Creates an approved enterprise organization and dispatches credentials via email.
@@ -667,7 +667,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                    System Admin Full Name *
+                    Workspace Admin Full Name *
                   </label>
                   <input
                     type="text"
@@ -683,7 +683,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                    System Admin Email *
+                    Workspace Admin Email *
                   </label>
                   <input
                     type="email"
@@ -835,7 +835,7 @@ export const SystemOwnerPlatformView: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
-                <div className="font-bold text-zinc-900 dark:text-white">System Admin Contact</div>
+                <div className="font-bold text-zinc-900 dark:text-white">Workspace Admin Contact</div>
                 <div className="flex items-center justify-between">
                   <span className="text-zinc-400">Name</span>
                   <span className="font-semibold text-zinc-800 dark:text-zinc-200">

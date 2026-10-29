@@ -108,7 +108,9 @@ export const Header: React.FC = () => {
                 {currentOrg.name}
               </span>
               <span className="text-3xs font-mono font-bold bg-white dark:bg-zinc-800 text-violet-600 dark:text-violet-400 border border-zinc-200 dark:border-zinc-700 px-1 py-0.2 rounded uppercase">
-                {currentOrg.myRole === "OWNER" ? "System Admin" : currentOrg.myRole}
+                {currentOrg.myRole === "OWNER" || (currentOrg.myRole as string) === "SYSTEM_ADMIN" || currentOrg.myRole === "WORKSPACE_ADMIN"
+                  ? "Workspace Admin"
+                  : currentOrg.myRole}
               </span>
             </div>
           </div>

@@ -45,15 +45,17 @@ export const targetActions = {
       month?: number;
       year?: number;
       targetType?: string;
+      periodType?: "MONTHLY" | "YEARLY";
     }
   ): Promise<MonthlyTargetItem[]> => {
     const params = new URLSearchParams();
     if (filters?.departmentId) params.append("departmentId", filters.departmentId);
     if (filters?.teamId) params.append("teamId", filters.teamId);
     if (filters?.serviceId) params.append("serviceId", filters.serviceId);
-    if (filters?.month) params.append("month", String(filters.month));
+    if (filters?.month !== undefined) params.append("month", String(filters.month));
     if (filters?.year) params.append("year", String(filters.year));
     if (filters?.targetType) params.append("targetType", filters.targetType);
+    if (filters?.periodType) params.append("periodType", filters.periodType);
     const query = params.toString() ? `?${params.toString()}` : "";
     return apiClient<MonthlyTargetItem[]>(`/targets/${organizationId}${query}`);
   },
@@ -62,6 +64,7 @@ export const targetActions = {
     organizationId: string,
     data: {
       targetType: "DEPARTMENT" | "TEAM";
+      periodType?: "MONTHLY" | "YEARLY";
       departmentId?: string;
       teamId?: string;
       serviceId?: string;

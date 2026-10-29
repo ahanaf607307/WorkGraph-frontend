@@ -50,7 +50,7 @@ export const RegisterView: React.FC = () => {
       }
       await refreshOrganizations();
       toast.success("Workspace created successfully!", {
-        description: `Welcome to Work Graph, ${data.name}! You are registered as System Admin for ${data.companyName}.`,
+        description: `Welcome to Work Graph, ${data.name}! You are registered as Workspace Admin for ${data.companyName}.`,
       });
       router.push("/dashboard");
     } catch (error: any) {
@@ -82,13 +82,13 @@ export const RegisterView: React.FC = () => {
           <div className="mt-14 max-w-md">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/15 text-amber-300 border border-amber-400/30 mb-4">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>System Admin Onboarding</span>
+              <span>Workspace Admin Onboarding</span>
             </div>
             <h1 className="text-3xl xl:text-4xl font-extrabold tracking-tight leading-tight">
               Launch Your Company Workspace with Dynamic Governance.
             </h1>
             <p className="mt-3.5 text-zinc-400 text-sm leading-relaxed">
-              As System Admin, you receive full operational sovereignty: add custom departments, define squad structures, and configure custom designations & titles.
+              As Workspace Admin, you receive full operational sovereignty: add custom departments, define squad structures, and configure custom designations & titles.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export const RegisterView: React.FC = () => {
               <Award className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold text-white block">Custom Designations & Official Titles</span>
-                <span className="text-zinc-400 text-2xs">System Admins can dynamically craft corporate titles and hierarchy levels.</span>
+                <span className="text-zinc-400 text-2xs">Workspace Admins can dynamically craft corporate titles and hierarchy levels.</span>
               </div>
             </div>
 
@@ -143,7 +143,7 @@ export const RegisterView: React.FC = () => {
               </Link>
             </div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-3xs font-mono font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 mb-2">
-              🏢 Registering as System Admin (Company Head)
+              🏢 Registering as Workspace Admin (Company Head)
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
               Create Enterprise Workspace
@@ -264,7 +264,7 @@ export const RegisterView: React.FC = () => {
               className="w-full mt-4 cursor-pointer"
               isLoading={isLoading}
             >
-              Launch Workspace as System Admin <ArrowRight className="w-4 h-4 ml-2" />
+              Launch Workspace as Workspace Admin <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </form>
 

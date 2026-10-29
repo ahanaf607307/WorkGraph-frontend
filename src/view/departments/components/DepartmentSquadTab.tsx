@@ -95,7 +95,7 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
           </button>
         ) : (
           <p className="text-2xs text-zinc-400">
-            Department structure is managed by the System Admin (Company Head).
+            Department structure is managed by the Workspace Admin (Company Head).
           </p>
         )}
       </div>
@@ -268,7 +268,7 @@ export const DepartmentSquadTab: React.FC<DepartmentSquadTabProps> = ({
                           {team.name}
                         </h4>
                         <span className="text-3xs font-mono font-semibold px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 border border-zinc-200/60 dark:border-white/[0.06] text-zinc-500 dark:text-zinc-400 shrink-0">
-                          {team.members?.length || team._count?.members || 0} members
+                          {(team.members?.length ?? team._count?.members ?? 0) + (team.leaderId || team.leader ? 1 : 0) + (team.coLeaderId || team.coLeader ? 1 : 0)} members
                         </span>
                       </div>
 

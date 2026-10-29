@@ -233,17 +233,17 @@ export const LoginView: React.FC = () => {
                 <div className="text-3xs text-zinc-400 font-mono mt-0.5">coleader@test.com</div>
               </button>
 
-              {/* Sales Member */}
+              {/* Seals Member */}
               <button
                 type="button"
-                onClick={() => setDemoAccount("sales@test.com", "Sales Member")}
+                onClick={() => setDemoAccount("sales@test.com", "Seals Member")}
                 className="p-2.5 text-xs font-medium text-left rounded-xl border border-emerald-300/80 dark:border-emerald-700/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/30 transition-all cursor-pointer shadow-2xs group"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-extrabold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                    💼 Sales Member
+                    💼 Seals Member
                   </span>
-                  <span className="text-3xs font-mono font-bold bg-emerald-500 text-white px-1.5 py-0.2 rounded">Sales Desk</span>
+                  <span className="text-3xs font-mono font-bold bg-emerald-500 text-white px-1.5 py-0.2 rounded">Seals Desk</span>
                 </div>
                 <div className="text-2xs text-zinc-500 dark:text-zinc-400 mt-0.5">Client calls, profile stations & queues</div>
                 <div className="text-3xs text-emerald-600 dark:text-emerald-400 font-mono mt-0.5 font-semibold">sales@test.com</div>

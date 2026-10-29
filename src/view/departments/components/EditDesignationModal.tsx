@@ -76,7 +76,7 @@ export const EditDesignationModal: React.FC<EditDesignationModalProps> = ({
         <DialogHeader>
           <div className="flex items-center space-x-2 text-amber-500 mb-1">
             <Award className="w-5 h-5" />
-            <span className="text-2xs font-bold uppercase tracking-wider font-mono">System Admin Privilege</span>
+            <span className="text-2xs font-bold uppercase tracking-wider font-mono">Workspace Admin Privilege</span>
           </div>
           <DialogTitle>Edit Designation & Title</DialogTitle>
           <DialogDescription>

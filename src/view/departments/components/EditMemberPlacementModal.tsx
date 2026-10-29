@@ -154,34 +154,34 @@ export const EditMemberPlacementModal: React.FC<EditMemberPlacementModalProps> =
             <div>
               <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1 flex items-center justify-between">
                 <span>Workspace Role</span>
-                {member?.role === "OWNER" ? (
+                {member?.role === "OWNER" || member?.role === "WORKSPACE_ADMIN" || (member?.role as string) === "SYSTEM_ADMIN" ? (
                   <span className="text-3xs text-violet-600 dark:text-violet-400 font-mono font-bold">
                     Protected Role
                   </span>
                 ) : !isSystemAdmin ? (
                   <span className="text-3xs text-zinc-400 font-mono">
-                    System Admin only
+                    Workspace Admin only
                   </span>
                 ) : null}
               </label>
 
-              {member?.role === "OWNER" ? (
+              {member?.role === "OWNER" || member?.role === "WORKSPACE_ADMIN" || (member?.role as string) === "SYSTEM_ADMIN" ? (
                 <div className="w-full px-3 py-2 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-300 dark:border-violet-800 text-xs font-bold text-violet-700 dark:text-violet-300 flex items-center justify-between">
-                  <span>🏢 Workspace Admin (Owner)</span>
+                  <span>🏢 Workspace Admin</span>
                   <span className="text-3xs font-mono font-normal text-violet-600 dark:text-violet-400">Cannot be modified</span>
                 </div>
               ) : (
                 <select
                   disabled={!isSystemAdmin}
-                  value={form.role === "SYSTEM_ADMIN" ? "WORKSPACE_ADMIN" : form.role}
+                  value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-[#141722] text-xs text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-white/[0.08] focus:border-violet-500 focus:outline-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="MEMBER">Member</option>
+                  <option value="SEALS">Seals</option>
                   <option value="CO_LEADER">Co-Leader</option>
                   <option value="TEAM_LEADER">Team Leader</option>
                   <option value="ADMIN">Admin</option>
-                  <option value="WORKSPACE_ADMIN">Workspace Admin</option>
                 </select>
               )}
             </div>

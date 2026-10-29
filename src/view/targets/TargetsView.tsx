@@ -38,25 +38,29 @@ export const TargetsView: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
 
+  const [periodTab, setPeriodTab] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
   const [activeTab, setActiveTab] = useState<"DEPARTMENT" | "TEAM">("DEPARTMENT");
 
   const isSystemAdminOrAdmin =
     currentOrg?.myRole === "OWNER" ||
     (currentOrg?.myRole as string) === "WORKSPACE_ADMIN" ||
+    (currentOrg?.myRole as string) === "workspace_admin" ||
     (currentOrg?.myRole as string) === "SYSTEM_ADMIN" ||
+    (currentOrg?.myRole as string) === "system_admin" ||
     currentOrg?.myRole === "ADMIN" ||
     user?.role === "SYSTEM_OWNER" ||
     user?.role === "WORKSPACE_ADMIN" ||
     (user?.role as string) === "workspace_admin" ||
     user?.role === "SYSTEM_ADMIN";
 
-  // Query targets for selected month & year
+  // Query targets for selected period & year
   const { data: targets = [], isLoading } = useQuery({
-    queryKey: ["targets", orgId, selectedMonth, selectedYear],
+    queryKey: ["targets", orgId, periodTab, periodTab === "MONTHLY" ? selectedMonth : 0, selectedYear],
     queryFn: () =>
       targetActions.getTargets(orgId!, {
-        month: selectedMonth,
+        month: periodTab === "MONTHLY" ? selectedMonth : 0,
         year: selectedYear,
+        periodType: periodTab,
       }),
     enabled: !!orgId,
   });
@@ -97,6 +101,7 @@ export const TargetsView: React.FC = () => {
   // Create Target Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [targetForm, setTargetForm] = useState<{
+    periodType: "MONTHLY" | "YEARLY";
     targetType: "DEPARTMENT" | "TEAM";
     departmentId: string;
     teamId: string;
@@ -108,6 +113,7 @@ export const TargetsView: React.FC = () => {
     targetMetric: string;
     targetValue: number;
   }>({
+    periodType: "MONTHLY",
     targetType: "DEPARTMENT",
     departmentId: "",
     teamId: "",
@@ -126,18 +132,23 @@ export const TargetsView: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["targets", orgId] });
       setIsCreateModalOpen(false);
       setTargetForm({
+        periodType: periodTab,
         targetType: "DEPARTMENT",
         departmentId: "",
         teamId: "",
         serviceId: "",
-        month: selectedMonth,
+        month: periodTab === "MONTHLY" ? selectedMonth : 0,
         year: selectedYear,
         title: "",
         description: "",
         targetMetric: "Story Points",
         targetValue: 100,
       });
-      toast.success("Monthly Target created successfully!");
+      toast.success(
+        targetForm.periodType === "YEARLY"
+          ? "Yearly Target created successfully!"
+          : "Monthly Target created successfully!"
+      );
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to create target");
@@ -169,6 +180,10 @@ export const TargetsView: React.FC = () => {
 
   // Filter targets for active tab
   const filteredTargets = targets.filter((t) => t.targetType === activeTab);
+
+  // Year navigation
+  const prevYear = () => setSelectedYear((y) => y - 1);
+  const nextYear = () => setSelectedYear((y) => y + 1);
 
   // Month navigation
   const prevMonth = () => {
@@ -207,37 +222,89 @@ export const TargetsView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/50 dark:border-white/[0.06]">
         <div>
           <h1 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight flex items-center gap-2">
-            <span>Monthly Targets & Objectives</span>
+            <span>{periodTab === "YEARLY" ? "Yearly Targets & Objectives" : "Monthly Targets & Objectives"}</span>
           </h1>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Configure department deliverables and monitor Team Leader monthly achievements
+            {periodTab === "YEARLY"
+              ? "Establish annual deliverables and track department and squad yearly milestones"
+              : "Configure department deliverables and monitor Team Leader monthly achievements"}
           </p>
         </div>
 
-        {/* Month Selector & Create Target Button */}
+        {/* Mode Selector, Date Navigator & Create Target Button */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center space-x-1.5 bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] px-2 py-1 rounded-xl">
+          {/* Primary Tab: Monthly vs Yearly */}
+          <div className="flex items-center gap-1 bg-zinc-100 dark:bg-white/[0.04] p-1 rounded-2xl border border-zinc-200/80 dark:border-white/[0.06]">
             <button
-              onClick={prevMonth}
-              className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              type="button"
+              onClick={() => setPeriodTab("MONTHLY")}
+              className={cn(
+                "px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5",
+                periodTab === "MONTHLY"
+                  ? "bg-violet-600 text-white shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
+              )}
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Monthly</span>
             </button>
-            <span className="text-xs font-semibold px-2 text-zinc-800 dark:text-zinc-200">{monthName}</span>
             <button
-              onClick={nextMonth}
-              className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              type="button"
+              onClick={() => setPeriodTab("YEARLY")}
+              className={cn(
+                "px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5",
+                periodTab === "YEARLY"
+                  ? "bg-violet-600 text-white shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
+              )}
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <Award className="w-3.5 h-3.5" />
+              <span>Yearly</span>
             </button>
           </div>
+
+          {/* Date Selector */}
+          {periodTab === "MONTHLY" ? (
+            <div className="flex items-center space-x-1.5 bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] px-2 py-1 rounded-xl">
+              <button
+                onClick={prevMonth}
+                className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-xs font-semibold px-2 text-zinc-800 dark:text-zinc-200">{monthName}</span>
+              <button
+                onClick={nextMonth}
+                className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-1.5 bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/70 dark:border-white/[0.06] px-2 py-1 rounded-xl">
+              <button
+                onClick={prevYear}
+                className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-xs font-semibold px-2 text-zinc-800 dark:text-zinc-200">Year {selectedYear}</span>
+              <button
+                onClick={nextYear}
+                className="p-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-white/[0.08] text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {canSetTarget && (
             <Button
               onClick={() => {
                 setTargetForm((prev) => ({
                   ...prev,
-                  month: selectedMonth,
+                  periodType: periodTab,
+                  month: periodTab === "MONTHLY" ? selectedMonth : 0,
                   year: selectedYear,
                   departmentId: departments[0]?.id || "",
                   teamId: allTeams[0]?.id || "",
@@ -290,12 +357,12 @@ export const TargetsView: React.FC = () => {
           <div className="col-span-full py-12 text-center rounded-2xl border border-dashed border-zinc-200/80 dark:border-white/[0.08] bg-white/40 dark:bg-white/[0.02] p-6 space-y-2">
             <Target className="w-8 h-8 text-zinc-300 dark:text-zinc-700 mx-auto" />
             <div className="text-sm font-semibold text-zinc-900 dark:text-white">
-              No {activeTab.toLowerCase()} targets configured for {monthName}
+              No {activeTab.toLowerCase()} targets configured for {periodTab === "YEARLY" ? `Year ${selectedYear}` : monthName}
             </div>
             <p className="text-2xs text-zinc-400 max-w-sm mx-auto">
               {isSystemAdminOrAdmin
                 ? "Click 'Set Target' above to establish deliverables and milestone goals."
-                : "Targets will be displayed here once configured by the System Admin or management."}
+                : "Targets will be displayed here once configured by the Workspace Admin or management."}
             </p>
           </div>
         ) : (
@@ -323,6 +390,10 @@ export const TargetsView: React.FC = () => {
                         {target.targetType === "DEPARTMENT"
                           ? `🏢 ${target.department?.name || "General Department"}`
                           : `👥 Squad: ${target.team?.name || "Squad"}`}
+                      </span>
+
+                      <span className="font-mono font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-white/[0.06] px-2 py-0.5 rounded-full border border-zinc-200 dark:border-white/[0.08] text-3xs">
+                        {target.month === 0 ? `📆 FY ${target.year} Annual` : `📅 ${new Date(target.year, target.month - 1, 1).toLocaleDateString(undefined, { month: "short", year: "numeric" })}`}
                       </span>
 
                       {target.service && (
@@ -472,6 +543,103 @@ export const TargetsView: React.FC = () => {
               }}
               className="space-y-4"
             >
+              {/* Period Type: Monthly vs Yearly */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                  Target Duration Period
+                </label>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setTargetForm({
+                        ...targetForm,
+                        periodType: "MONTHLY",
+                        month: selectedMonth || 1,
+                      })
+                    }
+                    className={cn(
+                      "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                      targetForm.periodType === "MONTHLY"
+                        ? "bg-white dark:bg-zinc-900 text-violet-600 dark:text-violet-400 shadow-xs"
+                        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                    )}
+                  >
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>Monthly Target</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setTargetForm({
+                        ...targetForm,
+                        periodType: "YEARLY",
+                        month: 0,
+                      })
+                    }
+                    className={cn(
+                      "py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                      targetForm.periodType === "YEARLY"
+                        ? "bg-white dark:bg-zinc-900 text-violet-600 dark:text-violet-400 shadow-xs"
+                        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                    )}
+                  >
+                    <Award className="w-3.5 h-3.5" />
+                    <span>Yearly Target</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Month & Year Selection */}
+              <div className="grid grid-cols-2 gap-2">
+                {targetForm.periodType === "MONTHLY" ? (
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                      Month *
+                    </label>
+                    <select
+                      value={targetForm.month || selectedMonth}
+                      onChange={(e) =>
+                        setTargetForm({ ...targetForm, month: Number(e.target.value) })
+                      }
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
+                    >
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {new Date(2026, i, 1).toLocaleDateString(undefined, { month: "long" })}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                      Target Period
+                    </label>
+                    <div className="px-3 py-2 text-xs rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-bold text-violet-600 dark:text-violet-400 flex items-center gap-1.5">
+                      <Award className="w-3.5 h-3.5" />
+                      <span>Full Year (Annual)</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                    Year *
+                  </label>
+                  <input
+                    type="number"
+                    min={2020}
+                    max={2035}
+                    value={targetForm.year}
+                    onChange={(e) =>
+                      setTargetForm({ ...targetForm, year: Number(e.target.value) })
+                    }
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white font-mono"
+                  />
+                </div>
+              </div>
+
               {/* Type Switch */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
                 <button

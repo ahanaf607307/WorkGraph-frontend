@@ -185,7 +185,7 @@ export const AnnouncementView: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Avatar name={item.author?.name} size="sm" />
                   <span className="font-medium text-zinc-800 dark:text-zinc-200">
-                    {item.author?.name || "System Admin"}
+                    {item.author?.name || "Workspace Admin"}
                   </span>
                 </div>
 
@@ -243,7 +243,7 @@ export const AnnouncementView: React.FC = () => {
                   <span>
                     Published by{" "}
                     <strong className="text-zinc-800 dark:text-zinc-200">
-                      {inspectAnnouncement.author?.name || "System Admin"}
+                      {inspectAnnouncement.author?.name || "Workspace Admin"}
                     </strong>
                   </span>
                   <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium ml-2">

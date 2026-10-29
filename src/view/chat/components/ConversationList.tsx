@@ -73,7 +73,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             <button
               type="button"
               onClick={onOpenDirectModal}
-              title={isSystemOwner ? "Message System Admin" : "New Direct Message"}
+              title={isSystemOwner ? "Message Workspace Admin" : "New Direct Message"}
               className="p-2 rounded-xl bg-zinc-100 hover:bg-violet-50 hover:text-violet-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors cursor-pointer flex items-center gap-1 text-xs font-medium"
             >
               <UserPlus className="w-4 h-4" />
