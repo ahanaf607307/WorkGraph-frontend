@@ -234,7 +234,7 @@ export const MeetingView: React.FC = () => {
         </h2>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
           You do not currently have permission to access the workspace Meeting Hub.
-          Please contact your <strong>System Admin</strong> or <strong>Workspace Owner</strong> to request access permission.
+          Please contact your <strong>Workspace Admin</strong> to request access permission.
         </p>
       </div>
     );
@@ -262,7 +262,7 @@ export const MeetingView: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2.5 shrink-0">
-          {/* Permission Button for System Admin */}
+          {/* Permission Button for Workspace Admin */}
           {isSystemAdmin && (
             <Button
               variant="outline"

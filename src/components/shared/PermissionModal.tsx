@@ -12,8 +12,8 @@ import { toast } from "sonner";
 
 /**
  * Hook to manage delegated permissions for a specific module/feature in the workspace.
- * System Admin (OWNER, SYSTEM_ADMIN, SYSTEM_OWNER) always has master permission.
- * Other users only have permission if explicitly delegated by System Admin in the database.
+ * Workspace Admin (OWNER, WORKSPACE_ADMIN, SYSTEM_OWNER) always has master permission.
+ * Other users only have permission if explicitly delegated by Workspace Admin in the database.
  */
 export function useFeaturePermission(featureKey: string) {
   const { currentOrg, user } = useAuth();
@@ -70,7 +70,7 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
     user?.role === "SYSTEM_ADMIN" ||
     (user?.role as string) === "system_admin";
 
-  // Only System Admin can grant/manage module permissions
+  // Only Workspace Admin can grant/manage module permissions
   if (!isSystemAdmin) return null;
 
   return (

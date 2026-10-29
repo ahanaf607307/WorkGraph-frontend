@@ -23,30 +23,34 @@ import {
   AlertCircle,
   FileText,
   UserCheck,
+  Lock,
 } from "lucide-react";
+import {
+  PermissionButton,
+  PermissionModal,
+  useFeaturePermission,
+} from "../../components/shared/PermissionModal";
 
 export const ActivityLogView: React.FC = () => {
   const { currentOrg, user } = useAuth();
   const orgId = currentOrg?.id;
 
-  const isSystemAdminOrAdmin =
-    currentOrg?.myRole === "OWNER" ||
-    currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER";
 
-  const isLeaderOrCoLeader =
-    (currentOrg as any)?.designation === "TEAM_LEADER" ||
-    (currentOrg as any)?.designation === "CO_LEADER";
 
   const [selectedTeamFilter, setSelectedTeamFilter] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [actionFilter, setActionFilter] = useState<string>("ALL");
+  const [showPermissionModal, setShowPermissionModal] = useState<boolean>(false);
+
+  // Feature Permission Hook
+  const { isSystemAdmin, hasPermission } = useFeaturePermission("ACTIVITY_LOG");
+  const canAccessActivity = isSystemAdmin || hasPermission;
 
   // Fetch departments & squads for the Team filter dropdown
   const { data: departments = [] } = useQuery({
     queryKey: ["departments-activity", orgId],
     queryFn: () => departmentActions.getDepartments(orgId),
-    enabled: !!orgId && isSystemAdminOrAdmin,
+    enabled: !!orgId && canAccessActivity,
   });
 
   // Flatten all teams
@@ -73,10 +77,10 @@ export const ActivityLogView: React.FC = () => {
     queryFn: () =>
       activityActions.getActivities({
         organizationId: orgId,
-        teamId: isSystemAdminOrAdmin ? selectedTeamFilter : undefined,
+        teamId: selectedTeamFilter,
         limit: 100,
       }),
-    enabled: !!orgId && (isSystemAdminOrAdmin || isLeaderOrCoLeader),
+    enabled: !!orgId && canAccessActivity,
   });
 
   const logs = activityData?.logs || [];
@@ -117,17 +121,17 @@ export const ActivityLogView: React.FC = () => {
     return "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20";
   };
 
-  if (!isSystemAdminOrAdmin && !isLeaderOrCoLeader) {
+  if (!canAccessActivity) {
     return (
       <div className="p-12 text-center max-w-md mx-auto space-y-3">
-        <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-600 flex items-center justify-center mx-auto">
-          <AlertCircle className="w-6 h-6" />
+        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+          <Lock className="w-6 h-6" />
         </div>
         <h2 className="text-base font-bold text-zinc-950 dark:text-white">
           Access Restricted
         </h2>
         <p className="text-xs text-zinc-500 dark:text-zinc-400">
-          Activity logs are securely restricted to System Admin, Workspace Admins, and Squad Leaders.
+          Activity logs are restricted to Workspace Admin and authorized members. Contact your Workspace Admin for permission.
         </p>
       </div>
     );
@@ -147,23 +151,13 @@ export const ActivityLogView: React.FC = () => {
           </p>
         </div>
 
-        {/* Status Indicator */}
+        {/* Status & Permissions Buttons */}
         <div className="flex items-center gap-2">
-          {isLeaderOrCoLeader && !isSystemAdminOrAdmin ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-semibold">
-              <Users className="w-3.5 h-3.5" />
-              <span>Squad Scope: Your Team Members Only</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold">
-              <Shield className="w-3.5 h-3.5" />
-              <span>
-                {currentOrg?.myRole === "OWNER" || user?.role === "SYSTEM_OWNER"
-                  ? "System Admin Oversight"
-                  : "Workspace Admin Oversight"}
-              </span>
-            </div>
-          )}
+          <PermissionButton onClick={() => setShowPermissionModal(true)} />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold">
+            <Shield className="w-3.5 h-3.5" />
+            <span>Workspace Activity Log</span>
+          </div>
         </div>
       </div>
 
@@ -182,8 +176,8 @@ export const ActivityLogView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Team Filter Dropdown (System Admin & Admins) */}
-          {isSystemAdminOrAdmin && (
+          {/* Team Filter Dropdown (Workspace Admin & Admins) */}
+          {isSystemAdmin && (
             <div className="flex items-center gap-1.5 bg-zinc-50 dark:bg-white/[0.03] px-2.5 py-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.08]">
               <Users className="w-3.5 h-3.5 text-violet-500 shrink-0" />
               <span className="text-3xs font-bold text-zinc-400 uppercase font-mono">
@@ -313,6 +307,14 @@ export const ActivityLogView: React.FC = () => {
           })
         )}
       </div>
+      {/* Permission Management Modal */}
+      <PermissionModal
+        isOpen={showPermissionModal}
+        onClose={() => setShowPermissionModal(false)}
+        featureKey="ACTIVITY_LOG"
+        title="Activity Log Permissions"
+        description="Grant permission to selected members to view workspace activity logs and audit trail."
+      />
     </div>
   );
 };

@@ -33,9 +33,15 @@ import {
   Check,
   Calendar,
   User,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../../lib/utils";
+import {
+  PermissionButton,
+  PermissionModal,
+  useFeaturePermission,
+} from "../../components/shared/PermissionModal";
 
 export const NoticeBoardView: React.FC = () => {
   const { user, currentOrg } = useAuth();
@@ -43,7 +49,12 @@ export const NoticeBoardView: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>(null);
+
+  // Permission hook
+  const { isSystemAdmin, hasPermission } = useFeaturePermission("NOTICE_BOARD");
+  const canPublishNotice = isSystemAdmin || hasPermission;
 
   // Create form state
   const [title, setTitle] = useState("");
@@ -58,12 +69,6 @@ export const NoticeBoardView: React.FC = () => {
   // Comment editing state
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState("");
-
-  const isAdminOrOwner =
-    currentOrg?.myRole === "OWNER" ||
-    currentOrg?.myRole === "ADMIN" ||
-    user?.role === "SYSTEM_OWNER" ||
-    user?.role === "BUSINESS_OWNER";
 
   // Load notices
   const { data: notices = [], isLoading } = useQuery({
@@ -215,6 +220,8 @@ export const NoticeBoardView: React.FC = () => {
     }
   };
 
+
+
   return (
     <div className="space-y-6 w-full max-w-[1600px] mx-auto pb-12 select-none">
       {/* Header bar */}
@@ -233,17 +240,20 @@ export const NoticeBoardView: React.FC = () => {
           </div>
         </div>
 
-        {isAdminOrOwner && (
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 w-fit cursor-pointer shadow-md shadow-orange-500/20"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Create Notice</span>
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <PermissionButton onClick={() => setShowPermissionModal(true)} />
+          {canPublishNotice && (
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 w-fit cursor-pointer shadow-md shadow-orange-500/20"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create Notice</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Notices Grid: Compact Initial Cards */}
@@ -668,6 +678,14 @@ export const NoticeBoardView: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
+      {/* Permission Management Modal */}
+      <PermissionModal
+        isOpen={showPermissionModal}
+        onClose={() => setShowPermissionModal(false)}
+        featureKey="NOTICE_BOARD"
+        title="Notice Board Permissions"
+        description="Authorize selected workspace members to view and publish company notices."
+      />
     </div>
   );
 };

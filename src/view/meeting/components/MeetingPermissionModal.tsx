@@ -58,7 +58,7 @@ export const MeetingPermissionModal: React.FC<MeetingPermissionModalProps> = ({
     type: "canAccess" | "canCreate"
   ) => {
     if (user.isOwner) {
-      toast.info("System Admin always maintains master permissions");
+      toast.info("Workspace Admin always maintains master permissions");
       return;
     }
 
@@ -85,7 +85,7 @@ export const MeetingPermissionModal: React.FC<MeetingPermissionModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Meeting Access & Creation Permissions"
-      description="System Admin can grant Leaders, Co-Leaders, and Admins permission to view the Meeting page and schedule meetings."
+      description="Workspace Admin can grant Leaders, Co-Leaders, and Admins permission to view the Meeting page and schedule meetings."
       maxWidth="lg"
     >
       <div className="space-y-4 pt-2">
@@ -126,8 +126,8 @@ export const MeetingPermissionModal: React.FC<MeetingPermissionModalProps> = ({
                         {u.name}
                       </span>
                       {u.isOwner && (
-                        <span className="text-4xs px-2 py-0.5 rounded-md font-mono bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20 shrink-0">
-                          System Admin
+                        <span className="text-4xs px-2 py-0.5 rounded-md font-mono bg-violet-500/10 text-violet-600 dark:text-violet-400 font-bold border border-violet-500/20 shrink-0">
+                          Workspace Admin
                         </span>
                       )}
                     </div>
