@@ -47,4 +47,8 @@ export const activityActions = {
     const endpoint = `/activity${qs ? `?${qs}` : ""}`;
     return apiClient<ActivityResponse>(endpoint);
   },
+
+  getActivityDetails: async (logId: string): Promise<{ log: ActivityLogItem; liveResource: any }> => {
+    return apiClient<{ log: ActivityLogItem; liveResource: any }>(`/activity/${logId}/details`);
+  },
 };

@@ -24,7 +24,18 @@ import {
   FileText,
   UserCheck,
   Lock,
+  Eye,
+  ExternalLink,
+  X,
+  Calendar,
+  CheckCircle,
+  FolderGit2,
+  ListTodo,
+  Tag,
+  Building2,
+  User,
 } from "lucide-react";
+import Link from "next/link";
 import {
   PermissionButton,
   PermissionModal,
@@ -35,8 +46,7 @@ export const ActivityLogView: React.FC = () => {
   const { currentOrg, user } = useAuth();
   const orgId = currentOrg?.id;
 
-
-
+  const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
   const [selectedTeamFilter, setSelectedTeamFilter] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [actionFilter, setActionFilter] = useState<string>("ALL");
@@ -83,7 +93,14 @@ export const ActivityLogView: React.FC = () => {
     enabled: !!orgId && canAccessActivity,
   });
 
-  const logs = activityData?.logs || [];
+  // Fetch detailed info when a log is selected
+  const { data: detailData, isLoading: isLoadingDetail } = useQuery({
+    queryKey: ["activity-detail", selectedLogId],
+    queryFn: () => (selectedLogId ? activityActions.getActivityDetails(selectedLogId) : null),
+    enabled: !!selectedLogId,
+  });
+
+  const logs: ActivityLogItem[] = activityData?.logs || [];
 
   // Filter logs by search term and action type
   const filteredLogs = useMemo(() => {
@@ -253,13 +270,14 @@ export const ActivityLogView: React.FC = () => {
             return (
               <div
                 key={log.id}
-                className="p-4 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] hover:border-violet-500/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
+                onClick={() => setSelectedLogId(log.id)}
+                className="p-4 rounded-2xl bg-white dark:bg-[#0f1118] border border-zinc-200/70 dark:border-white/[0.06] hover:border-violet-500/40 hover:shadow-md dark:hover:bg-white/[0.02] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs cursor-pointer group"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
                   <Avatar name={log.actor?.name || "User"} size="sm" />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-zinc-900 dark:text-white text-xs truncate">
+                      <span className="font-bold text-zinc-900 dark:text-white text-xs truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                         {log.actor?.name || "System Actor"}
                       </span>
                       <span className="text-3xs text-zinc-400 font-mono">
@@ -293,13 +311,19 @@ export const ActivityLogView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="text-right shrink-0">
-                  <div className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono flex items-center sm:justify-end gap-1">
-                    <Clock className="w-3 h-3 text-zinc-400" />
-                    <span>{dateStr}</span>
+                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                  <div className="text-right">
+                    <div className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono flex items-center sm:justify-end gap-1">
+                      <Clock className="w-3 h-3 text-zinc-400" />
+                      <span>{dateStr}</span>
+                    </div>
+                    <div className="text-3xs text-zinc-400 font-mono">
+                      {fullDate}
+                    </div>
                   </div>
-                  <div className="text-3xs text-zinc-400 font-mono">
-                    {fullDate}
+
+                  <div className="p-1.5 rounded-lg bg-zinc-100 group-hover:bg-violet-600 group-hover:text-white text-zinc-400 dark:bg-white/[0.04] transition-all">
+                    <ChevronRight className="w-4 h-4" />
                   </div>
                 </div>
               </div>
@@ -307,6 +331,238 @@ export const ActivityLogView: React.FC = () => {
           })
         )}
       </div>
+
+      {/* Activity Details Modal */}
+      {selectedLogId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative w-full max-w-2xl rounded-3xl bg-white dark:bg-[#0f1118] border border-zinc-200 dark:border-white/[0.08] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="px-6 py-4.5 border-b border-zinc-200/80 dark:border-white/[0.06] flex items-center justify-between bg-zinc-50/50 dark:bg-white/[0.02]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-violet-600/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+                    <span>Activity Event Inspection</span>
+                    {detailData?.log && (
+                      <span
+                        className={cn(
+                          "px-2 py-0.5 rounded-full text-3xs font-mono font-bold border uppercase tracking-wider",
+                          getActionBadgeColor(detailData.log.action)
+                        )}
+                      >
+                        {detailData.log.action.replace(/_/g, " ")}
+                      </span>
+                    )}
+                  </h3>
+                  <p className="text-3xs text-zinc-500 font-mono">
+                    Log ID: {selectedLogId}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedLogId(null)}
+                className="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.05] transition-all cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto space-y-5 text-xs text-zinc-700 dark:text-zinc-300">
+              {isLoadingDetail ? (
+                <div className="space-y-3 py-6">
+                  <Skeleton className="h-6 w-1/2" />
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-32 w-full" />
+                </div>
+              ) : !detailData?.log ? (
+                <div className="p-6 text-center text-zinc-500">
+                  Activity log record could not be found or loaded.
+                </div>
+              ) : (
+                <>
+                  {/* Actor Details Card */}
+                  <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/80 dark:border-white/[0.06] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={detailData.log.actor?.name || "User"} size="md" />
+                      <div>
+                        <div className="font-bold text-zinc-900 dark:text-white text-xs">
+                          {detailData.log.actor?.name || "System Actor"}
+                        </div>
+                        <div className="text-3xs text-zinc-500 font-mono">
+                          {detailData.log.actor?.email}
+                        </div>
+                        <div className="text-3xs text-zinc-400 mt-0.5">
+                          Actor ID: {detailData.log.actorId}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right font-mono text-3xs text-zinc-500">
+                      <div>{formatRelativeDate(detailData.log.createdAt)}</div>
+                      <div className="text-zinc-400 mt-0.5">
+                        {new Date(detailData.log.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Target Live Resource Card */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-xs text-zinc-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                        <Tag className="w-3.5 h-3.5 text-violet-500" />
+                        <span>Target Entity ({detailData.log.resourceType})</span>
+                      </h4>
+                      {detailData.liveResource ? (
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-3xs font-semibold flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> Live Record Found
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-md bg-zinc-500/10 text-zinc-500 text-3xs font-semibold">
+                          Deleted or Historical Snapshot
+                        </span>
+                      )}
+                    </div>
+
+                    {detailData.liveResource ? (
+                      <div className="p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20 space-y-3">
+                        {/* Task Resource Display */}
+                        {detailData.log.resourceType.toUpperCase().includes("TASK") && (
+                          <div className="space-y-2.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span className="text-3xs font-mono font-bold text-violet-600 uppercase">
+                                  Task Title
+                                </span>
+                                <h5 className="text-sm font-bold text-zinc-950 dark:text-white">
+                                  {detailData.liveResource.title}
+                                </h5>
+                              </div>
+                              <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-violet-500/10 text-violet-600 border border-violet-500/20 uppercase">
+                                {detailData.liveResource.status}
+                              </span>
+                            </div>
+
+                            {detailData.liveResource.description && (
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-3 bg-white dark:bg-black/20 p-2.5 rounded-xl border border-zinc-200/60 dark:border-white/[0.04]">
+                                {detailData.liveResource.description}
+                              </p>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-2 text-3xs font-mono pt-1">
+                              <div className="p-2 rounded-xl bg-white dark:bg-black/20 border border-zinc-200/60 dark:border-white/[0.04]">
+                                <span className="text-zinc-400 block">Project:</span>
+                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                  {detailData.liveResource.project?.name || "N/A"}
+                                </span>
+                              </div>
+                              <div className="p-2 rounded-xl bg-white dark:bg-black/20 border border-zinc-200/60 dark:border-white/[0.04]">
+                                <span className="text-zinc-400 block">Assignee:</span>
+                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                  {detailData.liveResource.assignee?.name || "Unassigned"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Project Resource Display */}
+                        {detailData.log.resourceType.toUpperCase().includes("PROJECT") && (
+                          <div className="space-y-2.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span className="text-3xs font-mono font-bold text-violet-600 uppercase">
+                                  Project Name
+                                </span>
+                                <h5 className="text-sm font-bold text-zinc-950 dark:text-white">
+                                  {detailData.liveResource.name}
+                                </h5>
+                              </div>
+                              <span className="px-2 py-0.5 rounded-full text-3xs font-mono font-bold bg-violet-500/10 text-violet-600 border border-violet-500/20 uppercase">
+                                {detailData.liveResource.status}
+                              </span>
+                            </div>
+
+                            {detailData.liveResource.description && (
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-3 bg-white dark:bg-black/20 p-2.5 rounded-xl border border-zinc-200/60 dark:border-white/[0.04]">
+                                {detailData.liveResource.description}
+                              </p>
+                            )}
+
+                            <div className="grid grid-cols-3 gap-2 text-3xs font-mono pt-1">
+                              <div className="p-2 rounded-xl bg-white dark:bg-black/20 border border-zinc-200/60 dark:border-white/[0.04]">
+                                <span className="text-zinc-400 block">Department:</span>
+                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                  {detailData.liveResource.department?.name || "All Departments"}
+                                </span>
+                              </div>
+                              <div className="p-2 rounded-xl bg-white dark:bg-black/20 border border-zinc-200/60 dark:border-white/[0.04]">
+                                <span className="text-zinc-400 block">Squad:</span>
+                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                  {detailData.liveResource.team?.name || "Cross-Squad"}
+                                </span>
+                              </div>
+                              <div className="p-2 rounded-xl bg-white dark:bg-black/20 border border-zinc-200/60 dark:border-white/[0.04]">
+                                <span className="text-zinc-400 block">Total Tasks:</span>
+                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                  {detailData.liveResource._count?.tasks || 0} tasks
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Generic Live Resource Display */}
+                        {!detailData.log.resourceType.toUpperCase().includes("TASK") &&
+                          !detailData.log.resourceType.toUpperCase().includes("PROJECT") && (
+                            <pre className="text-3xs font-mono bg-zinc-950 text-emerald-400 p-3 rounded-xl overflow-x-auto">
+                              {JSON.stringify(detailData.liveResource, null, 2)}
+                            </pre>
+                          )}
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-white/[0.03] border border-zinc-200/60 dark:border-white/[0.06] text-zinc-500 text-xs">
+                        This item was either deleted, moved, or only recorded in history logs. See the original snapshot metadata below.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Metadata Snapshot Card */}
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-xs text-zinc-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                      <FileText className="w-3.5 h-3.5 text-zinc-400" />
+                      <span>Event Metadata & Payload</span>
+                    </h4>
+                    <pre className="p-3.5 rounded-2xl bg-zinc-950 text-zinc-200 font-mono text-3xs overflow-x-auto border border-zinc-800 leading-relaxed">
+                      {detailData.log.metadata
+                        ? JSON.stringify(detailData.log.metadata, null, 2)
+                        : "No payload metadata attached to this activity event."}
+                    </pre>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3.5 border-t border-zinc-200/80 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] flex items-center justify-between">
+              <span className="text-3xs text-zinc-400 font-mono">
+                WorkGraph Audit Trail v1.0
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedLogId(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-all cursor-pointer"
+              >
+                Close Inspection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Permission Management Modal */}
       <PermissionModal
         isOpen={showPermissionModal}
