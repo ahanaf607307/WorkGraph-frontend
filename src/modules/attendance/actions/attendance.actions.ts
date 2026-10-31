@@ -145,4 +145,21 @@ export const attendanceActions = {
   ): Promise<AttendanceRecord[]> => {
     return apiClient<AttendanceRecord[]>(`/attendance/${organizationId}/members/${memberId}/history`);
   },
+
+  updateMyStatus: async (
+    organizationId: string,
+    data: {
+      status: "PRESENT" | "ABSENT" | "OFFLINE" | "NOTE";
+      note?: string;
+    }
+  ): Promise<AttendanceRecord> => {
+    return apiClient<AttendanceRecord>(`/attendance/${organizationId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getWorkspaceStatuses: async (organizationId: string): Promise<any[]> => {
+    return apiClient<any[]>(`/attendance/${organizationId}/statuses`);
+  },
 };
