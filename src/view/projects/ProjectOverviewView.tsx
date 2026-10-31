@@ -753,11 +753,16 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
                           {isCompleted && <CheckCircle2 className="w-4 h-4" />}
                         </button>
 
-                        <div className="space-y-0.5">
-                          <div className="flex items-center space-x-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                             <span className="font-bold text-sm text-zinc-950 dark:text-white">
                               {ph.name}
                             </span>
+                            {ph.orderId && (
+                              <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                Order: #{ph.orderId}
+                              </span>
+                            )}
                             <span
                               className={`text-3xs font-mono font-bold px-2 py-0.2 rounded-full uppercase ${
                                 isCompleted
@@ -773,6 +778,62 @@ export const ProjectOverviewView: React.FC<{ projectId: string; initialTab?: str
                           {ph.description && (
                             <p className="text-xs text-zinc-500">{ph.description}</p>
                           )}
+
+                          {/* Assignee & Dates & Links */}
+                          <div className="flex items-center gap-3 text-3xs text-zinc-500 dark:text-zinc-400 flex-wrap pt-1">
+                            {ph.assignedTo && (
+                              <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md font-medium text-zinc-700 dark:text-zinc-300">
+                                <Avatar name={ph.assignedTo.name} size="sm" />
+                                <span>{ph.assignedTo.name}</span>
+                              </div>
+                            )}
+
+                            {(ph.startDate || ph.deadline || ph.endDate) && (
+                              <div className="flex items-center gap-1 font-mono">
+                                <Calendar className="w-3 h-3 text-zinc-400" />
+                                <span>
+                                  {ph.startDate ? formatDate(ph.startDate) : "TBD"} &rarr;{" "}
+                                  {ph.endDate || ph.deadline ? formatDate(ph.endDate || ph.deadline!) : "TBD"}
+                                </span>
+                              </div>
+                            )}
+
+                            {ph.quotationUrl && (
+                              <a
+                                href={ph.quotationUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1 text-amber-600 dark:text-amber-400 hover:underline font-semibold"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                <span>Quote</span>
+                              </a>
+                            )}
+
+                            {ph.orderDocumentsUrl && (
+                              <a
+                                href={ph.orderDocumentsUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                              >
+                                <FileText className="w-3 h-3" />
+                                <span>Docs</span>
+                              </a>
+                            )}
+
+                            {ph.recordingUrl && (
+                              <a
+                                href={ph.recordingUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline font-semibold"
+                              >
+                                <Video className="w-3 h-3" />
+                                <span>Recording</span>
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </div>
 

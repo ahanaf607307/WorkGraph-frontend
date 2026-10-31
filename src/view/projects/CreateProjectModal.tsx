@@ -68,8 +68,32 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       currency: "USD",
       clientHealth: "GOOD",
       phases: [
-        { name: "Phase 1: Architecture & Wireframes", status: "PENDING", budget: 0 },
-        { name: "Phase 2: Core MVP Development", status: "PENDING", budget: 0 },
+        {
+          name: "Phase 1: Architecture & Wireframes",
+          status: "PENDING",
+          budget: 0,
+          orderId: "",
+          startDate: "",
+          endDate: "",
+          deadline: "",
+          quotationUrl: "",
+          orderDocumentsUrl: "",
+          recordingUrl: "",
+          assignedToId: "",
+        },
+        {
+          name: "Phase 2: Core MVP Development",
+          status: "PENDING",
+          budget: 0,
+          orderId: "",
+          startDate: "",
+          endDate: "",
+          deadline: "",
+          quotationUrl: "",
+          orderDocumentsUrl: "",
+          recordingUrl: "",
+          assignedToId: "",
+        },
       ],
     },
   });
@@ -148,7 +172,15 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     setIsLoading(true);
     try {
-      const created = await projectActions.createProject(currentOrg.id, data);
+      const payload = {
+        ...data,
+        phases: data.phases?.map((p) => ({
+          ...p,
+          deadline: p.endDate || p.deadline || null,
+          endDate: p.endDate || p.deadline || null,
+        })),
+      };
+      const created = await projectActions.createProject(currentOrg.id, payload as any);
       toast.success("Enterprise project created successfully!");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       reset();
@@ -171,7 +203,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       onClose={onClose}
       title="Create Enterprise Project"
       description="Add comprehensive project details, client metadata, phases, and squad assignment."
-      maxWidth="2xl"
+      maxWidth="3xl"
     >
       {/* Navigation Steps */}
       <div className="flex items-center space-x-1.5 border-b border-zinc-200 dark:border-zinc-800 pb-2 mb-4 overflow-x-auto text-xs">
@@ -253,15 +285,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               {...register("name")}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Input
-                id="orderId"
-                label="Order ID / Contract Number"
-                placeholder="e.g. ORD-94821 or #58210"
-                error={errors.orderId?.message}
-                {...register("orderId")}
-              />
-
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                   Platform Name
@@ -280,9 +304,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   <option value="Other">Other Platform</option>
                 </select>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input
                 id="profileName"
                 label="Profile Name"
@@ -545,7 +567,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   Milestones & Phase Breakdown
                 </h4>
                 <p className="text-3xs text-zinc-500">
-                  Break delivery into structured phases with deadlines and budgets.
+                  Break delivery into structured phases with deadlines, order IDs, links, and assigned personnel.
                 </p>
               </div>
 
@@ -558,6 +580,14 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                     name: `Phase ${phaseFields.length + 1}: Deliverable`,
                     status: "PENDING",
                     budget: 0,
+                    orderId: "",
+                    startDate: "",
+                    endDate: "",
+                    deadline: "",
+                    quotationUrl: "",
+                    orderDocumentsUrl: "",
+                    recordingUrl: "",
+                    assignedToId: "",
                   })
                 }
               >
@@ -565,13 +595,13 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               </Button>
             </div>
 
-            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
               {phaseFields.map((field, idx) => (
                 <div
                   key={field.id}
-                  className="p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 space-y-2"
+                  className="p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 space-y-2.5 shadow-xs"
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-2">
                     <span className="text-3xs font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded">
                       Phase #{idx + 1}
                     </span>
@@ -580,44 +610,146 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                         type="button"
                         onClick={() => removePhase(idx)}
                         className="text-zinc-400 hover:text-rose-500 transition-colors p-1 cursor-pointer"
+                        title="Remove Phase"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      placeholder="Phase Name (e.g. Wireframing & Design)"
-                      className="px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
-                      {...register(`phases.${idx}.name` as const)}
-                    />
+                  {/* Row 1: Phase Name & Order ID */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Milestone / Phase Name *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Phase Name (e.g. Phase 1: Architecture & Wireframes)"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.name` as const)}
+                      />
+                    </div>
 
-                    <input
-                      type="date"
-                      placeholder="Phase Deadline"
-                      className="px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
-                      {...register(`phases.${idx}.deadline` as const)}
-                    />
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Order ID / Contract Number
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. ORD-94821 or #58210"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400 font-mono"
+                        {...register(`phases.${idx}.orderId` as const)}
+                      />
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder="Phase Budget ($)"
-                      className="px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
-                      {...register(`phases.${idx}.budget` as const)}
-                    />
+                  {/* Row 2: Start Date, End Date, Budget, Status */}
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.startDate` as const)}
+                      />
+                    </div>
 
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.endDate` as const)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Phase Budget ($)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400 font-mono"
+                        {...register(`phases.${idx}.budget` as const)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Status
+                      </label>
+                      <select
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400 cursor-pointer"
+                        {...register(`phases.${idx}.status` as const)}
+                      >
+                        <option value="PENDING">PENDING</option>
+                        <option value="IN_PROGRESS">IN_PROGRESS</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Assign Person */}
+                  <div>
+                    <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                      Assign Person (Responsible Member)
+                    </label>
                     <select
-                      className="px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400 cursor-pointer"
-                      {...register(`phases.${idx}.status` as const)}
+                      className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400 cursor-pointer"
+                      {...register(`phases.${idx}.assignedToId` as const)}
                     >
-                      <option value="PENDING">PENDING</option>
-                      <option value="IN_PROGRESS">IN_PROGRESS</option>
-                      <option value="COMPLETED">COMPLETED</option>
+                      <option value="">Unassigned / Select Member...</option>
+                      {orgMembers.map((m) => (
+                        <option key={m.id} value={m.userId}>
+                          {m.user?.name || m.user?.email} ({m.designationRel?.name || m.role})
+                        </option>
+                      ))}
                     </select>
+                  </div>
+
+                  {/* Row 4: Links (Quotation Link, Order Documents, Recording Link) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-zinc-200/50 dark:border-zinc-800/50">
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Quotation Link
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://... (Quote Link)"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.quotationUrl` as const)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Order Documents
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://... (Docs / Drive Link)"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.orderDocumentsUrl` as const)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-3xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">
+                        Recording Link
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://loom.com/... or Zoom link"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-amber-400"
+                        {...register(`phases.${idx}.recordingUrl` as const)}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}

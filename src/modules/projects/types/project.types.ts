@@ -17,10 +17,17 @@ export interface ProjectPhase {
   name: string;
   description?: string | null;
   orderIndex: number;
+  orderId?: string | null;
   startDate?: string | null;
   deadline?: string | null;
+  endDate?: string | null;
   budget?: number | null;
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | string;
+  quotationUrl?: string | null;
+  orderDocumentsUrl?: string | null;
+  recordingUrl?: string | null;
+  assignedToId?: string | null;
+  assignedTo?: User | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -3,9 +3,16 @@ import { z } from "zod";
 export const projectPhaseSchema = z.object({
   name: z.string().min(1, "Phase name is required"),
   description: z.string().optional(),
+  orderId: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
   deadline: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
   budget: z.coerce.number().optional().nullable(),
   status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]).optional(),
+  quotationUrl: z.string().optional().nullable(),
+  orderDocumentsUrl: z.string().optional().nullable(),
+  recordingUrl: z.string().optional().nullable(),
+  assignedToId: z.string().optional().nullable(),
 });
 
 export const projectSchema = z.object({
